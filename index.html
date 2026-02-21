@@ -1,58 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cruise</title>
+    <title>Cruise Official</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root { --primary: #2481cc; --bg: #000; --panel: #111; --border: #222; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
 
-        /* ICONIC 3D INTRO (7s) */
+        /* 3D ICONIC LOGO INTRO */
         #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .logo-container { perspective: 1000px; text-align: center; }
+        .logo-container { perspective: 1000px; }
         .iconic-logo { 
             width: 150px; height: 150px; border-radius: 35px; 
             animation: iconicEntry 3s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards, breathe 4s ease-in-out infinite 3s;
-            box-shadow: 0 0 50px rgba(36, 129, 204, 0.4);
+            box-shadow: 0 0 60px rgba(36, 129, 204, 0.4);
         }
         @keyframes iconicEntry { 0% { transform: rotateX(45deg) rotateY(-45deg) translateZ(-500px) scale(0); opacity: 0; } 100% { transform: rotateX(0deg) rotateY(0deg) translateZ(0) scale(1); opacity: 1; } }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
         /* MAIN UI */
         #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1s; }
-        
-        /* DYNAMIC NAVBAR */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(10,10,10,0.95); border-bottom: 1px solid #222; backdrop-filter: blur(10px); z-index: 100; }
-        #page-title { font-weight: 900; letter-spacing: 3px; font-size: 16px; text-transform: uppercase; color: #fff; }
-        .nav-btn { background: none; border: none; color: #2481cc; font-size: 24px; cursor: pointer; position: relative; display: flex; align-items: center; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(10,10,10,0.95); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); z-index: 100; }
+        #page-title { font-weight: 900; letter-spacing: 3px; font-size: 14px; text-transform: uppercase; }
+        .nav-btn { background: none; border: none; color: var(--primary); font-size: 24px; cursor: pointer; position: relative; }
         .notif-dot { position: absolute; top: 0; right: 0; width: 9px; height: 9px; background: #ff3b30; border-radius: 50%; border: 2px solid #000; display: none; }
 
-        /* MENU (SIDEBAR) */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid #2481cc; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; padding: 40px 20px; }
+        /* SIDEBAR MENU */
+        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid var(--primary); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; padding: 40px 20px; }
         #side-menu.active { left: 0; }
-        .menu-header { color: #2481cc; letter-spacing: 5px; margin-bottom: 30px; font-size: 22px; font-weight: 900; }
-        .menu-item { width: 100%; padding: 16px; margin-bottom: 12px; background: #111; color: #fff; border: 1px solid #222; border-radius: 12px; text-align: left; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 15px; }
+        .menu-header { color: var(--primary); letter-spacing: 5px; margin-bottom: 30px; font-size: 22px; font-weight: 900; }
+        .menu-item { width: 100%; padding: 16px; margin-bottom: 12px; background: var(--panel); color: #fff; border: 1px solid var(--border); border-radius: 15px; text-align: left; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 15px; }
+        .menu-item i { font-style: normal; font-size: 20px; filter: drop-shadow(0 0 5px var(--primary)); }
 
-        /* VIEWS */
+        /* VIEW CONTAINER */
         .view { display: none; padding: 20px; flex: 1; overflow-y: auto; }
         .view.active { display: block; }
 
-        /* PROFILE UI */
-        .profile-card { background: linear-gradient(145deg, #151515, #050505); padding: 30px 20px; border-radius: 25px; border: 1px solid #2481cc; text-align: center; }
-        .pfp-circle { width: 85px; height: 85px; background: #2481cc; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; border: 3px solid #fff; }
-        .stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 25px; }
-        .stat-card { background: #000; padding: 12px; border-radius: 15px; border: 1px solid #222; }
-        .stat-v { display: block; color: #2481cc; font-size: 18px; font-weight: 800; }
-        .stat-l { font-size: 9px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        /* ICONIC CARDS (ADS & TASKS) */
+        .icon-card { 
+            background: var(--panel); border: 1px solid var(--border); padding: 18px; 
+            border-radius: 20px; display: flex; align-items: center; margin-bottom: 15px; 
+            transition: 0.3s;
+        }
+        .icon-card:active { transform: scale(0.97); border-color: var(--primary); }
+        .icon-box { 
+            width: 55px; height: 55px; border-radius: 15px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 24px; margin-right: 18px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+            border: 1px solid var(--border);
+            box-shadow: inset 0 0 10px rgba(36, 129, 204, 0.2);
+        }
+        .icon-info { flex: 1; }
+        .icon-info b { display: block; font-size: 16px; margin-bottom: 2px; }
+        .icon-info span { font-size: 12px; color: #666; }
 
-        /* NOTIFICATIONS */
-        .notif-box { background: #111; padding: 18px; border-radius: 18px; border-left: 4px solid #2481cc; margin-bottom: 12px; }
-        .notif-time { font-size: 10px; color: #444; display: block; margin-top: 8px; }
+        /* PROFILE */
+        .profile-hero { background: linear-gradient(180deg, #111, #000); padding: 30px 20px; border-radius: 25px; border: 1px solid var(--border); text-align: center; margin-bottom: 20px; }
+        .pfp-main { width: 90px; height: 90px; background: var(--primary); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; border: 3px solid #fff; box-shadow: 0 0 20px rgba(36, 129, 204, 0.3); }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .stat-item { background: #000; padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
+        .stat-v { display: block; color: var(--primary); font-weight: 800; font-size: 18px; }
+        .stat-l { font-size: 9px; color: #555; text-transform: uppercase; }
 
-        /* STUDIO & WALLET */
-        .glass-panel { background: #111; border: 1px solid #222; padding: 30px 20px; border-radius: 25px; text-align: center; }
+        /* WALLET CARD */
+        .wallet-card { background: linear-gradient(135deg, #0a0a0a 0%, #2481cc22 100%); border: 1px solid var(--primary); padding: 30px; border-radius: 25px; text-align: center; }
     </style>
 </head>
 <body>
@@ -75,64 +90,79 @@
         <div id="side-menu">
             <div class="menu-header">MENU</div>
             <div class="menu-list">
-                <button class="menu-item" onclick="showView('cruise')">🚀 Cruise</button>
-                <button class="menu-item" onclick="showView('profile')">👤 Profile</button>
-                <button class="menu-item" onclick="showView('studio')">📤 Studio</button>
-                <button class="menu-item" onclick="showView('tasks')">💰 Tasks</button>
-                <button class="menu-item" onclick="showView('wallet')">💎 Wallet</button>
+                <button class="menu-item" onclick="showView('cruise')"><i>🚀</i> Cruise</button>
+                <button class="menu-item" onclick="showView('profile')"><i>👤</i> Profile</button>
+                <button class="menu-item" onclick="showView('studio')"><i>📤</i> Studio</button>
+                <button class="menu-item" onclick="showView('ads')"><i>📢</i> Post Ads</button>
+                <button class="menu-item" onclick="showView('tasks')"><i>💰</i> Tasks</button>
+                <button class="menu-item" onclick="showView('wallet')"><i>💎</i> Wallet</button>
             </div>
-            <button onclick="toggleMenu()" style="margin-top:40px; background:none; border:none; color:#444; width:100%; font-weight:bold;">✕ CLOSE</button>
+            <button onclick="toggleMenu()" style="margin-top:40px; background:none; border:none; color:#444; width:100%;">✕ CLOSE</button>
         </div>
 
         <main id="view-cruise" class="view active">
-            <div style="margin-top:100px; text-align:center; color:#444;">
-                <p>No content in your cruise feed yet.<br>Follow creators to see their videos.</p>
-            </div>
+            <div style="margin-top:100px; text-align:center; color:#333;">Feed is empty. Follow creators!</div>
         </main>
 
         <main id="view-profile" class="view">
-            <div class="profile-card">
-                <div id="pfp-main" class="pfp-circle">?</div>
-                <h2 id="name-main" style="margin:0; letter-spacing:1px;">Cruiser</h2>
-                <div class="stat-row">
-                    <div class="stat-card"><span class="stat-v">0</span><span class="stat-l">Posts</span></div>
-                    <div class="stat-card"><span class="stat-v">0</span><span class="stat-l">Followers</span></div>
-                    <div class="stat-card"><span class="stat-v">0</span><span class="stat-l">Following</span></div>
+            <div class="profile-hero">
+                <div id="pfp-main" class="pfp-main">?</div>
+                <h2 id="name-main" style="margin:0;">Cruiser</h2>
+                <div class="stat-grid">
+                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Posts</span></div>
+                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Followers</span></div>
+                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Following</span></div>
                 </div>
             </div>
-            <h4 style="margin:30px 0 15px; border-bottom:1px solid #222; padding-bottom:10px;">MY CONTENT</h4>
-            <p style="text-align:center; color:#333; margin-top:20px;">No videos posted yet.</p>
+            <h4 style="border-bottom:1px solid var(--border); padding-bottom:10px;">MY CONTENT</h4>
+            <p style="text-align:center; color:#444; padding-top:20px;">No content posted yet.</p>
+        </main>
+
+        <main id="view-ads" class="view">
+            <h3 style="margin-top:0;">Promote</h3>
+            <div class="icon-card" onclick="tg.showAlert('Create Micro Ad')">
+                <div class="icon-box" style="color:#00f2ff;">⚡</div>
+                <div class="icon-info"><b>Micro Ads</b><span>High-speed link traffic</span></div>
+            </div>
+            <div class="icon-card" onclick="tg.showAlert('Create Social Ad')">
+                <div class="icon-box" style="color:#7d2ae8;">🌍</div>
+                <div class="icon-info"><b>Social Ads</b><span>Channel & Group growth</span></div>
+            </div>
+            <div class="icon-card" onclick="tg.showAlert('Create PTC Ad')">
+                <div class="icon-box" style="color:#2481cc;">🖱️</div>
+                <div class="icon-info"><b>PTC Ads</b><span>Paid-to-click engagement</span></div>
+            </div>
         </main>
 
         <main id="view-studio" class="view">
-            <div class="glass-panel" style="border-style:dashed;">
-                <h3 style="color:#2481cc; margin-top:0;">Creator Studio</h3>
-                <p style="color:#777; font-size:14px;">Upload your clips and build your fanbase.</p>
-                <button style="background:#2481cc; color:#fff; border:none; padding:15px 30px; border-radius:15px; font-weight:bold; margin-top:10px;">Upload Video</button>
+            <div style="border:2px dashed var(--border); padding:50px 20px; border-radius:25px; text-align:center;">
+                <h3 style="color:var(--primary);">Studio</h3>
+                <p style="color:#666;">Ready to upload your first clip?</p>
+                <button style="background:var(--primary); color:#fff; border:none; padding:12px 30px; border-radius:12px; font-weight:900; margin-top:10px;">UPLOAD</button>
             </div>
         </main>
 
         <main id="view-notif" class="view">
             <h3 style="margin-top:0;">Notifications</h3>
-            <div class="notif-box">
-                <b style="color:#2481cc;">🚢 Welcome to Cruise!</b>
-                <p style="margin:5px 0 0; font-size:14px; color:#aaa; line-height:1.4;">Welcome aboard! Complete tasks, follow creators, and start earning points today.</p>
-                <span class="notif-time">Just now</span>
+            <div style="background:var(--panel); padding:20px; border-radius:18px; border-left:4px solid var(--primary);">
+                <b>🚢 Welcome to Cruise!</b>
+                <p style="margin:8px 0 0; font-size:14px; color:#888;">Complete tasks and start earning 💎 points.</p>
             </div>
         </main>
 
         <main id="view-tasks" class="view">
-            <h3 style="margin-top:0;">Available Tasks</h3>
-            <div class="glass-panel">
-                <p style="color:#555;">New tasks are being prepared.</p>
+            <h3 style="margin-top:0;">Earning</h3>
+            <div class="icon-card" style="border-left:4px solid #fbb034;">
+                <div class="icon-box">📢</div>
+                <div class="icon-info"><b>Join Channel</b><span style="color:var(--primary);">+500 💎</span></div>
             </div>
         </main>
 
         <main id="view-wallet" class="view">
-            <div class="glass-panel" style="background: linear-gradient(135deg, #111 0%, #2481cc22 100%); border: 1px solid #2481cc;">
-                <small style="color:#2481cc; letter-spacing:2px; font-weight:bold;">TOTAL BALANCE</small>
-                <h1 style="font-size:40px; margin:15px 0;">0 💎</h1>
-                <button style="width:100%; padding:15px; border-radius:15px; border:none; background:#fff; color:#000; font-weight:900;">WITHDRAW</button>
+            <div class="wallet-card">
+                <small style="color:var(--primary); font-weight:900;">BALANCE</small>
+                <h1 style="font-size:48px; margin:15px 0;">0 💎</h1>
+                <button style="width:100%; padding:18px; background:#fff; color:#000; border-radius:15px; border:none; font-weight:900;">WITHDRAW</button>
             </div>
         </main>
     </div>
@@ -141,10 +171,8 @@
         const tg = window.Telegram.WebApp;
 
         function initApp() {
-            // Intro sequence
             document.getElementById('intro-layer').style.transition = "opacity 1s";
             document.getElementById('intro-layer').style.opacity = "0";
-            
             setTimeout(() => {
                 document.getElementById('intro-layer').style.display = 'none';
                 document.getElementById('main-app').style.display = 'flex';
@@ -154,36 +182,28 @@
                 }, 50);
             }, 1000);
 
-            // Fetch User
             try {
                 tg.expand();
                 tg.ready();
                 if(tg.initDataUnsafe?.user) {
-                    const user = tg.initDataUnsafe.user;
-                    document.getElementById('name-main').innerText = user.first_name;
-                    document.getElementById('pfp-main').innerText = user.first_name[0].toUpperCase();
+                    const u = tg.initDataUnsafe.user;
+                    document.getElementById('name-main').innerText = u.first_name;
+                    document.getElementById('pfp-main').innerText = u.first_name[0].toUpperCase();
                 }
             } catch(e) {}
         }
 
-        // Show intro for 7 seconds
         setTimeout(initApp, 7000);
 
         function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
 
         function showView(id) {
             if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
-            
-            // View Switch
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('view-' + id).classList.add('active');
-            
-            // Header Switch
             document.getElementById('page-title').innerText = id;
-            
-            // Notification Reset
             if(id === 'notif') document.getElementById('notif-dot').style.display = 'none';
         }
     </script>
 </body>
-</html>
+                    </html>
