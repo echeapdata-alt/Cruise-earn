@@ -1,23 +1,28 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// 1. Loading Simulation
-window.onload = () => {
+// Splash sequence
+window.addEventListener('load', () => {
     setTimeout(() => {
         document.getElementById('splash-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
-    }, 3000); // 3 seconds of "loading" for the iconic feel
-};
+    }, 2500);
+});
 
-// 2. Menu Toggle
+// Menu Toggle
 function toggleMenu() {
-    const menu = document.getElementById('side-menu');
-    menu.classList.toggle('menu-open');
+    document.getElementById('side-menu').classList.toggle('open');
 }
 
-// 3. Section Switcher
-function showSection(name) {
-    toggleMenu(); // Close menu after clicking
-    const content = document.getElementById('content');
-    // Logic to load sections...
+function showSection(section) {
+    toggleMenu(); // Close menu
+    const feed = document.getElementById('feed-container');
+    
+    // Switch content based on button click
+    if(section === 'tasks') {
+        feed.innerHTML = "<h2>Active Tasks</h2><div class='video-card'>Task: Follow @OurBot (+50 pts)</div>";
+    } else if(section === 'home') {
+        location.reload(); // Returns to video feed
+    }
+    // Add more section logic here
 }
