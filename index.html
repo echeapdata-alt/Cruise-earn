@@ -2,48 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cruise Earn</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="portrait-only">
     <div id="intro-layer">
-        <div class="logo-3d-container">
+        <div class="logo-box">
             <img src="logo.png" alt="3D Logo" class="logo-3d">
         </div>
     </div>
 
-    <div id="main-app" class="hidden-app">
+    <div id="main-app" style="display: none;">
         <header class="navbar">
             <div class="brand">
-                <img src="logo.png" alt="Logo" class="nav-logo">
+                <img src="logo.png" class="nav-logo">
                 <span>CRUISE</span>
             </div>
-            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <button class="menu-trigger" onclick="toggleMenu()">☰</button>
         </header>
 
         <div id="side-menu">
-            <div class="menu-header">
-                <h3>Menu</h3>
-                <button onclick="toggleMenu()">✕</button>
-            </div>
-            <nav class="menu-list">
+            <button class="close-btn" onclick="toggleMenu()">✕</button>
+            <div class="menu-items">
                 <button onclick="showSection('home')">🏠 Home Feed</button>
                 <button onclick="showSection('tasks')">💰 Earn Points</button>
                 <button onclick="showSection('upload')">📤 Studio Upload</button>
-                <button onclick="showSection('wallet')">💎 Wallet</button>
-            </nav>
+                <button onclick="showSection('wallet')">💎 My Wallet</button>
+            </div>
         </div>
 
-        <main id="feed-area">
-            <div class="post-card">
-                <div class="post-user">@cruise_hustler</div>
-                <div class="video-box"><span>Video Content Here</span></div>
-                <div class="post-actions">
-                    <button>Like</button>
-                    <span class="reward">+10 Pts</span>
-                </div>
+        <main id="feed">
+            <div class="v-card">
+                <div class="v-user">@cruise_admin</div>
+                <div class="v-display"><span>Video Loading...</span></div>
+                <div class="v-footer"><b>+10 Points</b></div>
             </div>
         </main>
     </div>
