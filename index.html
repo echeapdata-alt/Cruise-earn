@@ -3,229 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cruise Official</title>
+    <title>Cruise Global</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #2481cc; --bg: #000; --panel: #111; --border: #262626; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
-
-        /* SPLASH (4s) */
-        #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 99999; transition: 0.5s; }
-        .iconic-logo { width: 120px; height: 120px; border-radius: 30px; animation: entry 2s forwards; border: 1px solid #333; }
-        @keyframes entry { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-
-        /* NAVIGATION */
-        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: 1s; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: #000; border-bottom: 1px solid var(--border); z-index: 1000; }
-        .nav-logo { letter-spacing: 4px; font-weight: 900; font-size: 14px; }
-        .shorts-pill { background: var(--primary); color: #fff; font-size: 10px; font-weight: 800; padding: 5px 12px; border-radius: 20px; border: none; }
-
-        /* SIDE MENU */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid var(--primary); transition: 0.4s; z-index: 10000; padding: 40px 20px; }
-        #side-menu.active { left: 0; }
-        .menu-item { width: 100%; padding: 16px; margin-bottom: 12px; background: var(--panel); color: #fff; border: 1px solid var(--border); border-radius: 15px; text-align: left; display: flex; align-items: center; gap: 15px; font-weight: bold; }
-
-        /* VIEWS */
-        .view { display: none; flex: 1; position: relative; overflow-y: auto; padding: 20px; }
-        .view.active { display: block; }
-        #view-cruise { padding: 0; overflow: hidden; display: none; }
-        #view-cruise.active { display: flex; }
-
-        /* HORIZONTAL FEED */
-        #post-container { position: relative; flex: 1; width: 100%; overflow: hidden; }
-        .post-card { position: absolute; inset: 0; padding: 25px; display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.2, 1, 0.2, 1); background: #000; }
-        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .post-pfp { width: 42px; height: 42px; border-radius: 12px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid var(--border); color: var(--primary); }
-        .post-content { flex: 1; font-size: 18px; line-height: 1.6; overflow-y: auto; }
-        .post-img-wrap { margin-top: 15px; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); line-height: 0; }
-        .post-img-wrap img { width: 100%; max-height: 350px; object-fit: cover; }
-        .new-badge { background: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: auto; }
-
-        /* FLOATING CREATE BUTTON */
-        .create-btn { position: absolute; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; z-index: 5000; border: none; color: #fff; box-shadow: 0 10px 30px rgba(36, 129, 204, 0.3); }
-
-        /* EDITOR */
-        #editor-modal { position: fixed; inset: 0; background: #000; z-index: 50000; transform: translateY(100%); transition: 0.4s; padding: 25px; display: flex; flex-direction: column; }
-        #editor-modal.active { transform: translateY(0); }
-        #post-input { flex: 1; background: transparent; border: none; color: #fff; font-size: 20px; resize: none; margin-top: 20px; }
-        .ed-header { display: flex; justify-content: space-between; align-items: center; }
-        #preview-box { width: 100px; height: 100px; border-radius: 12px; border: 1px solid var(--primary); margin: 15px 0; background-size: cover; background-position: center; display: none; }
-
-        /* OTHER UI ELEMENTS */
-        .icon-card { background: var(--panel); border: 1px solid var(--border); padding: 18px; border-radius: 20px; display: flex; align-items: center; margin-bottom: 15px; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .stat-item { background: #111; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 1px solid var(--border); background: #000; height: 60px; }
+        .nav-logo { letter-spacing: 4px; font-weight: 900; }
+        #post-container { position: relative; flex: 1; width: 100%; height: calc(100vh - 60px); overflow: hidden; }
+        .post-card { position: absolute; inset: 0; padding: 25px; display: flex; flex-direction: column; background: #000; transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1); will-change: transform; }
+        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .post-pfp { width: 40px; height: 40px; border-radius: 12px; background: var(--panel); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); color: var(--primary); font-weight: bold; }
+        .post-content { flex: 1; font-size: 18px; overflow-y: auto; white-space: pre-wrap; }
+        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 20px; border: none; color: #fff; font-size: 30px; z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        #editor { position: fixed; inset: 0; background: #000; z-index: 1000; transform: translateY(100%); transition: 0.4s; padding: 20px; display: flex; flex-direction: column; }
+        #editor.active { transform: translateY(0); }
+        #post-text { flex: 1; background: transparent; border: none; color: #fff; font-size: 20px; resize: none; margin-top: 20px; }
     </style>
 </head>
 <body>
-
-    <div id="intro-layer">
-        <img src="logo.png" class="iconic-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5778/5778439.png'">
-    </div>
-
-    <div id="main-app">
-        <nav class="navbar">
-            <button onclick="toggleMenu()" style="background:none; border:none; color:var(--primary); font-size:24px;">☰</button>
-            <div class="nav-logo">CRUISE</div>
-            <button class="shorts-pill" onclick="tg.showAlert('Shorts Syncing...')">Shorts</button>
-        </nav>
-
-        <div id="side-menu">
-            <h2 style="letter-spacing:2px; font-size:14px; color:#444;">DASHBOARD</h2>
-            <div class="menu-item" onclick="showView('cruise')">🚀 Cruise Feed</div>
-            <div class="menu-item" onclick="showView('profile')">👤 My Profile</div>
-            <div class="menu-item" onclick="showView('ads')">📢 Post Ads</div>
-            <div class="menu-item" onclick="showView('wallet')">💎 Wallet</div>
-            <div class="menu-item" onclick="showView('tasks')">💰 Tasks</div>
-            <button onclick="toggleMenu()" style="width:100%; margin-top:30px; background:none; border:none; color:#444;">✕ CLOSE</button>
+    <nav class="navbar">
+        <div style="font-size: 20px;">☰</div>
+        <div class="nav-logo">CRUISE</div>
+        <button id="status" style="background:red; color:#fff; border:none; padding:5px 10px; border-radius:10px; font-size:10px;">OFFLINE</button>
+    </nav>
+    <div id="post-container"></div>
+    <button class="create-btn" onclick="openEd()">+</button>
+    <div id="editor">
+        <div style="display:flex; justify-content:space-between;">
+            <button onclick="closeEd()" style="background:none; border:none; color:gray;">Cancel</button>
+            <button onclick="publish()" style="background:var(--primary); color:#fff; border:none; padding:8px 20px; border-radius:10px; font-weight:bold;">Post</button>
         </div>
-
-        <main id="view-cruise" class="view active">
-            <div id="post-container"></div>
-            <button class="create-btn" onclick="openEditor()">+</button>
-        </main>
-
-        <main id="view-profile" class="view">
-            <div style="text-align:center; padding:20px; background:#111; border-radius:25px; border:1px solid var(--border);">
-                <div id="user-pfp" style="width:80px; height:80px; background:var(--primary); border-radius:20px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold;">?</div>
-                <h2 id="user-name" style="margin:0;">Cruiser</h2>
-                <div class="stat-grid">
-                    <div class="stat-item"><b>0</b><br><small>Posts</small></div>
-                    <div class="stat-item"><b>0</b><br><small>Fans</small></div>
-                    <div class="stat-item"><b>0</b><br><small>Ads</small></div>
-                </div>
-            </div>
-        </main>
-
-        <main id="view-ads" class="view">
-            <h3>Promote Content</h3>
-            <div class="icon-card"><b>⚡ Micro Ads</b></div>
-            <div class="icon-card"><b>🌍 Social Ads</b></div>
-        </main>
-
-        <main id="view-wallet" class="view">
-            <div style="background:linear-gradient(135deg, #111, #000); padding:30px; border-radius:25px; border:1px solid var(--primary); text-align:center;">
-                <small>BALANCE</small>
-                <h1 style="font-size:40px; margin:10px 0;">0 💎</h1>
-                <button style="width:100%; padding:15px; background:#fff; color:#000; border-radius:12px; font-weight:bold; border:none;">WITHDRAW</button>
-            </div>
-        </main>
-
-        <main id="view-tasks" class="view">
-            <h3>Daily Tasks</h3>
-            <div class="icon-card">📢 Join Channel (+500 💎)</div>
-        </main>
-
-        <div id="editor-modal">
-            <div class="ed-header">
-                <button onclick="closeEditor()" style="background:none; border:none; color:#666;">Cancel</button>
-                <button style="background:var(--primary); color:#fff; border:none; padding:8px 20px; border-radius:12px; font-weight:bold;" onclick="submitPost()">Post</button>
-            </div>
-            <textarea id="post-input" placeholder="What's happening?"></textarea>
-            <div id="preview-box"></div>
-            <div style="padding:20px 0; border-top:1px solid var(--border);">
-                <label for="img-up" style="cursor:pointer; color:var(--primary); font-weight:bold; display:flex; align-items:center; gap:10px;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    Add Image
-                </label>
-                <input type="file" id="img-up" accept="image/*" style="display:none;" onchange="handleImage(event)">
-            </div>
-        </div>
+        <textarea id="post-text" placeholder="Share with the world..."></textarea>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        let curPost = 0;
-        let selectedImg = null;
-        let posts = [
-            { user: "Cruise", text: "Welcome! Swipe left/right to browse. Use the + button to share your first post!", isNew: false }
-        ];
+        tg.expand();
 
-        // STARTUP
-        setTimeout(() => {
-            document.getElementById('intro-layer').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
-            document.getElementById('main-app').style.opacity = '1';
-            renderPosts();
-            tg.expand();
-            if(tg.initDataUnsafe?.user) {
-                const u = tg.initDataUnsafe.user;
-                document.getElementById('user-name').innerText = u.first_name;
-                document.getElementById('user-pfp').innerText = u.first_name[0].toUpperCase();
+        // YOUR UNIQUE KEYS PLUGGED IN HERE
+        const SB_URL = "https://chsybopznpfdvhmdspox.supabase.co"; 
+        const SB_KEY = "sb_publishable_IfqycsZxpWeXgSPA5U7D5w_u-nl_FJf";
+
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+        let posts = [];
+        let cur = 0;
+
+        async function fetchPosts() {
+            const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
+            if (!error) {
+                posts = data;
+                document.getElementById('status').innerText = "LIVE";
+                document.getElementById('status').style.background = "green";
+                render();
+            } else {
+                console.error(error);
+                document.getElementById('status').innerText = "ERROR";
             }
-        }, 4000);
+        }
 
-        function renderPosts() {
+        function render() {
             const container = document.getElementById('post-container');
+            if (posts.length === 0) {
+                container.innerHTML = `<div style="padding:40px; text-align:center;">No posts yet. Be the first!</div>`;
+                return;
+            }
             container.innerHTML = posts.map((p, i) => `
-                <div class="post-card" style="transform: translateX(${(i - curPost) * 100}%); z-index: ${100 - i};">
+                <div class="post-card" style="transform: translateX(${(i - cur) * 100}%);">
                     <div class="post-header">
-                        <div class="post-pfp">${p.user[0]}</div>
-                        <div style="font-weight:700;">@${p.user.toLowerCase()}</div>
-                        ${p.isNew ? '<span class="new-badge">NEW</span>' : ''}
+                        <div class="post-pfp">${p.username ? p.username[0] : '?'}</div>
+                        <b>@${p.username || 'unknown'}</b>
                     </div>
-                    <div class="post-content">
-                        ${p.text}
-                        ${p.img ? `<div class="post-img-wrap"><img src="${p.img}"></div>` : ''}
-                    </div>
+                    <div class="post-content">${p.content}</div>
                 </div>
             `).join('');
         }
 
-        // SWIPE
-        let startX = 0;
-        document.getElementById('post-container').addEventListener('touchstart', e => startX = e.touches[0].clientX);
-        document.getElementById('post-container').addEventListener('touchend', e => {
-            const diffX = startX - e.changedTouches[0].clientX;
-            if (diffX > 50 && curPost < posts.length - 1) curPost++;
-            else if (diffX < -50 && curPost > 0) curPost--;
-            renderPosts();
+        let sX = 0;
+        document.body.addEventListener('touchstart', e => sX = e.touches[0].clientX);
+        document.body.addEventListener('touchend', e => {
+            let diff = sX - e.changedTouches[0].clientX;
+            if(diff > 50 && cur < posts.length - 1) cur++;
+            if(diff < -50 && cur > 0) cur--;
+            render();
+            tg.HapticFeedback.impactOccurred('light');
         });
 
-        function handleImage(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    selectedImg = ev.target.result;
-                    document.getElementById('preview-box').style.display = 'block';
-                    document.getElementById('preview-box').style.backgroundImage = `url(${selectedImg})`;
-                };
-                reader.readAsDataURL(file);
+        async function publish() {
+            const txt = document.getElementById('post-text').value;
+            if(!txt) return;
+            const { error } = await supabaseClient.from('posts').insert([{ 
+                username: tg.initDataUnsafe?.user?.first_name || "Cruiser", 
+                content: txt 
+            }]);
+            if(!error) {
+                document.getElementById('post-text').value = "";
+                closeEd();
+                cur = 0;
+                fetchPosts();
+                tg.showAlert("Posted!");
             }
         }
 
-        function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
-        function showView(id) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + id).classList.add('active');
-            toggleMenu();
-        }
-
-        function openEditor() { document.getElementById('editor-modal').classList.add('active'); }
-        function closeEditor() { 
-            document.getElementById('editor-modal').classList.remove('active'); 
-            selectedImg = null;
-            document.getElementById('preview-box').style.display = 'none';
-            document.getElementById('post-input').value = "";
-        }
-
-        function submitPost() {
-            const txt = document.getElementById('post-input').value;
-            if (!txt.trim() && !selectedImg) return;
-            posts.forEach(p => p.isNew = false);
-            posts.unshift({
-                user: tg.initDataUnsafe?.user?.first_name || "Cruiser",
-                text: txt,
-                img: selectedImg,
-                isNew: true
-            });
-            curPost = 0;
-            renderPosts();
-            closeEditor();
-            tg.showAlert("Post published! Swipe left to see it.");
-        }
+        function openEd() { document.getElementById('editor').classList.add('active'); }
+        function closeEd() { document.getElementById('editor').classList.remove('active'); }
+        fetchPosts();
     </script>
 </body>
-    </html>
+</html>
