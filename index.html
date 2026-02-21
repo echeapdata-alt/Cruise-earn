@@ -6,94 +6,169 @@
     <title>Cruise Earn</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ALL CSS GOES HERE */
-        body, html { margin: 0; padding: 0; background: #000; color: #fff; font-family: sans-serif; overflow: hidden; height: 100%; }
-        
+        /* RESET & THEME */
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; color: #fff; font-family: -apple-system, system-ui, sans-serif;
+            overflow: hidden; 
+        }
+
+        /* ICONIC 3D INTRO */
         #intro-layer { 
             position: fixed; inset: 0; background: #000; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 9999; text-align: center;
+            z-index: 9999;
+        }
+
+        .stage {
+            perspective: 1200px; /* Deep 3D Space */
+            display: flex; flex-direction: column; align-items: center;
         }
 
         .floating-logo { 
-            width: 140px; border-radius: 20px; 
-            animation: flip 3s ease-in-out forwards; 
-            box-shadow: 0 0 30px rgba(36,129,204,0.5);
+            width: 160px; height: 160px;
+            border-radius: 35px;
+            object-fit: cover;
+            /* Iconic 3D Animation: Tumbles in and Pulses */
+            animation: iconic3D 3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            box-shadow: 0 0 50px rgba(36, 129, 204, 0.4);
         }
 
-        @keyframes flip {
-            0% { transform: scale(0) rotateY(-180deg); opacity: 0; }
-            100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+        @keyframes iconic3D {
+            0% { 
+                transform: rotateX(45deg) rotateY(-45deg) translateZ(-500px) scale(0);
+                opacity: 0; 
+                filter: brightness(2);
+            }
+            60% { 
+                transform: rotateX(-15deg) rotateY(15deg) translateZ(50px) scale(1.1);
+                opacity: 1;
+                filter: brightness(1.2);
+            }
+            100% { 
+                transform: rotateX(0deg) rotateY(0deg) translateZ(0) scale(1);
+                opacity: 1;
+                filter: brightness(1);
+            }
         }
 
-        #main-app { display: none; height: 100vh; flex-direction: column; }
+        .logo-glow {
+            width: 100px; height: 10px;
+            background: rgba(36, 129, 204, 0.6);
+            margin-top: 40px; border-radius: 50%;
+            filter: blur(15px);
+            animation: glowPulse 3s infinite ease-in-out;
+        }
 
-        /* Left Menu Styling */
-        .navbar { display: flex; align-items: center; padding: 15px; background: #111; border-bottom: 1px solid #222; }
-        .menu-btn { background: none; border: none; color: #2481cc; font-size: 30px; margin-right: 15px; }
+        @keyframes glowPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.8); opacity: 0.7; }
+        }
+
+        /* MAIN UI */
+        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 0.8s ease; }
+
+        .navbar { 
+            display: flex; align-items: center; padding: 15px 20px; 
+            background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(10px);
+            border-bottom: 1px solid #222; position: sticky; top: 0;
+        }
         
+        .menu-btn { background: none; border: none; color: #2481cc; font-size: 28px; cursor: pointer; padding: 0 15px 0 0; }
+        .brand-text { font-weight: 800; letter-spacing: 3px; font-size: 18px; }
+
+        /* SIDEBAR */
         #side-menu {
             position: fixed; top: 0; left: -100%; width: 280px; height: 100%;
-            background: #0a0a0a; border-right: 2px solid #2481cc;
-            transition: 0.3s; z-index: 10000; padding: 20px;
+            background: #0a0a0a; border-right: 1px solid #2481cc;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; padding: 30px 20px;
         }
         #side-menu.active { left: 0; }
         .menu-items button { 
-            width: 100%; padding: 15px; margin-bottom: 10px; 
-            background: #1a1a1a; color: #fff; border: none; border-radius: 10px; text-align: left;
+            width: 100%; padding: 18px; margin-bottom: 12px; 
+            background: #151515; color: #fff; border: 1px solid #222; 
+            border-radius: 15px; text-align: left; font-size: 16px; font-weight: 500;
         }
 
-        .feed { padding: 20px; overflow-y: auto; flex: 1; }
-        .card { background: #111; border-radius: 15px; padding: 15px; border: 1px solid #222; margin-bottom: 20px; }
-        .video-box { height: 350px; background: #050505; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #444; }
+        /* FEED VIEW */
+        .feed { padding: 15px; overflow-y: auto; flex: 1; }
+        .card { 
+            background: #111; border-radius: 20px; padding: 15px; 
+            border: 1px solid #222; margin-bottom: 25px;
+        }
+        .user-tag { font-size: 13px; color: #2481cc; font-weight: bold; margin-bottom: 12px; }
+        .video-placeholder { 
+            height: 420px; background: #050505; border-radius: 15px; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #333; border: 1px dashed #222; font-weight: bold;
+        }
+        .earn-btn { 
+            width: 100%; margin-top: 15px; background: linear-gradient(90deg, #2481cc, #005fa3); 
+            color: #fff; border: none; padding: 16px; border-radius: 12px; font-weight: 800; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div id="intro-layer" onclick="startApp()">
-        <img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
-        <h2 style="color:#2481cc; margin-top:20px;">CRUISE</h2>
-        <p style="font-size:12px; color:#555;">(Click to skip if stuck)</p>
+    <div id="intro-layer">
+        <div class="stage">
+            <img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
+            <div class="logo-glow"></div>
+        </div>
     </div>
 
     <div id="main-app">
         <header class="navbar">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
-            <div style="font-weight:bold; letter-spacing:2px;">CRUISE EARN</div>
+            <div class="brand-text">CRUISE</div>
         </header>
 
         <div id="side-menu">
-            <h3 style="margin-top:0;">Menu</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                <h2 style="margin:0; color:#2481cc;">Menu</h2>
+                <button onclick="toggleMenu()" style="background:none; border:none; color:#555; font-size:24px;">✕</button>
+            </div>
             <div class="menu-items">
                 <button onclick="toggleMenu()">🏠 Home Feed</button>
-                <button onclick="alert('Studio Open')">📤 Studio</button>
-                <button onclick="alert('Tasks Open')">💰 Tasks</button>
-                <button onclick="alert('Wallet Open')">💎 Wallet</button>
+                <button onclick="alert('Studio coming soon!')">📤 Studio</button>
+                <button onclick="alert('Tasks coming soon!')">💰 Tasks</button>
+                <button onclick="alert('Wallet coming soon!')">💎 Wallet</button>
+                <button onclick="alert('Profile coming soon!')">👤 Profile</button>
             </div>
-            <button onclick="toggleMenu()" style="background:none; color:red; margin-top:20px;">Close ✕</button>
         </div>
 
         <div class="feed">
             <div class="card">
-                <div style="margin-bottom:10px; font-weight:bold;">@official_cruise</div>
-                <div class="video-box">Video Feed Ready</div>
-                <button style="width:100%; margin-top:15px; background:#2481cc; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold;">Claim 10 Pts</button>
+                <div class="user-tag">@cruise_official</div>
+                <div class="video-placeholder">VIDEO FEED CONTENT</div>
+                <button class="earn-btn">CLAIM 10 POINTS</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ALL JS GOES HERE
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
 
         function startApp() {
-            document.getElementById('intro-layer').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
-            document.body.style.overflow = 'auto';
+            const intro = document.getElementById('intro-layer');
+            const app = document.getElementById('main-app');
+            
+            // Seamless transition
+            intro.style.transition = "opacity 0.8s ease";
+            intro.style.opacity = "0";
+            
+            setTimeout(() => {
+                intro.style.display = 'none';
+                app.style.display = 'flex';
+                setTimeout(() => { app.style.opacity = '1'; }, 50);
+                document.body.style.overflow = 'auto';
+            }, 800);
         }
 
-        // Auto-start after 3 seconds
+        // Auto-start exactly after 3 seconds
         setTimeout(startApp, 3000);
 
         function toggleMenu() {
@@ -101,4 +176,4 @@
         }
     </script>
 </body>
-    </html>
+                    </html>
