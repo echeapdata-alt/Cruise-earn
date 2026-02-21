@@ -1,6 +1,30 @@
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        document.getElementById('intro-layer').style.display = 'none';
-        document.getElementById('main-app').style.display = 'block';
-    }, 3000); // 3 seconds
-});
+body { margin: 0; background: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
+
+/* 3D Intro */
+#intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 9999; perspective: 1000px; }
+.floating-logo { width: 150px; border-radius: 20px; animation: flip3d 3s ease-in-out forwards; }
+@keyframes flip3d { 0% { transform: translateZ(-200px) rotateY(-90deg); opacity: 0; } 50% { transform: translateZ(100px) rotateY(20deg); opacity: 1; } 100% { transform: translateZ(0) rotateY(0deg); opacity: 1; } }
+
+/* Navbar */
+.navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #111; border-bottom: 1px solid #222; }
+.menu-trigger { background: none; border: none; color: #2481cc; font-size: 28px; cursor: pointer; }
+.brand { font-weight: bold; letter-spacing: 2px; }
+.header-spacer { width: 30px; } /* Keeps 'Cruise' centered */
+
+/* Side Menu (Left Side) */
+#side-menu {
+    position: fixed; top: 0; left: -100%; width: 260px; height: 100%;
+    background: #0a0a0a; border-right: 2px solid #2481cc;
+    transition: 0.4s ease; z-index: 1000; padding: 20px;
+}
+#side-menu.active { left: 0; }
+.menu-items button { 
+    width: 100%; padding: 15px; margin-bottom: 10px; border: none;
+    background: #1a1a1a; color: white; border-radius: 10px; text-align: left;
+}
+
+/* Feed */
+#app-content { padding: 15px; height: calc(100vh - 60px); overflow-y: auto; }
+.v-card { background: #111; border-radius: 15px; padding: 10px; margin-bottom: 20px; border: 1px solid #222; }
+.v-frame { height: 400px; background: #050505; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.claim-btn { width: 100%; margin-top: 10px; background: #2481cc; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; }
