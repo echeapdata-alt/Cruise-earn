@@ -1,9 +1,59 @@
-<div id="intro-layer">
-    <div class="stage">
-        <img src="logo.png" alt="Cruise Logo" class="floating-logo">
-        <div class="shadow"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cruise Earn</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="intro-layer">
+        <div class="stage">
+            <img src="logo.png" alt="Cruise Logo" class="floating-logo">
+            <div class="shadow"></div>
+        </div>
     </div>
-</div>
 
-<div id="main-app" style="display:none;">
-</div>
+    <div id="main-app" style="display:none;">
+        <header class="navbar">
+            <button class="menu-trigger" onclick="toggleMenu()">☰</button>
+            <div class="brand">CRUISE</div>
+            <div class="header-spacer"></div> 
+        </header>
+
+        <div id="side-menu">
+            <div class="menu-header">
+                <h3>Cruise Menu</h3>
+                <button onclick="toggleMenu()">✕</button>
+            </div>
+            <div class="menu-items">
+                <button onclick="showSection('home')">🏠 Home Feed</button>
+                <button onclick="showSection('studio')">📤 Studio</button>
+                <button onclick="showSection('tasks')">💰 Tasks</button>
+                <button onclick="showSection('wallet')">💎 Wallet</button>
+                <button onclick="showSection('profile')">👤 Profile</button>
+            </div>
+        </div>
+
+        <main id="app-content">
+            <div id="feed-view">
+                <div class="v-card">
+                    <div class="v-user">@cruise_hq</div>
+                    <div class="v-frame"><span>Loading Video...</span></div>
+                    <div class="v-footer">
+                        <button class="claim-btn">Claim 10 Pts</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="studio-view" style="display:none;">
+                <h2>Studio</h2>
+                <p>Upload your clips here.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+            </html>
