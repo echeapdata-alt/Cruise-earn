@@ -4,136 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cruise</title>
-    <script src="https://telegram.org/js/telegram-web-app.js?v=1"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
 
         /* INTRO LAYER */
-        #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .floating-logo { width: 140px; height: 140px; border-radius: 30px; animation: popIn 0.8s ease-out; box-shadow: 0 0 40px rgba(36, 129, 204, 0.3); }
-        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        #loading-screen { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .logo { width: 120px; height: 120px; border-radius: 25px; border: 2px solid #2481cc; }
 
-        /* MAIN APP */
-        #main-app { display: none; height: 100vh; flex-direction: column; }
+        /* MAIN APP - Hidden by default */
+        #app-content { display: none; height: 100vh; flex-direction: column; }
         
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #0f0f0f; border-bottom: 1px solid #222; }
-        #page-title { font-weight: 800; letter-spacing: 2px; font-size: 16px; text-transform: uppercase; color: #fff; }
-        .menu-btn, .notif-btn { background: none; border: none; color: #2481cc; font-size: 24px; position: relative; padding: 5px; cursor: pointer; }
-        .notif-dot { position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; background: #ff3b30; border-radius: 50%; display: none; }
-
-        /* SIDEBAR */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 260px; height: 100%; background: #0a0a0a; border-right: 1px solid #2481cc; transition: 0.3s ease; z-index: 10000; padding: 30px 20px; }
-        #side-menu.active { left: 0; }
-        .menu-items button { width: 100%; padding: 16px; margin-bottom: 12px; background: #151515; color: #fff; border: 1px solid #222; border-radius: 12px; text-align: left; font-size: 15px; }
-
+        .nav { display: flex; justify-content: space-between; padding: 15px; background: #111; border-bottom: 1px solid #222; align-items: center; }
+        .title { font-weight: bold; letter-spacing: 1px; color: #2481cc; }
+        
         /* VIEWS */
-        .view-section { padding: 20px; overflow-y: auto; flex: 1; display: none; }
-        .active-view { display: block; }
+        .page { padding: 20px; display: none; flex: 1; overflow-y: auto; }
+        .active { display: block; }
 
-        /* PROFILE */
-        .pfp { width: 80px; height: 80px; background: #2481cc; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; border: 2px solid #fff; }
-        .stats { display: flex; justify-content: space-around; background: #111; padding: 15px; border-radius: 15px; margin-top: 20px; }
-        .stat-val { display: block; color: #2481cc; font-weight: 800; }
-        .stat-lab { font-size: 10px; color: #666; text-transform: uppercase; }
+        /* MENU */
+        #menu { position: fixed; top: 0; left: -100%; width: 250px; height: 100%; background: #0a0a0a; z-index: 10000; transition: 0.3s; padding: 20px; border-right: 1px solid #2481cc; }
+        #menu.open { left: 0; }
+        .menu-btn-item { display: block; width: 100%; padding: 15px; margin-bottom: 10px; background: #151515; color: #fff; border: 1px solid #222; border-radius: 10px; text-align: left; }
     </style>
 </head>
 <body>
 
-    <div id="intro-layer">
-        <img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
+    <div id="loading-screen">
+        <img src="logo.png" class="logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
+        <p style="position:absolute; bottom:20%; color:#333; font-size:12px;">Loading Cruise...</p>
     </div>
 
-    <div id="main-app">
-        <header class="navbar">
-            <button class="menu-btn" onclick="toggleMenu()">☰</button>
-            <div id="page-title">CRUISE</div>
-            <button class="notif-btn" onclick="showSection('notif')">
-                🔔 <div id="notif-dot" class="notif-dot"></div>
-            </button>
-        </header>
-
-        <div id="side-menu">
-            <h2 style="color:#2481cc; margin-top:0;">MENU</h2>
-            <div class="menu-items">
-                <button onclick="showSection('cruise')">🚀 Cruise</button>
-                <button onclick="showSection('profile')">👤 Profile</button>
-                <button onclick="showSection('studio')">📤 Studio</button>
-                <button onclick="showSection('tasks')">💰 Tasks</button>
-                <button onclick="showSection('wallet')">💎 Wallet</button>
-            </div>
-            <button onclick="toggleMenu()" style="color:#444; background:none; border:none; width:100%; margin-top:20px;">Close</button>
+    <div id="app-content">
+        <div class="nav">
+            <button onclick="toggleMenu()" style="background:none; border:none; color:#2481cc; font-size:20px;">☰</button>
+            <div id="header-text" class="title">CRUISE</div>
+            <button onclick="showPage('notif')" style="background:none; border:none; font-size:20px;">🔔</button>
         </div>
 
-        <main id="cruise-view" class="view-section active-view">
-            <p style="text-align:center; color:#444; margin-top:40px;">No content yet. Follow creators!</p>
-        </main>
+        <div id="menu">
+            <h2 style="color:#2481cc;">MENU</h2>
+            <button class="menu-btn-item" onclick="showPage('cruise')">🚀 Cruise</button>
+            <button class="menu-btn-item" onclick="showPage('profile')">👤 Profile</button>
+            <button class="menu-btn-item" onclick="showPage('studio')">📤 Studio</button>
+            <button class="menu-btn-item" onclick="showPage('tasks')">💰 Tasks</button>
+            <button onclick="toggleMenu()" style="margin-top:20px; background:none; border:none; color:#555;">Close</button>
+        </div>
 
-        <main id="profile-view" class="view-section">
+        <div id="page-cruise" class="page active">
+            <p style="text-align:center; color:#444; margin-top:50px;">Cruise feed is empty.</p>
+        </div>
+
+        <div id="page-profile" class="page">
             <div style="text-align:center;">
-                <div id="user-pfp" class="pfp">?</div>
-                <h2 id="user-name" style="margin:0;">Cruiser</h2>
+                <div style="width:70px; height:70px; background:#2481cc; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-size:25px;">?</div>
+                <h2 id="user-name">Cruiser</h2>
             </div>
-            <div class="stats">
-                <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Posts</span></div>
-                <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Followers</span></div>
-                <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Following</span></div>
+            <div style="display:flex; justify-content:space-around; background:#111; padding:15px; border-radius:15px; margin-top:20px;">
+                <div style="text-align:center;"><b style="color:#2481cc; display:block;">0</b><small style="color:#666;">FOLLOWERS</small></div>
+                <div style="text-align:center;"><b style="color:#2481cc; display:block;">0</b><small style="color:#666;">FOLLOWING</small></div>
             </div>
-        </main>
+        </div>
 
-        <main id="studio-view" class="view-section">
-            <div style="background:#111; border: 2px dashed #222; padding:40px; border-radius:15px; text-align:center;">
-                <h3 style="color:#2481cc;">Studio</h3>
-                <button style="background:#2481cc; color:#fff; border:none; padding:10px 20px; border-radius:8px;">Upload Video</button>
+        <div id="page-studio" class="page">
+            <h2 style="color:#2481cc;">Studio</h2>
+            <div style="border: 2px dashed #222; padding:30px; text-align:center; border-radius:15px;">
+                <button style="background:#2481cc; border:none; color:#fff; padding:10px 20px; border-radius:8px;">Upload Video</button>
             </div>
-        </main>
+        </div>
 
-        <main id="notif-view" class="view-section">
+        <div id="page-notif" class="page">
+            <h2>Notifications</h2>
             <div style="background:#111; padding:15px; border-radius:10px; border-left:4px solid #2481cc;">
-                Welcome to <b>Cruise</b>! Start your journey.
+                Welcome to Cruise!
             </div>
-        </main>
+        </div>
 
-        <main id="tasks-view" class="view-section"><p style="text-align:center; color:#444;">No Tasks Available</p></main>
-        <main id="wallet-view" class="view-section"><p style="text-align:center; color:#444;">Balance: 0 💎</p></main>
+        <div id="page-tasks" class="page"><p>Tasks coming soon...</p></div>
     </div>
 
     <script>
-        // MASTER FAIL-SAFE: If anything goes wrong, open the app in 4 seconds
-        const safetySwitch = setTimeout(openApp, 4000);
-
-        function openApp() {
-            clearTimeout(safetySwitch); // Stop the safety timer if we triggered manually
-            document.getElementById('intro-layer').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
+        // 2. IMMEDIATE LAUNCH LOGIC
+        function forceOpen() {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('app-content').style.display = 'flex';
             
-            // Show red dot for the welcome message
-            document.getElementById('notif-dot').style.display = 'block';
-
-            // Telegram specific setup
+            // Try Telegram Init
             try {
-                const tg = window.Telegram.WebApp;
-                tg.expand();
-                tg.ready();
-                if(tg.initDataUnsafe?.user) {
-                    document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
-                    document.getElementById('user-pfp').innerText = tg.initDataUnsafe.user.first_name[0].toUpperCase();
+                const WebApp = window.Telegram.WebApp;
+                WebApp.expand();
+                WebApp.ready();
+                if(WebApp.initDataUnsafe?.user) {
+                    document.getElementById('user-name').innerText = WebApp.initDataUnsafe.user.first_name;
                 }
-            } catch(e) { console.error("TG Load Fail", e); }
+            } catch(e) {}
         }
 
-        // Trigger opening as soon as window loads
-        window.onload = openApp;
+        // Force open after 3 seconds exactly
+        setTimeout(forceOpen, 3000);
 
-        function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
+        function toggleMenu() {
+            document.getElementById('menu').classList.toggle('open');
+        }
 
-        function showSection(id) {
-            if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
-            document.getElementById(id + '-view').classList.add('active-view');
-            document.getElementById('page-title').innerText = id;
-            if(id === 'notif') document.getElementById('notif-dot').style.display = 'none';
+        function showPage(pageId) {
+            toggleMenu(); // Close menu
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Show target
+            document.getElementById('page-' + pageId).classList.add('active');
+            // Update title
+            document.getElementById('header-text').innerText = pageId.toUpperCase();
         }
     </script>
 </body>
-</html>
+            </html>
