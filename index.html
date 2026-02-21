@@ -2,50 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cruise Earn</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="splash-screen">
-        <img src="logo.png" alt="Logo" class="pulse-logo">
+    <div id="intro-layer">
+        <div class="logo-3d-container">
+            <img src="logo.png" alt="3D Logo" class="logo-3d">
+        </div>
     </div>
 
-    <div id="main-app" style="display:none;">
+    <div id="main-app" class="hidden-app">
         <header class="navbar">
-            <div class="logo-text">CRUISE</div>
-            <button class="menu-trigger" onclick="toggleMenu()">☰</button>
-        </header>
-
-        <main id="feed-container">
-            <div class="video-card">
-                <div class="video-header">
-                    <span class="user-tag">@creator_one</span>
-                </div>
-                <div class="video-body">
-                    <p>Fetching latest funny clips...</p>
-                </div>
-                <div class="video-footer">
-                    <button class="watch-btn">Watch to Earn 10pts</button>
-                </div>
+            <div class="brand">
+                <img src="logo.png" alt="Logo" class="nav-logo">
+                <span>CRUISE</span>
             </div>
-        </main>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        </header>
 
         <div id="side-menu">
             <div class="menu-header">
-                <h3>Dashboard</h3>
+                <h3>Menu</h3>
                 <button onclick="toggleMenu()">✕</button>
             </div>
-            <div class="menu-items">
+            <nav class="menu-list">
                 <button onclick="showSection('home')">🏠 Home Feed</button>
                 <button onclick="showSection('tasks')">💰 Earn Points</button>
                 <button onclick="showSection('upload')">📤 Studio Upload</button>
-                <button onclick="showSection('wallet')">💎 My Wallet</button>
-                <button onclick="showSection('profile')">👤 My Profile</button>
-            </div>
+                <button onclick="showSection('wallet')">💎 Wallet</button>
+            </nav>
         </div>
+
+        <main id="feed-area">
+            <div class="post-card">
+                <div class="post-user">@cruise_hustler</div>
+                <div class="video-box"><span>Video Content Here</span></div>
+                <div class="post-actions">
+                    <button>Like</button>
+                    <span class="reward">+10 Pts</span>
+                </div>
+            </div>
+        </main>
     </div>
+
     <script src="script.js"></script>
 </body>
-                    </html>
+</html>
