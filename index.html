@@ -20,28 +20,28 @@
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); z-index: 100; }
         .shorts-btn { background: var(--primary); color: #fff; font-size: 10px; font-weight: 900; padding: 5px 10px; border-radius: 6px; border: none; }
 
-        /* POST FEED (HORIZONTAL) */
+        /* POST FEED */
         #post-container { position: relative; flex: 1; width: 100%; overflow: hidden; background: #050505; }
         .post-card { position: absolute; inset: 0; padding: 25px; display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: #000; }
         .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
         .post-pfp { width: 45px; height: 45px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #222; }
         .post-content { flex: 1; font-size: 18px; line-height: 1.6; color: #eee; overflow-y: auto; white-space: pre-wrap; }
-        .post-image { width: 100%; max-height: 250px; border-radius: 15px; object-fit: cover; margin-top: 15px; border: 1px solid #333; }
+        .post-image { width: 100%; max-height: 300px; border-radius: 15px; object-fit: cover; margin-top: 15px; border: 1px solid #333; }
         
         /* ACTIONS */
         .post-actions { display: flex; gap: 12px; padding: 20px 0; border-top: 1px solid var(--border); }
         .action-btn { background: var(--panel); border: none; color: #fff; padding: 10px 15px; border-radius: 12px; font-size: 14px; display: flex; align-items: center; gap: 8px; font-weight: bold; }
 
-        /* POST EDITOR MODAL */
+        /* POST EDITOR */
         #editor-modal { position: fixed; bottom: -100%; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; transition: 0.5s; padding: 20px; display: flex; flex-direction: column; }
         #editor-modal.active { bottom: 0; }
-        #post-input { width: 100%; height: 150px; background: #111; border: 1px solid #222; border-radius: 15px; color: #fff; font-size: 18px; resize: none; padding: 15px; margin-top: 20px; }
-        #image-input { width: 100%; background: #111; border: 1px solid #222; border-radius: 12px; color: #fff; padding: 12px; margin-top: 10px; font-size: 14px; }
+        #post-input { width: 100%; height: 200px; background: transparent; border: none; color: #fff; font-size: 20px; resize: none; padding-top: 20px; }
         .editor-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
         .post-submit { background: var(--primary); color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; }
+        #preview-box { width: 80px; height: 80px; border-radius: 10px; border: 2px dashed #333; display: none; margin-top: 10px; background-size: cover; background-position: center; position: relative; }
 
-        /* FLOATING CREATE BUTTON */
-        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 8px 25px rgba(36, 129, 204, 0.4); z-index: 500; border: none; color: #fff; }
+        /* CREATE BTN */
+        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 500; border: none; color: #fff; box-shadow: 0 8px 25px rgba(36, 129, 204, 0.4); }
     </style>
 </head>
 <body>
@@ -72,8 +72,17 @@
                 <button class="post-submit" onclick="submitPost()">Post</button>
             </div>
             <textarea id="post-input" placeholder="What's the vibe today?"></textarea>
-            <input type="text" id="image-input" placeholder="Paste Image URL (Optional)">
-            <p style="font-size: 11px; color: #444; margin-top: 10px;">Paste a link to an image to include it in your post.</p>
+            
+            <div id="preview-box">
+                <button onclick="removeImg()" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:12px;">✕</button>
+            </div>
+
+            <div style="padding: 20px 0; border-top: 1px solid var(--border); display:flex; gap:25px;">
+                <label for="file-upload" style="cursor:pointer; font-size:24px;">🖼️</label>
+                <input type="file" id="file-upload" accept="image/*" style="display:none;" onchange="handleImage(event)">
+                <span onclick="addEmoji('🔥')" style="font-size:24px;">🔥</span>
+                <span onclick="addEmoji('😂')" style="font-size:24px;">😂</span>
+            </div>
         </div>
 
         <div id="shorts-overlay" style="display:none; position:fixed; inset:0; background:#000; z-index:60000;">
@@ -85,12 +94,11 @@
     <script>
         const tg = window.Telegram.WebApp;
         let curPost = 0;
+        let selectedImgData = null;
         let posts = [
-            { user: "CruiseBot", text: "Swipe Left to see the community's posts! 🚀", img: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=500", color: "#2481cc" },
-            { user: "CruiseBot", text: "Click the + button to post your own meme.", color: "#7d2ae8" }
+            { user: "CruiseBot", text: "Welcome! Tap + to upload a photo from your phone. 📸", color: "#2481cc" }
         ];
 
-        // STARTUP
         setTimeout(() => {
             document.getElementById('intro-layer').style.opacity = "0";
             setTimeout(() => {
@@ -112,7 +120,7 @@
                     </div>
                     <div class="post-content">
                         ${p.text}
-                        ${p.img ? `<img src="${p.img}" class="post-image" onerror="this.style.display='none'">` : ''}
+                        ${p.img ? `<img src="${p.img}" class="post-image">` : ''}
                     </div>
                     <div class="post-actions">
                         <button class="action-btn">👍 0</button>
@@ -122,7 +130,7 @@
             `).join('');
         }
 
-        // SWIPE LOGIC
+        // Horizontal Swipe
         let startX = 0;
         document.getElementById('post-container').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('post-container').addEventListener('touchend', e => {
@@ -132,40 +140,53 @@
             renderPosts();
         });
 
-        // EDITOR LOGIC
+        // Image Handling
+        function handleImage(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    selectedImgData = event.target.result;
+                    const preview = document.getElementById('preview-box');
+                    preview.style.display = 'block';
+                    preview.style.backgroundImage = `url(${selectedImgData})`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImg() {
+            selectedImgData = null;
+            document.getElementById('preview-box').style.display = 'none';
+            document.getElementById('file-upload').value = "";
+        }
+
         function openEditor() { document.getElementById('editor-modal').classList.add('active'); }
-        function closeEditor() { document.getElementById('editor-modal').classList.remove('active'); }
+        function closeEditor() { document.getElementById('editor-modal').classList.remove('active'); removeImg(); }
+        function addEmoji(e) { document.getElementById('post-input').value += e; }
 
         function submitPost() {
             const text = document.getElementById('post-input').value;
-            const img = document.getElementById('image-input').value;
-            
-            if (!text.trim() && !img.trim()) return;
+            if (!text.trim() && !selectedImgData) return;
 
-            // Add to the START of the array
             posts.unshift({
                 user: tg.initDataUnsafe?.user?.first_name || "Cruiser",
                 text: text,
-                img: img,
-                color: "#2481cc"
+                img: selectedImgData,
+                color: "#" + Math.floor(Math.random()*16777215).toString(16)
             });
 
-            curPost = 0; // Force view to the brand new post
-            renderPosts(); // Redraw
-            
-            // Reset and Close
+            curPost = 0;
+            renderPosts();
             document.getElementById('post-input').value = "";
-            document.getElementById('image-input').value = "";
             closeEditor();
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // SHORTS (Simple)
         function openShorts() {
             document.getElementById('shorts-overlay').style.display = 'block';
-            const v = document.getElementById('shorts-v');
-            v.src = "https://www.w3schools.com/html/mov_bbb.mp4";
-            v.play();
+            document.getElementById('shorts-v').src = "https://www.w3schools.com/html/mov_bbb.mp4";
+            document.getElementById('shorts-v').play();
         }
         function closeShorts() {
             document.getElementById('shorts-v').pause();
@@ -179,4 +200,4 @@
         }
     </script>
 </body>
-                </html>
+</html>
