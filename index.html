@@ -5,48 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cruise Earn</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ALL CSS GOES HERE */
+        body, html { margin: 0; padding: 0; background: #000; color: #fff; font-family: sans-serif; overflow: hidden; height: 100%; }
+        
+        #intro-layer { 
+            position: fixed; inset: 0; background: #000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 9999; text-align: center;
+        }
+
+        .floating-logo { 
+            width: 140px; border-radius: 20px; 
+            animation: flip 3s ease-in-out forwards; 
+            box-shadow: 0 0 30px rgba(36,129,204,0.5);
+        }
+
+        @keyframes flip {
+            0% { transform: scale(0) rotateY(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+        }
+
+        #main-app { display: none; height: 100vh; flex-direction: column; }
+
+        /* Left Menu Styling */
+        .navbar { display: flex; align-items: center; padding: 15px; background: #111; border-bottom: 1px solid #222; }
+        .menu-btn { background: none; border: none; color: #2481cc; font-size: 30px; margin-right: 15px; }
+        
+        #side-menu {
+            position: fixed; top: 0; left: -100%; width: 280px; height: 100%;
+            background: #0a0a0a; border-right: 2px solid #2481cc;
+            transition: 0.3s; z-index: 10000; padding: 20px;
+        }
+        #side-menu.active { left: 0; }
+        .menu-items button { 
+            width: 100%; padding: 15px; margin-bottom: 10px; 
+            background: #1a1a1a; color: #fff; border: none; border-radius: 10px; text-align: left;
+        }
+
+        .feed { padding: 20px; overflow-y: auto; flex: 1; }
+        .card { background: #111; border-radius: 15px; padding: 15px; border: 1px solid #222; margin-bottom: 20px; }
+        .video-box { height: 350px; background: #050505; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #444; }
+    </style>
 </head>
 <body>
-    <div id="intro-layer" onclick="forceOpen()">
-        <div class="stage">
-            <img src="logo.png" alt="CRUISE" class="floating-logo" onerror="this.style.display='none'">
-            <h1 id="logo-text" style="color:#2481cc; font-family:sans-serif;">CRUISE</h1>
-            <p style="color: #444; font-size: 12px;">Tap to skip intro</p>
-        </div>
+
+    <div id="intro-layer" onclick="startApp()">
+        <img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
+        <h2 style="color:#2481cc; margin-top:20px;">CRUISE</h2>
+        <p style="font-size:12px; color:#555;">(Click to skip if stuck)</p>
     </div>
 
-    <div id="main-app" style="display:none;">
+    <div id="main-app">
         <header class="navbar">
-            <button class="menu-trigger" onclick="toggleMenu()">☰</button>
-            <div class="brand">CRUISE</div>
-            <div style="width:30px;"></div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <div style="font-weight:bold; letter-spacing:2px;">CRUISE EARN</div>
         </header>
 
         <div id="side-menu">
-            <div class="menu-header">
-                <h3>MENU</h3>
-                <button onclick="toggleMenu()">✕</button>
-            </div>
+            <h3 style="margin-top:0;">Menu</h3>
             <div class="menu-items">
-                <button onclick="showSection('home')">🏠 Home Feed</button>
-                <button onclick="showSection('studio')">📤 Studio</button>
-                <button onclick="showSection('tasks')">💰 Tasks</button>
-                <button onclick="showSection('wallet')">💎 Wallet</button>
+                <button onclick="toggleMenu()">🏠 Home Feed</button>
+                <button onclick="alert('Studio Open')">📤 Studio</button>
+                <button onclick="alert('Tasks Open')">💰 Tasks</button>
+                <button onclick="alert('Wallet Open')">💎 Wallet</button>
             </div>
+            <button onclick="toggleMenu()" style="background:none; color:red; margin-top:20px;">Close ✕</button>
         </div>
 
-        <main id="feed-view">
-            <div class="v-card">
-                <div class="v-user">@cruise_admin</div>
-                <div class="v-frame"><span>Video Feed Active</span></div>
-                <div class="v-footer">
-                    <button class="claim-btn" onclick="alert('Points Claimed!')">Claim 10 Pts</button>
-                </div>
+        <div class="feed">
+            <div class="card">
+                <div style="margin-bottom:10px; font-weight:bold;">@official_cruise</div>
+                <div class="video-box">Video Feed Ready</div>
+                <button style="width:100%; margin-top:15px; background:#2481cc; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:bold;">Claim 10 Pts</button>
             </div>
-        </main>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // ALL JS GOES HERE
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function startApp() {
+            document.getElementById('intro-layer').style.display = 'none';
+            document.getElementById('main-app').style.display = 'flex';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Auto-start after 3 seconds
+        setTimeout(startApp, 3000);
+
+        function toggleMenu() {
+            document.getElementById('side-menu').classList.toggle('active');
+        }
+    </script>
 </body>
-</html>
+    </html>
