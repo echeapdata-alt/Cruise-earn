@@ -1,36 +1,29 @@
-const tg = window.Telegram.WebApp;
-tg.expand();
+// Expand the Telegram window immediately
+window.Telegram.WebApp.expand();
 
-// Force the Transition
-window.onload = function() {
-    console.log("App Started...");
+// THE 3-SECOND TIMER
+setTimeout(function() {
+    console.log("Switching to Main App...");
     
-    setTimeout(() => {
-        // 1. Hide Intro
-        const intro = document.getElementById('intro-layer');
-        if(intro) intro.style.display = 'none';
-        
-        // 2. Show App
-        const app = document.getElementById('main-app');
-        if(app) {
-            app.style.display = 'block';
-            setTimeout(() => { app.style.opacity = '1'; }, 50);
-        }
-        
-        // 3. Enable Scroll
-        document.body.style.overflow = 'auto';
-        console.log("Feed is now visible");
-    }, 3000); 
-};
+    // Hide the Intro
+    document.getElementById('intro-layer').style.display = 'none';
+    
+    // Show the App
+    document.getElementById('main-app').style.display = 'block';
+    
+    // Allow scrolling
+    document.body.style.overflow = 'auto';
+}, 3000);
 
 function toggleMenu() {
-    document.getElementById('side-menu').classList.toggle('active');
+    var menu = document.getElementById('side-menu');
+    menu.classList.toggle('active');
 }
 
 function showSection(name) {
     toggleMenu();
-    const feed = document.getElementById('feed-view');
-    const studio = document.getElementById('studio-view');
+    var feed = document.getElementById('feed-view');
+    var studio = document.getElementById('studio-view');
     
     if(name === 'studio') {
         feed.style.display = 'none';
