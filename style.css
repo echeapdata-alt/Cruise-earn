@@ -1,1 +1,67 @@
+/* RESET & BASE */
+* { box-sizing: border-box; }
+body, html { 
+    margin: 0; padding: 0; width: 100%; height: 100%; 
+    background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: hidden; /* Prevent bounce during intro */
+}
 
+/* 3D INTRO LAYER */
+#intro-layer {
+    position: fixed; inset: 0; background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 9999; cursor: pointer;
+}
+.stage { text-align: center; perspective: 1000px; }
+.floating-logo {
+    width: 140px; border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(36, 129, 204, 0.3);
+    animation: flip3d 3s ease-in-out forwards;
+}
+@keyframes flip3d {
+    0% { transform: translateZ(-200px) rotateY(-90deg); opacity: 0; }
+    50% { transform: translateZ(50px) rotateY(20deg); opacity: 1; }
+    100% { transform: translateZ(0) rotateY(0deg); opacity: 1; }
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px; background: #111; border-bottom: 1px solid #222;
+    position: sticky; top: 0; z-index: 100;
+}
+.menu-trigger { background: none; border: none; color: #2481cc; font-size: 30px; cursor: pointer; }
+.brand { font-weight: 900; letter-spacing: 3px; color: #fff; }
+
+/* SIDE MENU (LEFT SIDE) */
+#side-menu {
+    position: fixed; top: 0; left: -100%; width: 280px; height: 100%;
+    background: #0a0a0a; border-right: 2px solid #2481cc;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; padding: 25px;
+}
+#side-menu.active { left: 0; }
+.menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.menu-items button {
+    width: 100%; padding: 16px; margin-bottom: 12px;
+    background: #1a1a1a; color: #fff; border: 1px solid #333;
+    border-radius: 12px; text-align: left; font-size: 16px;
+}
+
+/* FEED VIEW */
+#feed-view { padding: 15px; height: calc(100vh - 65px); overflow-y: auto; }
+.v-card { 
+    background: #111; border-radius: 18px; padding: 15px; 
+    margin-bottom: 25px; border: 1px solid #222; 
+}
+.v-user { font-size: 14px; font-weight: bold; color: #2481cc; margin-bottom: 10px; }
+.v-frame { 
+    height: 420px; background: #050505; border-radius: 12px; 
+    display: flex; align-items: center; justify-content: center; 
+    color: #444; border: 1px dashed #222;
+}
+.v-footer { margin-top: 15px; }
+.claim-btn { 
+    width: 100%; background: linear-gradient(90deg, #2481cc, #005fa3); 
+    color: #fff; border: none; padding: 14px; border-radius: 10px; 
+    font-weight: bold; font-size: 15px; cursor: pointer;
+         }
