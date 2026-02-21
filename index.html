@@ -6,72 +6,64 @@
     <title>Cruise Earn</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
 
-        /* 7s INTRO */
-        #intro-layer { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        /* INTRO LAYER */
+        #intro-layer { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s; }
         .logo-wrapper { position: relative; animation: breathe 4s infinite 3s; }
-        .floating-logo { width: 170px; height: 170px; border-radius: 40px; animation: iconic3D 3s forwards; box-shadow: 0 0 60px rgba(36, 129, 204, 0.5); }
-        @keyframes iconic3D { 0% { transform: rotateX(50deg) rotateY(-50deg) translateZ(-600px) scale(0); opacity: 0; } 100% { transform: rotateX(0deg) rotateY(0deg) translateZ(0) scale(1); opacity: 1; } }
+        .floating-logo { width: 150px; height: 150px; border-radius: 35px; animation: iconic3D 3s forwards; box-shadow: 0 0 50px rgba(36, 129, 204, 0.4); }
+        @keyframes iconic3D { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-        /* MAIN UI */
-        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1.2s; }
+        /* MAIN APP */
+        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 0.8s; }
         
-        /* DYNAMIC NAVBAR */
-        .navbar { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 15px 20px; background: rgba(15,15,15,0.95); 
-            border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; 
-        }
-        .nav-left, .nav-right { display: flex; align-items: center; }
-        .menu-btn, .notif-btn { background: none; border: none; color: #2481cc; font-size: 24px; cursor: pointer; position: relative; }
-        .notif-dot { position: absolute; top: 2px; right: 2px; width: 10px; height: 10px; background: #ff3b30; border-radius: 50%; border: 2px solid #000; display: none; }
-        #page-title { font-weight: 800; letter-spacing: 3px; font-size: 18px; margin-left: 10px; text-transform: uppercase; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #0f0f0f; border-bottom: 1px solid #222; }
+        #page-title { font-weight: 800; letter-spacing: 2px; font-size: 16px; text-transform: uppercase; color: #fff; }
+        .menu-btn, .notif-btn { background: none; border: none; color: #2481cc; font-size: 24px; position: relative; padding: 5px; }
+        .notif-dot { position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; background: #ff3b30; border-radius: 50%; display: none; }
+
+        /* SIDEBAR */
+        #side-menu { position: fixed; top: 0; left: -100%; width: 260px; height: 100%; background: #0a0a0a; border-right: 1px solid #2481cc; transition: 0.4s ease; z-index: 10000; padding: 30px 20px; }
+        #side-menu.active { left: 0; }
+        .menu-items button { width: 100%; padding: 16px; margin-bottom: 12px; background: #151515; color: #fff; border: 1px solid #222; border-radius: 12px; text-align: left; font-size: 15px; }
 
         /* VIEWS */
         .view-section { padding: 20px; overflow-y: auto; flex: 1; display: none; }
         .active-view { display: block; }
 
-        /* SIDEBAR (MENU) */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid #2481cc; transition: 0.5s; z-index: 10000; padding: 30px 20px; }
-        #side-menu.active { left: 0; }
-        .menu-items button { width: 100%; padding: 18px; margin-bottom: 15px; background: #151515; color: #fff; border: 1px solid #222; border-radius: 15px; text-align: left; font-size: 16px; font-weight: 600; }
-
-        /* PROFILE SECTION */
-        .profile-header { text-align: center; padding-bottom: 20px; }
-        .profile-pfp { width: 90px; height: 90px; background: #2481cc; border-radius: 50%; margin: 0 auto 15px; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; }
-        .stat-bar { display: flex; justify-content: space-around; margin: 20px 0; background: #111; padding: 15px; border-radius: 15px; border: 1px solid #222; }
+        /* PROFILE */
+        .profile-header { text-align: center; margin-bottom: 20px; }
+        .pfp { width: 80px; height: 80px; background: #2481cc; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; border: 2px solid #fff; }
+        .stats { display: flex; justify-content: space-around; background: #111; padding: 15px; border-radius: 15px; margin-bottom: 20px; }
         .stat-box { text-align: center; }
-        .stat-num { display: block; font-size: 18px; font-weight: 800; color: #2481cc; }
-        .stat-label { font-size: 10px; color: #666; text-transform: uppercase; }
+        .stat-val { display: block; color: #2481cc; font-weight: 800; }
+        .stat-lab { font-size: 10px; color: #666; text-transform: uppercase; }
 
-        /* STUDIO BOX */
-        .studio-card { background: #111; border: 2px dashed #333; border-radius: 20px; padding: 40px 20px; text-align: center; }
+        /* STUDIO */
+        .studio-card { background: #111; border: 2px dashed #222; border-radius: 15px; padding: 30px 15px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="intro-layer">
-        <div class="stage"><div class="logo-wrapper"><img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'"></div></div>
+        <div class="logo-wrapper">
+            <img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
+        </div>
     </div>
 
     <div id="main-app">
         <header class="navbar">
-            <div class="nav-left">
-                <button class="menu-btn" onclick="toggleMenu()">☰</button>
-                <div id="page-title">CRUISE</div>
-            </div>
-            <div class="nav-right">
-                <button class="notif-btn" onclick="showSection('notif')">
-                    🔔 <div id="notif-dot" class="notif-dot"></div>
-                </button>
-            </div>
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <div id="page-title">CRUISE</div>
+            <button class="notif-btn" onclick="showSection('notif')">
+                🔔 <div id="notif-dot" class="notif-dot"></div>
+            </button>
         </header>
 
         <div id="side-menu">
-            <h2 style="color:#2481cc; margin-bottom:40px; letter-spacing:2px;">MENU</h2>
+            <h2 style="color:#2481cc; margin-top:0;">MENU</h2>
             <div class="menu-items">
                 <button onclick="showSection('cruise')">🚀 Cruise</button>
                 <button onclick="showSection('profile')">👤 Profile</button>
@@ -79,86 +71,84 @@
                 <button onclick="showSection('tasks')">💰 Tasks</button>
                 <button onclick="showSection('wallet')">💎 Wallet</button>
             </div>
-            <button onclick="toggleMenu()" style="background:none; border:none; color:#444; margin-top:30px; width:100%;">✕ CLOSE</button>
+            <button onclick="toggleMenu()" style="color:#444; background:none; border:none; width:100%; margin-top:20px;">Close</button>
         </div>
 
         <main id="cruise-view" class="view-section active-view">
-            <p style="text-align:center; color:#444; margin-top:50px;">Your cruise feed is empty.<br>Follow creators to see content!</p>
+            <p style="text-align:center; color:#444; margin-top:40px;">No content yet. Follow creators!</p>
         </main>
 
         <main id="profile-view" class="view-section">
             <div class="profile-header">
-                <div id="pfp" class="profile-pfp">?</div>
-                <h2 id="p-name" style="margin:0;">Cruiser</h2>
+                <div id="user-pfp" class="pfp">?</div>
+                <h2 id="user-display-name" style="margin:0;">Cruiser</h2>
             </div>
-            <div class="stat-bar">
-                <div class="stat-box"><span class="stat-num">0</span><span class="stat-label">Posts</span></div>
-                <div class="stat-box"><span class="stat-num">0</span><span class="stat-label">Followers</span></div>
-                <div class="stat-box"><span class="stat-num">0</span><span class="stat-label">Following</span></div>
+            <div class="stats">
+                <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Posts</span></div>
+                <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Followers</span></div>
+                <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Following</span></div>
             </div>
-            <h4 style="margin-bottom:15px; border-bottom: 1px solid #222; padding-bottom:5px;">My Content</h4>
-            <p style="text-align:center; color:#333; font-size:14px;">No content posted yet.</p>
+            <p style="text-align:center; color:#333;">No content posted yet.</p>
         </main>
 
         <main id="studio-view" class="view-section">
             <div class="studio-card">
-                <h3 style="color:#2481cc;">Creator Studio</h3>
-                <p style="color:#666; font-size:14px;">Upload your first video to start earning from fans.</p>
-                <button style="background:#2481cc; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; margin-top:10px;">Upload Video</button>
+                <h3 style="color:#2481cc;">Studio</h3>
+                <p style="color:#666;">Ready to post your first video?</p>
+                <button onclick="alert('Upload coming soon!')" style="background:#2481cc; color:#fff; border:none; padding:10px 20px; border-radius:8px;">Upload</button>
             </div>
         </main>
 
         <main id="notif-view" class="view-section">
-            <h2 style="margin-top:0;">Notifications</h2>
-            <div style="background:#111; padding:15px; border-radius:15px; border-left:4px solid #2481cc;">
-                🚢 Welcome to <b>Cruise</b>! Start your journey here.
+            <div style="background:#111; padding:15px; border-radius:10px; border-left:4px solid #2481cc;">
+                Welcome to <b>Cruise</b>! Start your journey.
             </div>
         </main>
 
-        <main id="tasks-view" class="view-section">
-            <p style="text-align:center; color:#444;">Available tasks will appear here.</p>
-        </main>
-
-        <main id="wallet-view" class="view-section">
-            <p style="text-align:center; color:#444;">Your points balance: 0 💎</p>
-        </main>
+        <main id="tasks-view" class="view-section"><p style="text-align:center; color:#444;">Tasks Loading...</p></main>
+        <main id="wallet-view" class="view-section"><p style="text-align:center; color:#444;">Wallet: 0 💎</p></main>
     </div>
 
     <script>
+        // Use a safe initialization
         const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        setTimeout(() => {
+        
+        function startApp() {
+            // Hide intro, show app
             document.getElementById('intro-layer').style.display = 'none';
             document.getElementById('main-app').style.display = 'flex';
             setTimeout(() => { 
-                document.getElementById('main-app').style.opacity = '1';
+                document.getElementById('main-app').style.opacity = '1'; 
                 document.getElementById('notif-dot').style.display = 'block';
             }, 50);
-        }, 7000);
+            
+            // Try to get user data safely
+            try {
+                const user = tg.initDataUnsafe?.user;
+                if(user) {
+                    document.getElementById('user-display-name').innerText = user.first_name;
+                    document.getElementById('user-pfp').innerText = user.first_name[0].toUpperCase();
+                }
+            } catch(e) { console.log("User data error:", e); }
+
+            tg.expand();
+            tg.ready();
+        }
+
+        // FORCE start after 7 seconds no matter what
+        setTimeout(startApp, 7000);
 
         function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
 
         function showSection(id) {
             if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
-            
-            // 1. Hide all views
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
+            const target = document.getElementById(id + '-view');
+            if(target) target.classList.add('active-view');
             
-            // 2. Show the one we want
-            document.getElementById(id + '-view').classList.add('active-view');
-            
-            // 3. Update the Top Bar Title
-            document.getElementById('page-title').innerText = id === 'notif' ? 'NOTIFICATIONS' : id;
-            
-            // 4. Notification dot logic
+            // Update Title
+            document.getElementById('page-title').innerText = id;
             if(id === 'notif') document.getElementById('notif-dot').style.display = 'none';
-        }
-
-        const user = tg.initDataUnsafe?.user;
-        if(user) {
-            document.getElementById('p-name').innerText = user.first_name;
-            document.getElementById('pfp').innerText = user.first_name[0].toUpperCase();
         }
     </script>
 </body>
