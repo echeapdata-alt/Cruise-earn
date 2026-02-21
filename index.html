@@ -160,12 +160,22 @@
 
         <main id="view-wallet" class="view">
             <div class="wallet-card">
-                <small style="color:var(--primary); font-weight:900;">BALANCE</small>
-                <h1 style="font-size:48px; margin:15px 0;">0 💎</h1>
-                <button style="width:100%; padding:18px; background:#fff; color:#000; border-radius:15px; border:none; font-weight:900;">WITHDRAW</button>
+                <small style="color:var(--primary); font-weight:900; letter-spacing: 2px;">TOTAL BALANCE</small>
+                <h1 id="balance-val" style="font-size:48px; margin:15px 0;">0 💎</h1>
+                <button onclick="tg.showAlert('Withdrawals open at 50,000 💎')" style="width:100%; padding:15px; background:#fff; color:#000; border-radius:15px; border:none; font-weight:900; margin-bottom: 20px;">WITHDRAW</button>
+            </div>
+
+            <div class="referral-box" style="margin-top: 20px;">
+                <h4 style="margin: 0 0 10px 0; color: var(--primary);">Invite & Earn</h4>
+                <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Get 500 💎 for every friend who joins Cruise!</p>
+                
+                <div class="link-container">
+                    <input type="text" id="referral-link" readonly value="https://t.me/YourBotName?start=user123" 
+                           style="background:#000; border:1px solid var(--border); color:#fff; padding:12px; border-radius:10px; width:75%; font-size:12px;">
+                    <button onclick="copyRef()" style="background:var(--primary); border:none; color:#fff; border-radius:10px; width:20%; padding:12px; font-weight:bold;">Copy</button>
+                </div>
             </div>
         </main>
-    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
