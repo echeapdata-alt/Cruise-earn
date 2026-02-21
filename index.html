@@ -10,12 +10,12 @@
 <body>
     <div id="intro-layer">
         <div class="stage">
-            <img src="logo.png" alt="Cruise Logo" class="floating-logo">
+            <img src="logo.png" alt="Logo" class="floating-logo">
             <div class="shadow"></div>
         </div>
     </div>
 
-    <div id="main-app" style="display:none;">
+    <div id="main-app" style="display:none; opacity:0; transition: opacity 0.5s;">
         <header class="navbar">
             <button class="menu-trigger" onclick="toggleMenu()">☰</button>
             <div class="brand">CRUISE</div>
@@ -24,7 +24,7 @@
 
         <div id="side-menu">
             <div class="menu-header">
-                <h3>Cruise Menu</h3>
+                <h3>Menu</h3>
                 <button onclick="toggleMenu()">✕</button>
             </div>
             <div class="menu-items">
@@ -32,15 +32,14 @@
                 <button onclick="showSection('studio')">📤 Studio</button>
                 <button onclick="showSection('tasks')">💰 Tasks</button>
                 <button onclick="showSection('wallet')">💎 Wallet</button>
-                <button onclick="showSection('profile')">👤 Profile</button>
             </div>
         </div>
 
         <main id="app-content">
             <div id="feed-view">
                 <div class="v-card">
-                    <div class="v-user">@cruise_hq</div>
-                    <div class="v-frame"><span>Loading Video...</span></div>
+                    <div class="v-user">@cruise_admin</div>
+                    <div class="v-frame"><span>[ Video Feed Active ]</span></div>
                     <div class="v-footer">
                         <button class="claim-btn">Claim 10 Pts</button>
                     </div>
@@ -49,11 +48,11 @@
 
             <div id="studio-view" style="display:none;">
                 <h2>Studio</h2>
-                <p>Upload your clips here.</p>
+                <p>Upload your videos here.</p>
             </div>
         </main>
     </div>
 
     <script src="script.js"></script>
 </body>
-            </html>
+</html>
