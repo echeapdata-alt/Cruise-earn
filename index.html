@@ -23,9 +23,10 @@
         /* POST FEED (HORIZONTAL) */
         #post-container { position: relative; flex: 1; width: 100%; overflow: hidden; background: #050505; }
         .post-card { position: absolute; inset: 0; padding: 25px; display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: #000; }
-        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
         .post-pfp { width: 45px; height: 45px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #222; }
         .post-content { flex: 1; font-size: 18px; line-height: 1.6; color: #eee; overflow-y: auto; white-space: pre-wrap; }
+        .post-image { width: 100%; max-height: 250px; border-radius: 15px; object-fit: cover; margin-top: 15px; border: 1px solid #333; }
         
         /* ACTIONS */
         .post-actions { display: flex; gap: 12px; padding: 20px 0; border-top: 1px solid var(--border); }
@@ -34,15 +35,13 @@
         /* POST EDITOR MODAL */
         #editor-modal { position: fixed; bottom: -100%; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; transition: 0.5s; padding: 20px; display: flex; flex-direction: column; }
         #editor-modal.active { bottom: 0; }
-        #post-input { width: 100%; flex: 1; background: transparent; border: none; color: #fff; font-size: 20px; resize: none; padding-top: 20px; }
+        #post-input { width: 100%; height: 150px; background: #111; border: 1px solid #222; border-radius: 15px; color: #fff; font-size: 18px; resize: none; padding: 15px; margin-top: 20px; }
+        #image-input { width: 100%; background: #111; border: 1px solid #222; border-radius: 12px; color: #fff; padding: 12px; margin-top: 10px; font-size: 14px; }
         .editor-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
         .post-submit { background: var(--primary); color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; }
 
         /* FLOATING CREATE BUTTON */
-        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 8px 25px rgba(36, 129, 204, 0.4); z-index: 500; border: none; color: #fff; }
-
-        /* SHORTS */
-        #shorts-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 60000; }
+        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 8px 25px rgba(36, 129, 204, 0.4); z-index: 500; border: none; color: #fff; }
     </style>
 </head>
 <body>
@@ -69,23 +68,17 @@
         <div id="editor-modal">
             <div class="editor-header">
                 <button onclick="closeEditor()" style="background:none; border:none; color:#666; font-size:16px;">Cancel</button>
-                <b style="color:var(--primary)">NEW POST</b>
+                <b style="color:var(--primary)">CREATE POST</b>
                 <button class="post-submit" onclick="submitPost()">Post</button>
             </div>
-            <textarea id="post-input" placeholder="What's happening on Cruise?"></textarea>
-            <div style="padding: 15px 0; display:flex; gap:15px; color:var(--primary); font-size:20px;">
-                <span onclick="addEmoji('🔥')">🔥</span>
-                <span onclick="addEmoji('🚀')">🚀</span>
-                <span onclick="addEmoji('😂')">😂</span>
-                <span onclick="addEmoji('💎')">💎</span>
-            </div>
+            <textarea id="post-input" placeholder="What's the vibe today?"></textarea>
+            <input type="text" id="image-input" placeholder="Paste Image URL (Optional)">
+            <p style="font-size: 11px; color: #444; margin-top: 10px;">Paste a link to an image to include it in your post.</p>
         </div>
 
-        <div id="shorts-overlay">
+        <div id="shorts-overlay" style="display:none; position:fixed; inset:0; background:#000; z-index:60000;">
             <button onclick="closeShorts()" style="position:absolute; top:20px; left:20px; z-index:100; background:rgba(0,0,0,0.5); border:none; color:#fff; width:40px; height:40px; border-radius:50%;">✕</button>
-            <div id="shorts-zone" style="height:100%; width:100%; display:flex; align-items:center;">
-                <video id="shorts-v" style="width:100%; height:100%; object-fit: contain;" loop playsinline></video>
-            </div>
+            <video id="shorts-v" style="width:100%; height:100%; object-fit: contain;" loop playsinline></video>
         </div>
     </div>
 
@@ -93,8 +86,8 @@
         const tg = window.Telegram.WebApp;
         let curPost = 0;
         let posts = [
-            { user: "CruiseBot", text: "Welcome to the horizontal feed! Swipe Left to see what's trending. 🚀", color: "#2481cc" },
-            { user: "MemeLord", text: "Crypto is cool, but Cruise is iconic. 🔥", color: "#7d2ae8" }
+            { user: "CruiseBot", text: "Swipe Left to see the community's posts! 🚀", img: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=500", color: "#2481cc" },
+            { user: "CruiseBot", text: "Click the + button to post your own meme.", color: "#7d2ae8" }
         ];
 
         // STARTUP
@@ -106,33 +99,30 @@
                 document.getElementById('main-app').style.opacity = '1';
                 renderPosts();
                 tg.expand();
-                if(tg.initDataUnsafe?.user) {
-                    const u = tg.initDataUnsafe.user;
-                    window.userName = u.first_name;
-                }
             }, 500);
         }, 4000);
 
-        // RENDER POSTS
         function renderPosts() {
             const container = document.getElementById('post-container');
             container.innerHTML = posts.map((p, i) => `
                 <div class="post-card" style="transform: translateX(${(i - curPost) * 100}%);">
                     <div class="post-header">
-                        <div class="post-pfp" style="background:${p.color || '#2481cc'}">${p.user[0]}</div>
-                        <b style="font-size:16px;">@${p.user}</b>
+                        <div class="post-pfp" style="background:${p.color}">${p.user[0]}</div>
+                        <b>@${p.user}</b>
                     </div>
-                    <div class="post-content">${p.text}</div>
+                    <div class="post-content">
+                        ${p.text}
+                        ${p.img ? `<img src="${p.img}" class="post-image" onerror="this.style.display='none'">` : ''}
+                    </div>
                     <div class="post-actions">
                         <button class="action-btn">👍 0</button>
-                        <button class="action-btn">👎 0</button>
                         <button class="action-btn">💬 Comment</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // HORIZONTAL SWIPE
+        // SWIPE LOGIC
         let startX = 0;
         document.getElementById('post-container').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('post-container').addEventListener('touchend', e => {
@@ -143,48 +133,50 @@
         });
 
         // EDITOR LOGIC
-        function openEditor() { 
-            document.getElementById('editor-modal').classList.add('active'); 
-            document.getElementById('post-input').focus();
-        }
+        function openEditor() { document.getElementById('editor-modal').classList.add('active'); }
         function closeEditor() { document.getElementById('editor-modal').classList.remove('active'); }
-        function addEmoji(e) { document.getElementById('post-input').value += e; }
 
         function submitPost() {
             const text = document.getElementById('post-input').value;
-            if (!text.trim()) return;
+            const img = document.getElementById('image-input').value;
             
-            // Add new post to start of array
+            if (!text.trim() && !img.trim()) return;
+
+            // Add to the START of the array
             posts.unshift({
-                user: window.userName || "Cruiser",
+                user: tg.initDataUnsafe?.user?.first_name || "Cruiser",
                 text: text,
-                color: "#" + Math.floor(Math.random()*16777215).toString(16) // Random pfp color
+                img: img,
+                color: "#2481cc"
             });
+
+            curPost = 0; // Force view to the brand new post
+            renderPosts(); // Redraw
             
-            curPost = 0; // Go to the new post
+            // Reset and Close
             document.getElementById('post-input').value = "";
+            document.getElementById('image-input').value = "";
             closeEditor();
-            renderPosts();
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // SHORTS (L/R Swipe)
-        const vids = ["https://www.w3schools.com/html/mov_bbb.mp4"];
-        function openShorts() { 
-            document.getElementById('shorts-overlay').style.display = 'block'; 
+        // SHORTS (Simple)
+        function openShorts() {
+            document.getElementById('shorts-overlay').style.display = 'block';
             const v = document.getElementById('shorts-v');
-            v.src = vids[0];
+            v.src = "https://www.w3schools.com/html/mov_bbb.mp4";
             v.play();
         }
-        function closeShorts() { 
+        function closeShorts() {
             document.getElementById('shorts-v').pause();
-            document.getElementById('shorts-overlay').style.display = 'none'; 
+            document.getElementById('shorts-overlay').style.display = 'none';
         }
 
         function showView(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + id).classList.add('active');
+            const target = document.getElementById('view-' + id);
+            if(target) target.classList.add('active');
         }
     </script>
 </body>
-</html>
+                </html>
