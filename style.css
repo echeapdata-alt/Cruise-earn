@@ -1,0 +1,4 @@
+body { background: #0e0e0e; color: white; font-family: sans-serif; text-align: center; }
+#main-logo { width: 100%; max-width: 320px; border-radius: 15px; margin-top: 20px; }
+nav { display: flex; justify-content: space-around; background: #1a1a1a; padding: 15px; position: fixed; bottom: 0; width: 100%; }
+button { background: #2481cc; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; }
