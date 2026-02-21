@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cruise Earn</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <img src="logo.png" alt="Cruise Earn Logo" id="main-logo">
+            <h1>Welcome, <span id="username">Hustler</span></h1>
+        </header>
+
+        <div class="stats">
+            <p>Cruise Points: <b id="points">0</b></p>
+        </div>
+
+        <nav>
+            <button onclick="showSection('tasks')">Tasks</button>
+            <button onclick="showSection('cruise')">Cruise</button>
+            <button onclick="showSection('upload')">Studio</button>
+        </nav>
+
+        <main id="content">
+            </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+  </html>
