@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #2481cc; --bg: #000; --panel: #111; --border: #222; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
 
         /* INTRO 4s */
@@ -20,28 +20,29 @@
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); z-index: 100; }
         .shorts-btn { background: var(--primary); color: #fff; font-size: 10px; font-weight: 900; padding: 5px 10px; border-radius: 6px; border: none; }
 
-        /* POST FEED (SWIPEABLE) */
+        /* POST FEED (HORIZONTAL) */
         #post-container { position: relative; flex: 1; width: 100%; overflow: hidden; background: #050505; }
-        .post-card { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; transition: transform 0.4s ease; background: #000; }
-        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-        .post-pfp { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .post-content { flex: 1; font-size: 16px; line-height: 1.5; color: #eee; overflow-y: auto; }
+        .post-card { position: absolute; inset: 0; padding: 25px; display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: #000; }
+        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .post-pfp { width: 45px; height: 45px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #222; }
+        .post-content { flex: 1; font-size: 18px; line-height: 1.6; color: #eee; overflow-y: auto; white-space: pre-wrap; }
         
-        /* INTERACTION BAR */
-        .post-actions { display: flex; gap: 15px; padding: 15px 0; border-top: 1px solid var(--border); }
-        .action-btn { background: var(--panel); border: none; color: #fff; padding: 8px 12px; border-radius: 10px; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+        /* ACTIONS */
+        .post-actions { display: flex; gap: 12px; padding: 20px 0; border-top: 1px solid var(--border); }
+        .action-btn { background: var(--panel); border: none; color: #fff; padding: 10px 15px; border-radius: 12px; font-size: 14px; display: flex; align-items: center; gap: 8px; font-weight: bold; }
 
-        /* COMMENTS DRAWER */
-        #comment-drawer { position: fixed; bottom: -100%; left: 0; width: 100%; height: 70%; background: #0f0f0f; z-index: 30000; transition: 0.4s; border-radius: 25px 25px 0 0; padding: 20px; border-top: 2px solid var(--primary); }
-        #comment-drawer.active { bottom: 0; }
-        .comment-item { margin-bottom: 15px; background: #1a1a1a; padding: 10px; border-radius: 12px; }
+        /* POST EDITOR MODAL */
+        #editor-modal { position: fixed; bottom: -100%; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; transition: 0.5s; padding: 20px; display: flex; flex-direction: column; }
+        #editor-modal.active { bottom: 0; }
+        #post-input { width: 100%; flex: 1; background: transparent; border: none; color: #fff; font-size: 20px; resize: none; padding-top: 20px; }
+        .editor-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+        .post-submit { background: var(--primary); color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; }
 
         /* FLOATING CREATE BUTTON */
-        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 55px; height: 55px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 500; border: none; color: #fff; }
+        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 8px 25px rgba(36, 129, 204, 0.4); z-index: 500; border: none; color: #fff; }
 
-        /* SHORTS OVERLAY */
-        #shorts-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 40000; }
-        .close-btn { position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(0,0,0,0.5); border: none; color: #fff; border-radius: 50%; width: 40px; height: 40px; }
+        /* SHORTS */
+        #shorts-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 60000; }
     </style>
 </head>
 <body>
@@ -52,38 +53,37 @@
 
     <div id="main-app">
         <header class="navbar">
-            <button onclick="toggleMenu()" style="background:none; border:none; color:var(--primary); font-size:24px;">☰</button>
+            <button style="background:none; border:none; color:var(--primary); font-size:24px;">☰</button>
             <div style="display:flex; align-items:center; gap:8px;">
                 <b style="letter-spacing:2px; font-size:14px;">CRUISE</b>
-                <button class="shorts-btn" onclick="openShorts(0)">SHORTS ⚡</button>
+                <button class="shorts-btn" onclick="openShorts()">SHORTS ⚡</button>
             </div>
             <button onclick="showView('wallet')" style="background:none; border:none; font-size:20px;">💎</button>
         </header>
 
         <main id="view-cruise" class="view active" style="padding:0; position:relative;">
-            <div id="post-container">
-                </div>
-            <button class="create-btn" onclick="tg.showAlert('Post editor coming in next update!')">+</button>
+            <div id="post-container"></div>
+            <button class="create-btn" onclick="openEditor()">+</button>
         </main>
 
-        <div id="comment-drawer">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                <b>Comments</b>
-                <button onclick="closeComments()" style="background:none; border:none; color:#555;">CLOSE</button>
+        <div id="editor-modal">
+            <div class="editor-header">
+                <button onclick="closeEditor()" style="background:none; border:none; color:#666; font-size:16px;">Cancel</button>
+                <b style="color:var(--primary)">NEW POST</b>
+                <button class="post-submit" onclick="submitPost()">Post</button>
             </div>
-            <div id="comment-list" style="overflow-y:auto; height:80%;">
-                <div class="comment-item">
-                    <b>@User123</b>: This is amazing! 🔥
-                    <div style="display:flex; gap:10px; margin-top:5px; font-size:12px; color:var(--primary);">
-                        <span>👍 12</span> <span>👎 0</span> <span>❤️</span>
-                    </div>
-                </div>
+            <textarea id="post-input" placeholder="What's happening on Cruise?"></textarea>
+            <div style="padding: 15px 0; display:flex; gap:15px; color:var(--primary); font-size:20px;">
+                <span onclick="addEmoji('🔥')">🔥</span>
+                <span onclick="addEmoji('🚀')">🚀</span>
+                <span onclick="addEmoji('😂')">😂</span>
+                <span onclick="addEmoji('💎')">💎</span>
             </div>
         </div>
 
         <div id="shorts-overlay">
-            <button class="close-btn" onclick="closeShorts()">✕</button>
-            <div id="shorts-zone" style="height:100%; width:100%; background:#000; display:flex; align-items:center;">
+            <button onclick="closeShorts()" style="position:absolute; top:20px; left:20px; z-index:100; background:rgba(0,0,0,0.5); border:none; color:#fff; width:40px; height:40px; border-radius:50%;">✕</button>
+            <div id="shorts-zone" style="height:100%; width:100%; display:flex; align-items:center;">
                 <video id="shorts-v" style="width:100%; height:100%; object-fit: contain;" loop playsinline></video>
             </div>
         </div>
@@ -92,18 +92,12 @@
     <script>
         const tg = window.Telegram.WebApp;
         let curPost = 0;
-        let vCount = 0;
-        let curVid = 0;
-
-        const posts = [
-            { user: "CruiseBot", text: "Welcome to the horizontal feed! Swipe Left for more. 🚀", color: "#2481cc" },
-            { user: "MemeLord", text: "Mini apps are the future of Telegram. Change my mind. ☕", color: "#7d2ae8" },
-            { user: "TechDaily", text: "Did you know Cruise gives you 💎 for watching ads?", color: "#00f2ff" }
+        let posts = [
+            { user: "CruiseBot", text: "Welcome to the horizontal feed! Swipe Left to see what's trending. 🚀", color: "#2481cc" },
+            { user: "MemeLord", text: "Crypto is cool, but Cruise is iconic. 🔥", color: "#7d2ae8" }
         ];
 
-        const videos = ["https://www.w3schools.com/html/mov_bbb.mp4", "https://www.w3schools.com/html/movie.mp4"];
-
-        // INIT APP (4s)
+        // STARTUP
         setTimeout(() => {
             document.getElementById('intro-layer').style.opacity = "0";
             setTimeout(() => {
@@ -112,56 +106,74 @@
                 document.getElementById('main-app').style.opacity = '1';
                 renderPosts();
                 tg.expand();
+                if(tg.initDataUnsafe?.user) {
+                    const u = tg.initDataUnsafe.user;
+                    window.userName = u.first_name;
+                }
             }, 500);
         }, 4000);
 
-        // POSTS LOGIC (Horizontal Swipe)
+        // RENDER POSTS
         function renderPosts() {
             const container = document.getElementById('post-container');
             container.innerHTML = posts.map((p, i) => `
-                <div class="post-card" style="transform: translateX(${(i - curPost) * 100}%); background: ${i % 2 === 0 ? '#050505' : '#0a0a0a'}">
+                <div class="post-card" style="transform: translateX(${(i - curPost) * 100}%);">
                     <div class="post-header">
-                        <div class="post-pfp" style="background:${p.color}">${p.user[0]}</div>
-                        <b>@${p.user}</b>
+                        <div class="post-pfp" style="background:${p.color || '#2481cc'}">${p.user[0]}</div>
+                        <b style="font-size:16px;">@${p.user}</b>
                     </div>
                     <div class="post-content">${p.text}</div>
                     <div class="post-actions">
-                        <button class="action-btn">👍 24</button>
-                        <button class="action-btn">👎 2</button>
-                        <button class="action-btn" onclick="openComments()">💬 5</button>
-                        <button class="action-btn">🔥</button>
+                        <button class="action-btn">👍 0</button>
+                        <button class="action-btn">👎 0</button>
+                        <button class="action-btn">💬 Comment</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // POST SWIPE
+        // HORIZONTAL SWIPE
         let startX = 0;
         document.getElementById('post-container').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('post-container').addEventListener('touchend', e => {
             const diffX = startX - e.changedTouches[0].clientX;
-            if (diffX > 50 && curPost < posts.length - 1) curPost++;
-            else if (diffX < -50 && curPost > 0) curPost--;
+            if (diffX > 60 && curPost < posts.length - 1) curPost++;
+            else if (diffX < -60 && curPost > 0) curPost--;
             renderPosts();
         });
 
-        // SHORTS SWIPE (Horizontal)
-        document.getElementById('shorts-zone').addEventListener('touchstart', e => startX = e.touches[0].clientX);
-        document.getElementById('shorts-zone').addEventListener('touchend', e => {
-            const diffX = startX - e.changedTouches[0].clientX;
-            if (Math.abs(diffX) > 50) {
-                curVid = (diffX > 0) ? (curVid + 1) % videos.length : (curVid - 1 + videos.length) % videos.length;
-                playVid();
-            }
-        });
-
-        function openShorts(idx) {
-            document.getElementById('shorts-overlay').style.display = 'block';
-            playVid();
+        // EDITOR LOGIC
+        function openEditor() { 
+            document.getElementById('editor-modal').classList.add('active'); 
+            document.getElementById('post-input').focus();
         }
-        function playVid() {
+        function closeEditor() { document.getElementById('editor-modal').classList.remove('active'); }
+        function addEmoji(e) { document.getElementById('post-input').value += e; }
+
+        function submitPost() {
+            const text = document.getElementById('post-input').value;
+            if (!text.trim()) return;
+            
+            // Add new post to start of array
+            posts.unshift({
+                user: window.userName || "Cruiser",
+                text: text,
+                color: "#" + Math.floor(Math.random()*16777215).toString(16) // Random pfp color
+            });
+            
+            curPost = 0; // Go to the new post
+            document.getElementById('post-input').value = "";
+            closeEditor();
+            renderPosts();
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        // SHORTS (L/R Swipe)
+        const vids = ["https://www.w3schools.com/html/mov_bbb.mp4"];
+        function openShorts() { 
+            document.getElementById('shorts-overlay').style.display = 'block'; 
             const v = document.getElementById('shorts-v');
-            v.src = videos[curVid];
+            v.src = vids[0];
             v.play();
         }
         function closeShorts() { 
@@ -169,14 +181,10 @@
             document.getElementById('shorts-overlay').style.display = 'none'; 
         }
 
-        function openComments() { document.getElementById('comment-drawer').classList.add('active'); }
-        function closeComments() { document.getElementById('comment-drawer').classList.remove('active'); }
         function showView(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('view-' + id).classList.add('active');
-            if(id === 'cruise') renderPosts();
         }
-        function toggleMenu() { tg.showAlert('Menu open'); }
     </script>
 </body>
 </html>
