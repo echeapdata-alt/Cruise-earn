@@ -6,47 +6,43 @@
     <title>Cruise Official</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #2481cc; --bg: #000; --panel: #111; --border: #262626; --text-main: #ffffff; --text-dim: #a0a0a0; }
+        :root { --primary: #2481cc; --bg: #000; --panel: #111; --border: #262626; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text-main); font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
 
-        /* 4s LOGO SPLASH */
+        /* SPLASH */
         #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 99999; }
-        .iconic-logo { width: 120px; height: 120px; border-radius: 30px; animation: entry 2.5s ease-out forwards; border: 1px solid rgba(255,255,255,0.1); }
-        @keyframes entry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 100% { transform: scale(1); opacity: 1; filter: blur(0); } }
+        .iconic-logo { width: 120px; height: 120px; border-radius: 30px; animation: entry 2s forwards; }
+        @keyframes entry { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* NAV & LAYOUT */
+        /* NAV */
         #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: 1s; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); z-index: 100; }
-        .nav-logo { letter-spacing: 4px; font-weight: 900; font-size: 14px; color: #fff; }
-        .shorts-pill { background: linear-gradient(90deg, #2481cc, #005fa3); color: #fff; font-size: 10px; font-weight: 800; padding: 5px 12px; border-radius: 20px; border: none; text-transform: uppercase; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: #000; border-bottom: 1px solid var(--border); z-index: 100; }
+        .nav-logo { letter-spacing: 4px; font-weight: 900; font-size: 14px; }
 
-        /* POST FEED ENGINE */
+        /* FEED ENGINE - CRITICAL FIX */
         #post-container { position: relative; flex: 1; width: 100%; overflow: hidden; }
-        .post-card { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); background: #000; }
-        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .post-pfp { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid var(--border); background: #1a1a1a; }
-        .post-content { flex: 1; font-size: 17px; line-height: 1.5; overflow-y: auto; color: #f0f0f0; }
-        .post-img-wrap { margin-top: 15px; border-radius: 18px; overflow: hidden; border: 1px solid var(--border); background: #0a0a0a; line-height: 0; }
-        .post-img-wrap img { width: 100%; max-height: 350px; object-fit: contain; }
+        .post-card { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); background: #000; visibility: hidden; }
+        .post-card.visible { visibility: visible; }
         
-        /* INTERACTION BAR */
-        .post-actions { display: flex; gap: 10px; padding: 15px 0 25px; border-top: 1px solid var(--border); margin-top: 10px; }
-        .act-btn { background: #111; border: 1px solid var(--border); color: #fff; padding: 10px 16px; border-radius: 14px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .post-pfp { width: 40px; height: 40px; border-radius: 12px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid var(--border); }
+        .post-content { flex: 1; font-size: 17px; line-height: 1.5; overflow-y: auto; }
+        .post-img-wrap { margin-top: 15px; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); }
+        .post-img-wrap img { width: 100%; max-height: 300px; object-fit: cover; }
+        
+        .new-badge { background: var(--primary); color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-left: auto; }
 
-        /* MODERN EDITOR */
-        #editor-modal { position: fixed; inset: 0; background: #000; z-index: 50000; transform: translateY(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; display: flex; flex-direction: column; }
+        /* EDITOR */
+        #editor-modal { position: fixed; inset: 0; background: #000; z-index: 50000; transform: translateY(100%); transition: 0.4s; padding: 20px; display: flex; flex-direction: column; }
         #editor-modal.active { transform: translateY(0); }
-        .ed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        #post-input { flex: 1; background: transparent; border: none; color: #fff; font-size: 19px; resize: none; }
-        .ed-footer { display: flex; align-items: center; gap: 20px; padding: 20px 0; border-top: 1px solid var(--border); }
-        .post-btn { background: var(--primary); color: #fff; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 800; }
-        
-        #preview-box { width: 100px; height: 100px; border-radius: 14px; border: 1px solid var(--primary); margin-bottom: 15px; display: none; background-size: cover; background-position: center; position: relative; }
+        #post-input { flex: 1; background: transparent; border: none; color: #fff; font-size: 19px; resize: none; margin-top: 20px; }
+        .ed-header { display: flex; justify-content: space-between; align-items: center; }
+        .post-btn { background: var(--primary); color: #fff; border: none; padding: 10px 25px; border-radius: 12px; font-weight: 800; }
+        #preview-box { width: 100px; height: 100px; border-radius: 12px; border: 1px solid var(--primary); margin: 15px 0; background-size: cover; background-position: center; display: none; }
 
-        /* FLOATING CREATE */
-        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; z-index: 500; border: none; color: #fff; box-shadow: 0 10px 30px rgba(36, 129, 204, 0.4); transform: rotate(45deg); }
-        .create-btn span { transform: rotate(-45deg); display: block; font-weight: 300; }
+        /* CREATE BTN */
+        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; z-index: 500; border: none; color: #fff; box-shadow: 0 10px 30px rgba(36, 129, 204, 0.3); }
     </style>
 </head>
 <body>
@@ -57,32 +53,27 @@
 
     <div id="main-app">
         <nav class="navbar">
-            <button onclick="tg.showAlert('Settings coming soon')" style="background:none; border:none; color:var(--primary); font-size:20px;">⚡</button>
+            <div style="width:40px;"></div>
             <div class="nav-logo">CRUISE</div>
-            <button class="shorts-pill" onclick="openShorts()">Shorts</button>
+            <button onclick="tg.showAlert('Coming Soon')" style="background:none; border:none; color:var(--primary); font-weight:bold;">Shorts</button>
         </nav>
 
-        <main id="view-cruise" class="view active" style="padding:0;">
+        <main id="view-cruise" style="flex:1; display:flex; flex-direction:column;">
             <div id="post-container"></div>
-            <button class="create-btn" onclick="openEditor()"><span>+</span></button>
+            <button class="create-btn" onclick="openEditor()">+</button>
         </main>
 
         <div id="editor-modal">
             <div class="ed-header">
-                <button onclick="closeEditor()" style="background:none; border:none; color:var(--text-dim); font-size:16px;">Cancel</button>
+                <button onclick="closeEditor()" style="background:none; border:none; color:#666;">Cancel</button>
                 <button class="post-btn" onclick="submitPost()">Post</button>
             </div>
-            
-            <textarea id="post-input" placeholder="Share a meme or article..."></textarea>
-            
-            <div id="preview-box">
-                <button onclick="removeImg()" style="position:absolute; top:-8px; right:-8px; background:#ff3b30; color:white; border:none; border-radius:50%; width:22px; height:22px;">✕</button>
-            </div>
-
-            <div class="ed-footer">
-                <label for="file-up" style="cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--primary); font-weight:700;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    Gallery
+            <textarea id="post-input" placeholder="What's the word?"></textarea>
+            <div id="preview-box"></div>
+            <div style="padding: 20px 0; border-top: 1px solid var(--border);">
+                <label for="file-up" style="cursor:pointer; color:var(--primary); font-weight:700; display:flex; align-items:center; gap:10px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Add Photo
                 </label>
                 <input type="file" id="file-up" accept="image/*" style="display:none;" onchange="handleImage(event)">
             </div>
@@ -94,36 +85,33 @@
         let curPost = 0;
         let selectedImg = null;
         let posts = [
-            { user: "Cruise", text: "Welcome to Cruise. Swipe left to explore.\n\nTap the + to share your first post!", color: "#2481cc" }
+            { user: "Cruise", text: "Welcome! Swipe LEFT to see more posts. Tap the + to create your own.", isNew: false }
         ];
 
-        // STARTUP SCRIPT
+        // STARTUP
         setTimeout(() => {
-            document.getElementById('intro-layer').style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById('intro-layer').style.display = 'none';
-                document.getElementById('main-app').style.display = 'flex';
-                document.getElementById('main-app').style.opacity = '1';
-                renderPosts();
-                tg.expand();
-            }, 500);
+            document.getElementById('intro-layer').style.display = 'none';
+            document.getElementById('main-app').style.display = 'flex';
+            document.getElementById('main-app').style.opacity = '1';
+            renderPosts();
+            tg.expand();
         }, 4000);
 
         function renderPosts() {
             const container = document.getElementById('post-container');
             container.innerHTML = posts.map((p, i) => `
-                <div class="post-card" style="transform: translateX(${(i - curPost) * 100}%);">
+                <div class="post-card visible" style="transform: translateX(${(i - curPost) * 100}%); z-index: ${1000 - i};">
                     <div class="post-header">
-                        <div class="post-pfp" style="color:${p.color || '#2481cc'}">${p.user[0]}</div>
-                        <div style="font-weight:700; font-size:15px; letter-spacing:0.5px;">@${p.user.toLowerCase()}</div>
+                        <div class="post-pfp">${p.user[0]}</div>
+                        <div style="font-weight:700;">@${p.user.toLowerCase()}</div>
+                        ${p.isNew ? '<span class="new-badge">NEW</span>' : ''}
                     </div>
                     <div class="post-content">
                         ${p.text}
                         ${p.img ? `<div class="post-img-wrap"><img src="${p.img}"></div>` : ''}
                     </div>
-                    <div class="post-actions">
-                        <button class="act-btn">👍 0</button>
-                        <button class="act-btn">💬 0</button>
+                    <div style="display:flex; gap:15px; margin-top:15px; opacity:0.6;">
+                        <span>👍 0</span> <span>💬 0</span>
                     </div>
                 </div>
             `).join('');
@@ -131,18 +119,16 @@
 
         // SWIPE SYSTEM
         let startX = 0;
-        document.getElementById('post-container').addEventListener('touchstart', e => startX = e.touches[0].clientX);
-        document.getElementById('post-container').addEventListener('touchend', e => {
+        const container = document.getElementById('post-container');
+        container.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        container.addEventListener('touchend', e => {
             const diffX = startX - e.changedTouches[0].clientX;
-            if (diffX > 50 && curPost < posts.length - 1) {
-                curPost++;
-            } else if (diffX < -50 && curPost > 0) {
-                curPost--;
-            }
+            if (diffX > 50 && curPost < posts.length - 1) curPost++;
+            else if (diffX < -50 && curPost > 0) curPost--;
             renderPosts();
         });
 
-        // IMAGE HANDLER
+        // EDITOR & UPLOAD
         function handleImage(e) {
             const file = e.target.files[0];
             if (file) {
@@ -157,16 +143,11 @@
             }
         }
 
-        function removeImg() {
-            selectedImg = null;
-            document.getElementById('preview-box').style.display = 'none';
-            document.getElementById('file-up').value = "";
-        }
-
         function openEditor() { document.getElementById('editor-modal').classList.add('active'); }
         function closeEditor() { 
             document.getElementById('editor-modal').classList.remove('active'); 
-            removeImg(); 
+            selectedImg = null;
+            document.getElementById('preview-box').style.display = 'none';
             document.getElementById('post-input').value = "";
         }
 
@@ -174,21 +155,27 @@
             const txt = document.getElementById('post-input').value;
             if (!txt.trim() && !selectedImg) return;
 
-            // CRITICAL: Unshift puts it at the start (index 0)
+            // Remove 'NEW' badge from old posts
+            posts.forEach(p => p.isNew = false);
+
+            // Add new post to index 0
             posts.unshift({
                 user: tg.initDataUnsafe?.user?.first_name || "Cruiser",
                 text: txt,
                 img: selectedImg,
-                color: "#2481cc"
+                isNew: true
             });
 
-            curPost = 0; // Reset index to show the new post immediately
+            // RESET VIEW TO ZERO (The new post)
+            curPost = 0; 
+            
             renderPosts();
             closeEditor();
             tg.HapticFeedback.notificationOccurred('success');
+            
+            // Helpful Alert to confirm it worked
+            tg.showAlert("Post published! Swipe left to see older ones.");
         }
-
-        function openShorts() { tg.showAlert("Shorts feed coming in the next sync!"); }
     </script>
 </body>
-                    </html>
+    </html>
