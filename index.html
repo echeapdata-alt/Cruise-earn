@@ -10,7 +10,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
 
-        /* LOGO INTRO (4s) */
+        /* 4s LOGO SPLASH */
         #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 99999; }
         .logo-container { perspective: 1000px; }
         .iconic-logo { 
@@ -22,9 +22,10 @@
 
         /* MAIN UI */
         #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1s; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(10,10,10,0.95); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); z-index: 100; }
-        #page-title { font-weight: 900; letter-spacing: 3px; font-size: 14px; text-transform: uppercase; }
-        .nav-btn { background: none; border: none; color: var(--primary); font-size: 24px; cursor: pointer; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(10,10,10,0.95); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); z-index: 100; }
+        .nav-center { display: flex; align-items: center; gap: 10px; }
+        #page-title { font-weight: 900; letter-spacing: 2px; font-size: 14px; text-transform: uppercase; color: #fff; }
+        .shorts-trigger { background: var(--primary); color: #fff; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; cursor: pointer; border: none; }
 
         /* SIDE MENU */
         #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid var(--primary); transition: 0.4s; z-index: 10000; padding: 40px 20px; }
@@ -32,29 +33,25 @@
         .menu-item { width: 100%; padding: 16px; margin-bottom: 12px; background: var(--panel); color: #fff; border: 1px solid var(--border); border-radius: 15px; text-align: left; display: flex; align-items: center; gap: 15px; font-weight: bold; }
 
         /* VIEWS */
-        .view { display: none; padding: 20px; flex: 1; overflow-y: auto; }
+        .view { display: none; padding: 15px; flex: 1; overflow-y: auto; }
         .view.active { display: block; }
 
-        /* CARDS */
-        .icon-card { background: var(--panel); border: 1px solid var(--border); padding: 18px; border-radius: 20px; display: flex; align-items: center; margin-bottom: 15px; }
-        .icon-box { width: 55px; height: 55px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 18px; background: #000; border: 1px solid var(--border); }
-        .icon-info b { display: block; font-size: 16px; }
-        .icon-info span { font-size: 12px; color: #666; }
+        /* FEED CARDS (Memes/Articles) */
+        .post-card { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .post-pfp { width: 35px; height: 35px; background: #333; border-radius: 50%; }
+        .post-img { width: 100%; border-radius: 12px; margin: 10px 0; background: #222; }
 
-        /* VIDEO SYSTEM */
-        #video-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 20000; }
-        .close-vid { position: absolute; top: 20px; left: 20px; z-index: 201; background: rgba(0,0,0,0.5); border: none; color: #fff; font-size: 24px; border-radius: 50%; width: 40px; height: 40px; }
-        #ad-break { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); flex-direction: column; align-items: center; justify-content: center; z-index: 202; backdrop-filter: blur(15px); }
-        .progress-container { width: 200px; height: 4px; background: #222; border-radius: 10px; margin-top: 20px; overflow: hidden; }
-        #ad-progress { width: 0%; height: 100%; background: var(--primary); transition: linear 1s; }
+        /* SHORTS SYSTEM */
+        #shorts-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 20000; }
+        .close-shorts { position: absolute; top: 20px; left: 20px; z-index: 201; background: rgba(0,0,0,0.5); border: none; color: #fff; font-size: 24px; border-radius: 50%; width: 40px; height: 40px; }
+        #ad-break { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); flex-direction: column; align-items: center; justify-content: center; z-index: 202; }
+        #ad-progress-bar { width: 200px; height: 4px; background: #222; border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        #ad-fill { width: 0%; height: 100%; background: var(--primary); transition: linear 1s; }
 
-        /* PROFILE STUFF */
-        .profile-hero { background: linear-gradient(180deg, #111, #000); padding: 30px 20px; border-radius: 25px; border: 1px solid var(--border); text-align: center; margin-bottom: 20px; }
-        .pfp-main { width: 80px; height: 80px; background: var(--primary); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: bold; border: 2px solid #fff; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .stat-item { background: #000; padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
-        .stat-v { display: block; color: var(--primary); font-weight: 800; }
-        .stat-l { font-size: 10px; color: #555; }
+        /* PROFILE/WALLET STATS */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .stat-item { background: #000; padding: 10px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
     </style>
 </head>
 <body>
@@ -67,90 +64,66 @@
 
     <div id="main-app">
         <header class="navbar">
-            <button class="nav-btn" onclick="toggleMenu()">☰</button>
-            <div id="page-title">CRUISE</div>
-            <button class="nav-btn" onclick="showView('notif')">🔔</button>
+            <button onclick="toggleMenu()" style="background:none; border:none; color:var(--primary); font-size:24px;">☰</button>
+            <div class="nav-center">
+                <div id="page-title">CRUISE</div>
+                <button class="shorts-trigger" onclick="openShorts(0)">SHORTS ⚡</button>
+            </div>
+            <button onclick="showView('wallet')" style="background:none; border:none; color:var(--primary); font-size:20px;">💎</button>
         </header>
 
         <div id="side-menu">
-            <div class="menu-header">MENU</div>
-            <div class="menu-list">
-                <button class="menu-item" onclick="showView('cruise')">🚀 Cruise</button>
-                <button class="menu-item" onclick="showView('profile')">👤 Profile</button>
-                <button class="menu-item" onclick="showView('ads')">📢 Post Ads</button>
-                <button class="menu-item" onclick="showView('tasks')">💰 Tasks</button>
-                <button class="menu-item" onclick="showView('wallet')">💎 Wallet</button>
-            </div>
-            <button onclick="toggleMenu()" style="margin-top:40px; background:none; border:none; color:#444; width:100%;">✕ CLOSE</button>
+            <div class="menu-item" onclick="showView('cruise')">🚀 Home</div>
+            <div class="menu-item" onclick="showView('profile')">👤 Profile</div>
+            <div class="menu-item" onclick="showView('ads')">📢 Advertise</div>
+            <div class="menu-item" onclick="showView('wallet')">💎 Wallet</div>
+            <button onclick="toggleMenu()" style="width:100%; margin-top:20px; background:none; border:none; color:#444;">CLOSE</button>
         </div>
 
         <main id="view-cruise" class="view active">
-            <div style="margin-top:100px; text-align:center;">
-                <div onclick="openVideo(0)" style="background:linear-gradient(145deg, #111, #222); padding:40px; border-radius:30px; border:1px solid var(--primary); display:inline-block; box-shadow: 0 0 20px rgba(36,129,204,0.2);">
-                    <span style="font-size:40px;">🚀</span>
-                    <p style="margin-top:10px; font-weight:900; color:var(--primary); letter-spacing:1px;">START CRUISING</p>
-                </div>
-                <p style="color:#444; margin-top:20px; font-size:12px;">Wipe Up/Down to Scroll</p>
+            <div class="post-card">
+                <div class="post-header"><div class="post-pfp"></div> <b>Cruise Official</b></div>
+                <p style="font-size:14px; color:#ccc;">Welcome to the new Cruise feed! Post your memes and articles here. 🚢</p>
+                <div class="post-img" style="height:200px; display:flex; align-items:center; justify-content:center; color:#444;">[Meme Placeholder]</div>
+            </div>
+            <div class="post-card">
+                <div class="post-header"><div class="post-pfp"></div> <b>Article Bot</b></div>
+                <p style="font-size:14px; color:#ccc;"><b>The Future of Telegram Apps</b><br>Mini-apps are changing how we use social media...</p>
             </div>
         </main>
 
         <main id="view-profile" class="view">
-            <div class="profile-hero">
-                <div id="pfp-main" class="pfp-main">?</div>
+            <div style="text-align:center; padding:20px;">
+                <div id="pfp-main" style="width:80px; height:80px; background:var(--primary); border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold;">?</div>
                 <h2 id="name-main" style="margin:0;">Cruiser</h2>
                 <div class="stat-grid">
-                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Posts</span></div>
-                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Followers</span></div>
-                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Following</span></div>
+                    <div class="stat-item"><b style="display:block;">0</b><small style="color:#555;">Posts</small></div>
+                    <div class="stat-item"><b style="display:block;">0</b><small style="color:#555;">Fans</small></div>
+                    <div class="stat-item"><b style="display:block;">0</b><small style="color:#555;">Follow</small></div>
                 </div>
             </div>
         </main>
 
-        <main id="view-ads" class="view">
-            <h3 style="margin-top:0;">Promote</h3>
-            <div class="icon-card" onclick="tg.showAlert('Micro Ads Coming Soon')">
-                <div class="icon-box" style="color:#00f2ff;">⚡</div>
-                <div class="icon-info"><b>Micro Ads</b><span>Fast traffic</span></div>
-            </div>
-            <div class="icon-card" onclick="tg.showAlert('Social Ads Coming Soon')">
-                <div class="icon-box" style="color:#7d2ae8;">🌍</div>
-                <div class="icon-info"><b>Social Ads</b><span>Channel growth</span></div>
-            </div>
-            <div class="icon-card" onclick="tg.showAlert('PTC Ads Coming Soon')">
-                <div class="icon-box" style="color:var(--primary);">🖱️</div>
-                <div class="icon-info"><b>PTC Ads</b><span>Pay-per-click</span></div>
-            </div>
-        </main>
-
         <main id="view-wallet" class="view">
-            <div style="background: linear-gradient(135deg, #111, #000); padding: 30px; border-radius: 25px; border: 1px solid var(--primary); text-align: center;">
-                <small style="color:var(--primary); font-weight:bold;">BALANCE</small>
-                <h1 style="font-size:40px; margin:10px 0;">0 💎</h1>
+            <div style="background:var(--panel); padding:30px; border-radius:25px; border:1px solid var(--primary); text-align:center;">
+                <small style="color:var(--primary);">YOUR BALANCE</small>
+                <h1 style="font-size:45px; margin:10px 0;">0 💎</h1>
                 <button style="width:100%; padding:15px; background:#fff; color:#000; border-radius:12px; font-weight:bold; border:none;">WITHDRAW</button>
             </div>
         </main>
 
-        <main id="view-tasks" class="view">
-            <h3 style="margin-top:0;">Earning</h3>
-            <div class="icon-card">
-                <div class="icon-box">📢</div>
-                <div class="icon-info"><b>Join Channel</b><span style="color:var(--primary);">+500 💎</span></div>
-            </div>
-        </main>
-
-        <div id="video-overlay">
-            <button class="close-vid" onclick="closeVideo()">✕</button>
-            <div id="video-touch-zone" style="height:100%; width:100%; position:relative; display: flex; align-items: center; justify-content: center; background: #000;">
-                <video id="main-player" style="width:100%; height:100%; object-fit: contain;" playsinline loop>
-                    <source id="video-src" src="" type="video/mp4">
+        <div id="shorts-overlay">
+            <button class="close-shorts" onclick="closeShorts()">✕</button>
+            <div id="shorts-touch-zone" style="height:100%; width:100%; display:flex; align-items:center; justify-content:center; background:#000;">
+                <video id="shorts-player" style="width:100%; height:100%; object-fit: contain;" playsinline loop>
+                    <source id="shorts-src" src="" type="video/mp4">
                 </video>
+
                 <div id="ad-break">
-                    <div class="iconic-logo" style="width:70px; height:70px; margin-bottom:20px; border: 2px solid var(--primary);"></div>
-                    <h3 style="letter-spacing:2px;">CRUISE AD BREAK</h3>
-                    <div class="progress-container">
-                        <div id="ad-progress"></div>
-                    </div>
-                    <p id="ad-timer" style="margin-top:10px; font-weight:bold; color:var(--primary);">15s</p>
+                    <div class="iconic-logo" style="width:60px; height:60px; margin-bottom:15px; border:2px solid var(--primary);"></div>
+                    <h3 style="margin:0;">AD BREAK</h3>
+                    <div id="ad-progress-bar"><div id="ad-fill"></div></div>
+                    <p id="ad-timer" style="color:var(--primary); margin-top:10px; font-weight:bold;">15s</p>
                 </div>
             </div>
         </div>
@@ -158,14 +131,14 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        let videosWatched = 0;
-        let currentIdx = 0;
+        let vCount = 0;
+        let curIdx = 0;
         const playlist = [
             "https://www.w3schools.com/html/mov_bbb.mp4",
             "https://www.w3schools.com/html/movie.mp4"
         ];
 
-        // STARTUP (4s TIMER)
+        // 4s LOGO TIMER
         function initApp() {
             document.getElementById('intro-layer').style.transition = "opacity 0.8s";
             document.getElementById('intro-layer').style.opacity = "0";
@@ -183,57 +156,58 @@
         }
         setTimeout(initApp, 4000);
 
-        function openVideo(idx) {
-            if (idx < 0) idx = 0;
+        // SHORTS LOGIC
+        function openShorts(idx) {
+            if (idx < 0) idx = playlist.length - 1;
             if (idx >= playlist.length) idx = 0;
-            currentIdx = idx;
-            videosWatched++;
+            curIdx = idx;
+            vCount++;
 
-            if (videosWatched > 10) { 
-                startAdBreak(); 
+            if (vCount > 10) { 
+                startAd(); 
             } else {
-                document.getElementById('video-overlay').style.display = 'block';
-                const player = document.getElementById('main-player');
-                document.getElementById('video-src').src = playlist[currentIdx];
-                player.load();
-                player.play();
+                document.getElementById('shorts-overlay').style.display = 'block';
+                const p = document.getElementById('shorts-player');
+                document.getElementById('shorts-src').src = playlist[curIdx];
+                p.load();
+                p.play();
             }
         }
 
-        function startAdBreak() {
-            videosWatched = 0;
-            const adScreen = document.getElementById('ad-break');
-            adScreen.style.display = 'flex';
-            document.getElementById('video-overlay').style.display = 'block';
-            let timeLeft = 15;
-            const countdown = setInterval(() => {
-                timeLeft--;
-                document.getElementById('ad-timer').innerText = timeLeft + "s";
-                document.getElementById('ad-progress').style.width = ((15-timeLeft)/15*100) + "%";
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    adScreen.style.display = 'none';
-                    document.getElementById('ad-progress').style.width = "0%";
-                    openVideo(currentIdx);
+        function startAd() {
+            vCount = 0;
+            const ad = document.getElementById('ad-break');
+            ad.style.display = 'flex';
+            document.getElementById('shorts-overlay').style.display = 'block';
+            let t = 15;
+            const timer = setInterval(() => {
+                t--;
+                document.getElementById('ad-timer').innerText = t + "s";
+                document.getElementById('ad-fill').style.width = ((15-t)/15*100) + "%";
+                if (t <= 0) {
+                    clearInterval(timer);
+                    ad.style.display = 'none';
+                    document.getElementById('ad-fill').style.width = "0%";
+                    openShorts(curIdx);
                 }
             }, 1000);
         }
 
-        function closeVideo() {
-            document.getElementById('main-player').pause();
-            document.getElementById('video-overlay').style.display = 'none';
+        function closeShorts() {
+            document.getElementById('shorts-player').pause();
+            document.getElementById('shorts-overlay').style.display = 'none';
         }
 
-        // WIPE (SWIPE) LOGIC
-        let touchStartY = 0;
-        const touchZone = document.getElementById('video-touch-zone');
-        touchZone.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; });
-        touchZone.addEventListener('touchend', e => {
-            const touchEndY = e.changedTouches[0].clientY;
-            const diffY = touchStartY - touchEndY;
-            if (Math.abs(diffY) > 50) {
-                if (diffY > 0) openVideo(currentIdx + 1); // Wipe Up
-                else openVideo(currentIdx - 1); // Wipe Down
+        // --- HORIZONTAL SWIPE (Left/Right) ---
+        let startX = 0;
+        const zone = document.getElementById('shorts-touch-zone');
+        zone.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+        zone.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+            const diffX = startX - endX;
+            if (Math.abs(diffX) > 50) {
+                if (diffX > 0) openShorts(curIdx + 1); // Swipe Left -> Next
+                else openShorts(curIdx - 1); // Swipe Right -> Prev
                 tg.HapticFeedback.impactOccurred('medium');
             }
         });
@@ -247,4 +221,4 @@
         }
     </script>
 </body>
-            </html>
+                    </html>
