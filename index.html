@@ -10,64 +10,45 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
 
-        /* 3D ICONIC LOGO INTRO */
-        #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        /* 3D ICONIC LOGO INTRO (4s Sync) */
+        #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 99999; }
         .logo-container { perspective: 1000px; }
         .iconic-logo { 
-            width: 150px; height: 150px; border-radius: 35px; 
-            animation: iconicEntry 3s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards, breathe 4s ease-in-out infinite 3s;
+            width: 140px; height: 140px; border-radius: 35px; 
+            animation: iconicEntry 2.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
             box-shadow: 0 0 60px rgba(36, 129, 204, 0.4);
         }
         @keyframes iconicEntry { 0% { transform: rotateX(45deg) rotateY(-45deg) translateZ(-500px) scale(0); opacity: 0; } 100% { transform: rotateX(0deg) rotateY(0deg) translateZ(0) scale(1); opacity: 1; } }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-        /* MAIN UI */
+        /* MAIN APP */
         #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1s; }
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(10,10,10,0.95); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); z-index: 100; }
         #page-title { font-weight: 900; letter-spacing: 3px; font-size: 14px; text-transform: uppercase; }
         .nav-btn { background: none; border: none; color: var(--primary); font-size: 24px; cursor: pointer; position: relative; }
         .notif-dot { position: absolute; top: 0; right: 0; width: 9px; height: 9px; background: #ff3b30; border-radius: 50%; border: 2px solid #000; display: none; }
 
-        /* SIDEBAR MENU */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid var(--primary); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; padding: 40px 20px; }
+        /* SIDE MENU */
+        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid var(--primary); transition: 0.4s; z-index: 10000; padding: 40px 20px; }
         #side-menu.active { left: 0; }
         .menu-header { color: var(--primary); letter-spacing: 5px; margin-bottom: 30px; font-size: 22px; font-weight: 900; }
-        .menu-item { width: 100%; padding: 16px; margin-bottom: 12px; background: var(--panel); color: #fff; border: 1px solid var(--border); border-radius: 15px; text-align: left; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 15px; }
-        .menu-item i { font-style: normal; font-size: 20px; filter: drop-shadow(0 0 5px var(--primary)); }
+        .menu-item { width: 100%; padding: 16px; margin-bottom: 12px; background: var(--panel); color: #fff; border: 1px solid var(--border); border-radius: 15px; text-align: left; font-size: 15px; display: flex; align-items: center; gap: 15px; }
 
-        /* VIEW CONTAINER */
+        /* VIEWS */
         .view { display: none; padding: 20px; flex: 1; overflow-y: auto; }
         .view.active { display: block; }
 
-        /* ICONIC CARDS (ADS & TASKS) */
-        .icon-card { 
-            background: var(--panel); border: 1px solid var(--border); padding: 18px; 
-            border-radius: 20px; display: flex; align-items: center; margin-bottom: 15px; 
-            transition: 0.3s;
-        }
-        .icon-card:active { transform: scale(0.97); border-color: var(--primary); }
-        .icon-box { 
-            width: 55px; height: 55px; border-radius: 15px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 24px; margin-right: 18px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
-            border: 1px solid var(--border);
-            box-shadow: inset 0 0 10px rgba(36, 129, 204, 0.2);
-        }
-        .icon-info { flex: 1; }
-        .icon-info b { display: block; font-size: 16px; margin-bottom: 2px; }
+        /* ICONIC CARDS */
+        .icon-card { background: var(--panel); border: 1px solid var(--border); padding: 18px; border-radius: 20px; display: flex; align-items: center; margin-bottom: 15px; }
+        .icon-box { width: 55px; height: 55px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 18px; background: #000; border: 1px solid var(--border); }
+        .icon-info b { display: block; font-size: 16px; }
         .icon-info span { font-size: 12px; color: #666; }
 
-        /* PROFILE */
-        .profile-hero { background: linear-gradient(180deg, #111, #000); padding: 30px 20px; border-radius: 25px; border: 1px solid var(--border); text-align: center; margin-bottom: 20px; }
-        .pfp-main { width: 90px; height: 90px; background: var(--primary); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; border: 3px solid #fff; box-shadow: 0 0 20px rgba(36, 129, 204, 0.3); }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .stat-item { background: #000; padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
-        .stat-v { display: block; color: var(--primary); font-weight: 800; font-size: 18px; }
-        .stat-l { font-size: 9px; color: #555; text-transform: uppercase; }
-
-        /* WALLET CARD */
-        .wallet-card { background: linear-gradient(135deg, #0a0a0a 0%, #2481cc22 100%); border: 1px solid var(--primary); padding: 30px; border-radius: 25px; text-align: center; }
+        /* VIDEO PLAYER */
+        #video-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 20000; }
+        .close-vid { position: absolute; top: 20px; left: 20px; z-index: 201; background: rgba(0,0,0,0.5); border: none; color: #fff; font-size: 24px; border-radius: 50%; width: 40px; height: 40px; }
+        #ad-break { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); flex-direction: column; align-items: center; justify-content: center; z-index: 202; backdrop-filter: blur(15px); }
+        .progress-container { width: 200px; height: 4px; background: #222; border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        #ad-progress { width: 0%; height: 100%; background: var(--primary); transition: linear 1s; }
     </style>
 </head>
 <body>
@@ -90,71 +71,121 @@
         <div id="side-menu">
             <div class="menu-header">MENU</div>
             <div class="menu-list">
-                <button class="menu-item" onclick="showView('cruise')"><i>🚀</i> Cruise</button>
-                <button class="menu-item" onclick="showView('profile')"><i>👤</i> Profile</button>
-                <button class="menu-item" onclick="showView('studio')"><i>📤</i> Studio</button>
-                <button class="menu-item" onclick="showView('ads')"><i>📢</i> Post Ads</button>
-                <button class="menu-item" onclick="showView('tasks')"><i>💰</i> Tasks</button>
-                <button class="menu-item" onclick="showView('wallet')"><i>💎</i> Wallet</button>
+                <button class="menu-item" onclick="showView('cruise')">🚀 Cruise</button>
+                <button class="menu-item" onclick="showView('profile')">👤 Profile</button>
+                <button class="menu-item" onclick="showView('studio')">📤 Studio</button>
+                <button class="menu-item" onclick="showView('ads')">📢 Post Ads</button>
+                <button class="menu-item" onclick="showView('tasks')">💰 Tasks</button>
+                <button class="menu-item" onclick="showView('wallet')">💎 Wallet</button>
             </div>
             <button onclick="toggleMenu()" style="margin-top:40px; background:none; border:none; color:#444; width:100%;">✕ CLOSE</button>
         </div>
 
         <main id="view-cruise" class="view active">
             <div style="margin-top:100px; text-align:center;">
-                <div onclick="openVideo(0)" style="background:linear-gradient(145deg, #111, #222); padding:40px; border-radius:30px; border:1px solid #2481cc; display:inline-block; box-shadow: 0 0 20px rgba(36,129,204,0.2);">
+                <div onclick="openVideo(0)" style="background:linear-gradient(145deg, #111, #222); padding:40px; border-radius:30px; border:1px solid var(--primary); display:inline-block; box-shadow: 0 0 20px rgba(36,129,204,0.2);">
                     <span style="font-size:40px;">🚀</span>
-                    <p style="margin-top:10px; font-weight:900; color:#2481cc; letter-spacing:1px;">START CRUISING</p>
-                </div>
-            </div>
-        </main>
-
-        <main id="view-profile" class="view">
-            <div class="profile-hero">
-                <div id="pfp-main" class="pfp-main">?</div>
-                <h2 id="name-main" style="margin:0;">Cruiser</h2>
-                <div class="stat-grid">
-                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Posts</span></div>
-                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Followers</span></div>
-                    <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Following</span></div>
+                    <p style="margin-top:10px; font-weight:900; color:var(--primary); letter-spacing:1px;">START CRUISING</p>
                 </div>
             </div>
         </main>
 
         <main id="view-ads" class="view">
             <h3 style="margin-top:0;">Promote</h3>
-            <div class="icon-card" onclick="tg.showAlert('Micro Ads Coming Soon')">
+            <div class="icon-card" onclick="tg.showAlert('Create Micro Ad')">
                 <div class="icon-box" style="color:#00f2ff;">⚡</div>
                 <div class="icon-info"><b>Micro Ads</b><span>Fast traffic</span></div>
             </div>
-            <div class="icon-card" onclick="tg.showAlert('Social Ads Coming Soon')">
+            <div class="icon-card" onclick="tg.showAlert('Create Social Ad')">
                 <div class="icon-box" style="color:#7d2ae8;">🌍</div>
                 <div class="icon-info"><b>Social Ads</b><span>Channel growth</span></div>
             </div>
+            <div class="icon-card" onclick="tg.showAlert('Create PTC Ad')">
+                <div class="icon-box" style="color:var(--primary);">🖱️</div>
+                <div class="icon-info"><b>PTC Ads</b><span>Pay-per-click</span></div>
+            </div>
         </main>
 
-        <div id="video-overlay" style="display:none; position:fixed; inset:0; background:#000; z-index:20000;">
-            <button onclick="closeVideo()" style="position:absolute; top:20px; left:20px; z-index:100; background:rgba(0,0,0,0.5); border:none; color:#fff; font-size:24px; border-radius:50%; width:40px; height:40px;">✕</button>
-            <div id="video-container" style="height:100%; width:100%; position:relative;">
+        <div id="video-overlay">
+            <button class="close-vid" onclick="closeVideo()">✕</button>
+            <div style="height:100%; width:100%; position:relative;">
                 <video id="main-player" style="width:100%; height:100%; object-fit: cover;" playsinline loop>
                     <source id="video-src" src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
                 </video>
-
-                <div id="ad-break" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.95); flex-direction:column; align-items:center; justify-content:center; z-index:200; backdrop-filter: blur(15px);">
-                    <div class="iconic-logo" style="width:70px; height:70px; margin-bottom:20px; border: 2px solid #2481cc;"></div>
-                    <h3 style="letter-spacing:2px; color:#fff;">CRUISE AD BREAK</h3>
-                    <div style="width:200px; height:4px; background:#222; border-radius:10px; margin-top:20px; overflow:hidden;">
-                        <div id="ad-progress" style="width:0%; height:100%; background:#2481cc; transition: linear 1s;"></div>
+                <div id="ad-break">
+                    <div class="iconic-logo" style="width:70px; height:70px; margin-bottom:20px; border: 2px solid var(--primary);"></div>
+                    <h3 style="letter-spacing:2px;">CRUISE AD BREAK</h3>
+                    <div class="progress-container">
+                        <div id="ad-progress"></div>
                     </div>
-                    <p id="ad-timer" style="margin-top:10px; font-weight:bold; color:#2481cc;">15s</p>
+                    <p id="ad-timer" style="margin-top:10px; font-weight:bold; color:var(--primary);">15s</p>
                 </div>
             </div>
         </div>
-    </div> ```
+    </div>
 
----
+    <script>
+        const tg = window.Telegram.WebApp;
+        let videosWatched = 0;
+        let currentIdx = 0;
 
-### **Don't forget the Script!**
-Make sure your `<script>` at the bottom has the `openVideo` and `startAdBreak` functions I gave you earlier. Without those, the "Start Cruising" button won't do anything.
+        // 4 SECOND LOGO TIMER
+        function initApp() {
+            document.getElementById('intro-layer').style.transition = "opacity 0.8s";
+            document.getElementById('intro-layer').style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById('intro-layer').style.display = 'none';
+                document.getElementById('main-app').style.display = 'flex';
+                setTimeout(() => { document.getElementById('main-app').style.opacity = "1"; }, 50);
+                tg.expand();
+            }, 800);
+        }
+        setTimeout(initApp, 4000);
 
-**Check this:** Does the app open to the "Start Cruising" button now when you refresh?
+        function openVideo(idx) {
+            currentIdx = idx;
+            videosWatched++;
+            
+            if (videosWatched > 10) { 
+                startAdBreak(); 
+            } else {
+                document.getElementById('video-overlay').style.display = 'block';
+                document.getElementById('main-player').play();
+            }
+        }
+
+        function startAdBreak() {
+            videosWatched = 0;
+            const adScreen = document.getElementById('ad-break');
+            document.getElementById('video-overlay').style.display = 'block';
+            adScreen.style.display = 'flex';
+            
+            let timeLeft = 15;
+            const countdown = setInterval(() => {
+                timeLeft--;
+                document.getElementById('ad-timer').innerText = timeLeft + "s";
+                document.getElementById('ad-progress').style.width = ((15 - timeLeft) / 15 * 100) + "%";
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    adScreen.style.display = 'none';
+                    document.getElementById('ad-progress').style.width = "0%";
+                    openVideo(0); 
+                }
+            }, 1000);
+        }
+
+        function closeVideo() {
+            document.getElementById('main-player').pause();
+            document.getElementById('video-overlay').style.display = 'none';
+        }
+
+        function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
+        function showView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + id).classList.add('active');
+            document.getElementById('page-title').innerText = id;
+            if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
+        }
+    </script>
+</body>
+    </html>
