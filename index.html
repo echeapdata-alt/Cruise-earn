@@ -101,7 +101,12 @@
         </div>
 
         <main id="view-cruise" class="view active">
-            <div style="margin-top:100px; text-align:center; color:#333;">Feed is empty. Follow creators!</div>
+            <div style="margin-top:100px; text-align:center;">
+                <div onclick="openVideo(0)" style="background:linear-gradient(145deg, #111, #222); padding:40px; border-radius:30px; border:1px solid #2481cc; display:inline-block; box-shadow: 0 0 20px rgba(36,129,204,0.2);">
+                    <span style="font-size:40px;">🚀</span>
+                    <p style="margin-top:10px; font-weight:900; color:#2481cc; letter-spacing:1px;">START CRUISING</p>
+                </div>
+            </div>
         </main>
 
         <main id="view-profile" class="view">
@@ -114,106 +119,42 @@
                     <div class="stat-item"><span class="stat-v">0</span><span class="stat-l">Following</span></div>
                 </div>
             </div>
-            <h4 style="border-bottom:1px solid var(--border); padding-bottom:10px;">MY CONTENT</h4>
-            <p style="text-align:center; color:#444; padding-top:20px;">No content posted yet.</p>
         </main>
 
         <main id="view-ads" class="view">
             <h3 style="margin-top:0;">Promote</h3>
-            <div class="icon-card" onclick="tg.showAlert('Create Micro Ad')">
+            <div class="icon-card" onclick="tg.showAlert('Micro Ads Coming Soon')">
                 <div class="icon-box" style="color:#00f2ff;">⚡</div>
-                <div class="icon-info"><b>Micro Ads</b><span>High-speed link traffic</span></div>
+                <div class="icon-info"><b>Micro Ads</b><span>Fast traffic</span></div>
             </div>
-            <div class="icon-card" onclick="tg.showAlert('Create Social Ad')">
+            <div class="icon-card" onclick="tg.showAlert('Social Ads Coming Soon')">
                 <div class="icon-box" style="color:#7d2ae8;">🌍</div>
-                <div class="icon-info"><b>Social Ads</b><span>Channel & Group growth</span></div>
-            </div>
-            <div class="icon-card" onclick="tg.showAlert('Create PTC Ad')">
-                <div class="icon-box" style="color:#2481cc;">🖱️</div>
-                <div class="icon-info"><b>PTC Ads</b><span>Paid-to-click engagement</span></div>
+                <div class="icon-info"><b>Social Ads</b><span>Channel growth</span></div>
             </div>
         </main>
 
-        <main id="view-studio" class="view">
-            <div style="border:2px dashed var(--border); padding:50px 20px; border-radius:25px; text-align:center;">
-                <h3 style="color:var(--primary);">Studio</h3>
-                <p style="color:#666;">Ready to upload your first clip?</p>
-                <button style="background:var(--primary); color:#fff; border:none; padding:12px 30px; border-radius:12px; font-weight:900; margin-top:10px;">UPLOAD</button>
-            </div>
-        </main>
+        <div id="video-overlay" style="display:none; position:fixed; inset:0; background:#000; z-index:20000;">
+            <button onclick="closeVideo()" style="position:absolute; top:20px; left:20px; z-index:100; background:rgba(0,0,0,0.5); border:none; color:#fff; font-size:24px; border-radius:50%; width:40px; height:40px;">✕</button>
+            <div id="video-container" style="height:100%; width:100%; position:relative;">
+                <video id="main-player" style="width:100%; height:100%; object-fit: cover;" playsinline loop>
+                    <source id="video-src" src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                </video>
 
-        <main id="view-notif" class="view">
-            <h3 style="margin-top:0;">Notifications</h3>
-            <div style="background:var(--panel); padding:20px; border-radius:18px; border-left:4px solid var(--primary);">
-                <b>🚢 Welcome to Cruise!</b>
-                <p style="margin:8px 0 0; font-size:14px; color:#888;">Complete tasks and start earning 💎 points.</p>
-            </div>
-        </main>
-
-        <main id="view-tasks" class="view">
-            <h3 style="margin-top:0;">Earning</h3>
-            <div class="icon-card" style="border-left:4px solid #fbb034;">
-                <div class="icon-box">📢</div>
-                <div class="icon-info"><b>Join Channel</b><span style="color:var(--primary);">+500 💎</span></div>
-            </div>
-        </main>
-
-        <main id="view-wallet" class="view">
-            <div class="wallet-card">
-                <small style="color:var(--primary); font-weight:900; letter-spacing: 2px;">TOTAL BALANCE</small>
-                <h1 id="balance-val" style="font-size:48px; margin:15px 0;">0 💎</h1>
-                <button onclick="tg.showAlert('Withdrawals open at 50,000 💎')" style="width:100%; padding:15px; background:#fff; color:#000; border-radius:15px; border:none; font-weight:900; margin-bottom: 20px;">WITHDRAW</button>
-            </div>
-
-            <div class="referral-box" style="margin-top: 20px;">
-                <h4 style="margin: 0 0 10px 0; color: var(--primary);">Invite & Earn</h4>
-                <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Get 500 💎 for every friend who joins Cruise!</p>
-                
-                <div class="link-container">
-                    <input type="text" id="referral-link" readonly value="https://t.me/YourBotName?start=user123" 
-                           style="background:#000; border:1px solid var(--border); color:#fff; padding:12px; border-radius:10px; width:75%; font-size:12px;">
-                    <button onclick="copyRef()" style="background:var(--primary); border:none; color:#fff; border-radius:10px; width:20%; padding:12px; font-weight:bold;">Copy</button>
+                <div id="ad-break" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.95); flex-direction:column; align-items:center; justify-content:center; z-index:200; backdrop-filter: blur(15px);">
+                    <div class="iconic-logo" style="width:70px; height:70px; margin-bottom:20px; border: 2px solid #2481cc;"></div>
+                    <h3 style="letter-spacing:2px; color:#fff;">CRUISE AD BREAK</h3>
+                    <div style="width:200px; height:4px; background:#222; border-radius:10px; margin-top:20px; overflow:hidden;">
+                        <div id="ad-progress" style="width:0%; height:100%; background:#2481cc; transition: linear 1s;"></div>
+                    </div>
+                    <p id="ad-timer" style="margin-top:10px; font-weight:bold; color:#2481cc;">15s</p>
                 </div>
             </div>
-        </main>
+        </div>
+    </div> ```
 
-    <script>
-        const tg = window.Telegram.WebApp;
+---
 
-        function initApp() {
-            document.getElementById('intro-layer').style.transition = "opacity 1s";
-            document.getElementById('intro-layer').style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById('intro-layer').style.display = 'none';
-                document.getElementById('main-app').style.display = 'flex';
-                setTimeout(() => { 
-                    document.getElementById('main-app').style.opacity = "1";
-                    document.getElementById('notif-dot').style.display = 'block'; 
-                }, 50);
-            }, 1000);
+### **Don't forget the Script!**
+Make sure your `<script>` at the bottom has the `openVideo` and `startAdBreak` functions I gave you earlier. Without those, the "Start Cruising" button won't do anything.
 
-            try {
-                tg.expand();
-                tg.ready();
-                if(tg.initDataUnsafe?.user) {
-                    const u = tg.initDataUnsafe.user;
-                    document.getElementById('name-main').innerText = u.first_name;
-                    document.getElementById('pfp-main').innerText = u.first_name[0].toUpperCase();
-                }
-            } catch(e) {}
-        }
-
-        setTimeout(initApp, 7000);
-
-        function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
-
-        function showView(id) {
-            if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + id).classList.add('active');
-            document.getElementById('page-title').innerText = id;
-            if(id === 'notif') document.getElementById('notif-dot').style.display = 'none';
-        }
-    </script>
-</body>
-                    </html>
+**Check this:** Does the app open to the "Start Cruising" button now when you refresh?
