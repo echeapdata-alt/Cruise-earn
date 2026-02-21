@@ -4,185 +4,329 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cruise</title>
+
+    <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
 
-        /* 3D LIVING LOGO INTRO */
-        #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .logo-container { perspective: 1000px; text-align: center; }
-        .iconic-logo { 
-            width: 140px; height: 140px; border-radius: 35px; 
-            animation: iconicEntry 3s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards, breathe 4s ease-in-out infinite 3s;
-            box-shadow: 0 0 50px rgba(36, 129, 204, 0.5);
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, system-ui, sans-serif;
+            overflow: hidden;
         }
-        @keyframes iconicEntry { 0% { transform: rotateX(45deg) rotateY(-45deg) translateZ(-500px) scale(0); opacity: 0; } 100% { transform: rotateX(0deg) rotateY(0deg) translateZ(0) scale(1); opacity: 1; } }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-        /* MAIN APP STRUCTURE */
-        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1s; }
-        
-        /* DYNAMIC NAVBAR */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(10,10,10,0.95); border-bottom: 1px solid #222; backdrop-filter: blur(10px); }
-        #page-title { font-weight: 900; letter-spacing: 3px; font-size: 16px; color: #fff; text-transform: uppercase; }
-        .nav-btn { background: none; border: none; color: #2481cc; font-size: 22px; cursor: pointer; position: relative; }
-        .dot { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: #ff3b30; border-radius: 50%; border: 2px solid #000; display: none; }
+        /* INTRO */
+        #intro-layer {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
 
-        /* MENU (SIDEBAR) */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid #2481cc; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; padding: 40px 20px; }
+        .logo-container { perspective: 1000px; }
+
+        .iconic-logo {
+            width: 140px;
+            height: 140px;
+            border-radius: 35px;
+            animation: iconicEntry 2s ease forwards, breathe 4s ease-in-out infinite 2s;
+            box-shadow: 0 0 50px rgba(36,129,204,0.5);
+        }
+
+        @keyframes iconicEntry {
+            from {
+                transform: rotateX(45deg) rotateY(-45deg) translateZ(-500px) scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: none;
+                opacity: 1;
+            }
+        }
+
+        @keyframes breathe {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* MAIN */
+        #main-app {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(10,10,10,0.95);
+            border-bottom: 1px solid #222;
+        }
+
+        #page-title {
+            font-weight: 900;
+            letter-spacing: 3px;
+            font-size: 16px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #2481cc;
+            font-size: 22px;
+        }
+
+        .dot {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background: #ff3b30;
+            border-radius: 50%;
+            border: 2px solid #000;
+            display: none;
+        }
+
+        /* MENU */
+        #side-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 280px;
+            height: 100%;
+            background: #0a0a0a;
+            border-right: 1px solid #2481cc;
+            transition: .4s;
+            z-index: 10000;
+            padding: 40px 20px;
+        }
+
         #side-menu.active { left: 0; }
-        .menu-title { color: #2481cc; letter-spacing: 4px; margin-bottom: 30px; font-size: 20px; }
-        .menu-item { width: 100%; padding: 16px; margin-bottom: 12px; background: #111; color: #fff; border: 1px solid #222; border-radius: 12px; text-align: left; font-size: 16px; display: flex; align-items: center; gap: 15px; }
+
+        .menu-item {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            color: #fff;
+            text-align: left;
+            font-size: 16px;
+            display: flex;
+            gap: 15px;
+        }
 
         /* VIEWS */
-        .view { display: none; padding: 20px; flex: 1; overflow-y: auto; }
+        .view {
+            display: none;
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
         .view.active { display: block; }
 
-        /* PROFILE UI */
-        .profile-card { background: linear-gradient(145deg, #151515, #050505); padding: 30px 20px; border-radius: 25px; border: 1px solid #222; text-align: center; }
-        .pfp { width: 80px; height: 80px; background: #2481cc; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: bold; border: 3px solid #fff; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 25px; }
-        .stat-box { background: #111; padding: 12px; border-radius: 15px; border: 1px solid #222; }
-        .stat-val { display: block; color: #2481cc; font-size: 18px; font-weight: 800; }
-        .stat-lab { font-size: 9px; color: #555; text-transform: uppercase; }
+        .profile-card {
+            background: linear-gradient(145deg,#151515,#050505);
+            padding: 30px 20px;
+            border-radius: 25px;
+            border: 1px solid #222;
+            text-align: center;
+        }
 
-        /* NOTIFICATIONS */
-        .notif-card { background: #111; padding: 15px; border-radius: 15px; border-left: 4px solid #2481cc; margin-bottom: 10px; }
-        
-        /* STUDIO & TASKS CARDS */
-        .studio-box { border: 2px dashed #222; padding: 40px 20px; border-radius: 20px; text-align: center; color: #444; }
+        .pfp {
+            width: 80px;
+            height: 80px;
+            background: #2481cc;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: bold;
+            border: 3px solid #fff;
+        }
     </style>
 </head>
+
 <body>
 
-    <div id="intro-layer">
-        <div class="logo-container">
-            <img src="logo.png" class="iconic-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
-        </div>
+<!-- INTRO -->
+<div id="intro-layer">
+    <div class="logo-container">
+        <img src="logo.png"
+             class="iconic-logo"
+             onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
+    </div>
+</div>
+
+<!-- APP -->
+<div id="main-app">
+
+<header class="navbar">
+    <button class="nav-btn" onclick="toggleMenu()">☰</button>
+
+    <div id="page-title">CRUISE</div>
+
+    <button class="nav-btn" onclick="showView('notif')">
+        🔔 <div id="notif-dot" class="dot"></div>
+    </button>
+</header>
+
+<!-- MENU -->
+<div id="side-menu">
+
+    <h2 style="color:#2481cc">MENU</h2>
+
+    <button class="menu-item" onclick="showView('cruise')">🚀 Cruise</button>
+    <button class="menu-item" onclick="showView('profile')">👤 Profile</button>
+    <button class="menu-item" onclick="showView('studio')">📤 Studio</button>
+    <button class="menu-item" onclick="showView('tasks')">💰 Tasks</button>
+    <button class="menu-item" onclick="showView('wallet')">💎 Wallet</button>
+
+    <button onclick="toggleMenu()"
+            style="margin-top:30px;background:none;border:none;color:#444;width:100%">
+        ✕ CLOSE
+    </button>
+
+</div>
+
+<!-- VIEWS -->
+
+<main id="view-cruise" class="view active">
+    <p style="margin-top:100px;text-align:center;color:#333">
+        Your cruise feed is empty.
+    </p>
+</main>
+
+<main id="view-profile" class="view">
+
+    <div class="profile-card">
+
+        <div id="user-pfp" class="pfp">?</div>
+
+        <h2 id="user-name">Cruiser</h2>
+
+        <p style="color:#2481cc;font-size:12px">Verified Member</p>
+
     </div>
 
-    <div id="main-app">
-        <header class="navbar">
-            <button class="nav-btn" onclick="toggleMenu()">☰</button>
-            <div id="page-title">CRUISE</div>
-            <button class="nav-btn" onclick="showView('notif')">
-                🔔 <div id="notif-dot" class="dot"></div>
-            </button>
-        </header>
+</main>
 
-        <div id="side-menu">
-            <h2 class="menu-title">MENU</h2>
-            <div class="menu-list">
-                <button class="menu-item" onclick="showView('cruise')"><span>🚀</span> Cruise</button>
-                <button class="menu-item" onclick="showView('profile')"><span>👤</span> Profile</button>
-                <button class="menu-item" onclick="showView('studio')"><span>📤</span> Studio</button>
-                <button class="menu-item" onclick="showView('tasks')"><span>💰</span> Tasks</button>
-                <button class="menu-item" onclick="showView('wallet')"><span>💎</span> Wallet</button>
-            </div>
-            <button onclick="toggleMenu()" style="margin-top:30px; background:none; border:none; color:#444; width:100%;">✕ CLOSE</button>
-        </div>
+<main id="view-notif" class="view">
+    <h3>Notifications</h3>
 
-        <main id="view-cruise" class="view active">
-            <div style="margin-top:100px; text-align:center; color:#333;">
-                <p>Your cruise feed is empty.<br>Start following creators.</p>
-            </div>
-        </main>
-
-        <main id="view-profile" class="view">
-            <div class="profile-card">
-                <div id="user-pfp" class="pfp">?</div>
-                <h2 id="user-name" style="margin:0;">Cruiser</h2>
-                <p style="color:#2481cc; font-size:12px; margin-top:5px;">Verified Member</p>
-                <div class="stat-grid">
-                    <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Posts</span></div>
-                    <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Followers</span></div>
-                    <div class="stat-box"><span class="stat-val">0</span><span class="stat-lab">Following</span></div>
-                </div>
-            </div>
-            <h4 style="margin: 25px 0 10px; border-bottom:1px solid #222; padding-bottom:10px;">My Content</h4>
-            <p style="text-align:center; color:#444; font-size:14px; margin-top:30px;">No content posted yet.</p>
-        </main>
-
-        <main id="view-studio" class="view">
-            <div class="studio-box">
-                <h3 style="color:#2481cc;">Creator Studio</h3>
-                <p>Post videos and earn points from your fans.</p>
-                <button style="background:#2481cc; color:#fff; border:none; padding:12px 24px; border-radius:10px; font-weight:bold; margin-top:15px;">Upload Now</button>
-            </div>
-        </main>
-
-        <main id="view-notif" class="view">
-            <h3 style="margin-top:0;">Notifications</h3>
-            <div class="notif-card">
-                <b>🚢 Welcome to Cruise!</b>
-                <p style="margin:5px 0 0; font-size:13px; color:#888;">Your journey starts here. Explore the feed and complete tasks to earn 💎.</p>
-            </div>
-        </main>
-
-        <main id="view-tasks" class="view">
-            <h3 style="margin-top:0;">Earn Points</h3>
-            <div style="background:#111; padding:20px; border-radius:15px; border:1px solid #222; text-align:center;">
-                <p style="color:#666;">No tasks available right now.</p>
-            </div>
-        </main>
-
-        <main id="view-wallet" class="view">
-            <div style="background:linear-gradient(135deg, #111, #2481cc33); padding:30px; border-radius:20px; text-align:center; border:1px solid #2481cc;">
-                <small style="color:#2481cc; letter-spacing:2px;">BALANCE</small>
-                <h1 style="margin:10px 0;">0 💎</h1>
-                <button style="width:100%; background:#fff; color:#000; border:none; padding:15px; border-radius:12px; font-weight:bold;">Withdraw</button>
-            </div>
-        </main>
+    <div style="background:#111;padding:15px;border-radius:15px">
+        🚢 Welcome to Cruise!
     </div>
+</main>
 
-    <script>
-        const tg = window.Telegram.WebApp;
+<main id="view-studio" class="view">
+    <p>Creator Studio</p>
+</main>
 
-        // The "Premium" Launcher
-        function launchApp() {
-            document.getElementById('intro-layer').style.transition = "opacity 0.8s";
-            document.getElementById('intro-layer').style.opacity = "0";
-            
-            setTimeout(() => {
-                document.getElementById('intro-layer').style.display = 'none';
-                document.getElementById('main-app').style.display = 'flex';
-                setTimeout(() => { 
-                    document.getElementById('main-app').style.opacity = "1";
-                    document.getElementById('notif-dot').style.display = 'block'; // Default welcome dot
-                }, 50);
-            }, 800);
+<main id="view-tasks" class="view">
+    <p>No tasks yet</p>
+</main>
 
-            // Set User Data
-            try {
-                tg.expand();
-                tg.ready();
-                if(tg.initDataUnsafe?.user) {
-                    const u = tg.initDataUnsafe.user;
-                    document.getElementById('user-name').innerText = u.first_name;
-                    document.getElementById('user-pfp').innerText = u.first_name[0].toUpperCase();
-                }
-            } catch(e) {}
-        }
+<main id="view-wallet" class="view">
+    <h2>0 💎</h2>
+</main>
 
-        // Wait 5 seconds for the 3D logo to "shine" before launching
-        setTimeout(launchApp, 5000);
+</div>
 
-        function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
+<!-- SCRIPT -->
+<script>
 
-        function showView(viewId) {
-            if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
-            
-            // Switch Active View
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            
-            // Update Top Title
-            document.getElementById('page-title').innerText = viewId;
-            
-            // Clear Dot if viewing notifications
-            if(viewId === 'notif') document.getElementById('notif-dot').style.display = 'none';
-        }
-    </script>
+const tg = window.Telegram.WebApp;
+
+/* IMPORTANT: READY IMMEDIATELY */
+tg.ready();
+tg.expand();
+
+
+/* START APP */
+setTimeout(startApp, 2000);
+
+
+function startApp() {
+
+    const intro = document.getElementById('intro-layer');
+    const app = document.getElementById('main-app');
+
+    intro.style.opacity = "0";
+
+    setTimeout(() => {
+
+        intro.style.display = "none";
+
+        app.style.display = "flex";
+
+        setTimeout(() => {
+            app.style.opacity = "1";
+            document.getElementById('notif-dot').style.display = "block";
+        }, 50);
+
+    }, 600);
+
+
+    /* USER INFO */
+    if (tg.initDataUnsafe?.user) {
+
+        const u = tg.initDataUnsafe.user;
+
+        document.getElementById('user-name').innerText = u.first_name;
+
+        document.getElementById('user-pfp').innerText =
+            u.first_name[0].toUpperCase();
+    }
+
+}
+
+
+/* MENU */
+function toggleMenu() {
+    document.getElementById('side-menu')
+        .classList.toggle('active');
+}
+
+
+/* NAV */
+function showView(id) {
+
+    toggleMenu();
+
+    document.querySelectorAll('.view')
+        .forEach(v => v.classList.remove('active'));
+
+    document.getElementById('view-' + id)
+        .classList.add('active');
+
+    document.getElementById('page-title')
+        .innerText = id.toUpperCase();
+
+    if (id === 'notif')
+        document.getElementById('notif-dot').style.display = 'none';
+}
+
+</script>
+
 </body>
-                </html>
+    </html>
