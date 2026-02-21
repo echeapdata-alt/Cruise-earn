@@ -1,15 +1,23 @@
 const tg = window.Telegram.WebApp;
-tg.expand(); // Make the app full screen
+tg.expand();
 
-// Set the username from Telegram
-const user = tg.initDataUnsafe?.user;
-if (user) {
-    document.getElementById('username').innerText = user.first_name;
+// 1. Loading Simulation
+window.onload = () => {
+    setTimeout(() => {
+        document.getElementById('splash-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+    }, 3000); // 3 seconds of "loading" for the iconic feel
+};
+
+// 2. Menu Toggle
+function toggleMenu() {
+    const menu = document.getElementById('side-menu');
+    menu.classList.toggle('menu-open');
 }
 
+// 3. Section Switcher
 function showSection(name) {
+    toggleMenu(); // Close menu after clicking
     const content = document.getElementById('content');
-    if(name === 'tasks') content.innerHTML = "<h3>Earn by following channels...</h3>";
-    if(name === 'cruise') content.innerHTML = "<h3>Watch & Earn Cruise Points</h3>";
-    if(name === 'upload') content.innerHTML = "<h3>Upload your Funny Clips</h3>";
+    // Logic to load sections...
 }
