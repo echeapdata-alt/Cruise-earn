@@ -1,28 +1,28 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// Splash sequence
+// 3-Second 3D Intro Logic
 window.addEventListener('load', () => {
     setTimeout(() => {
-        document.getElementById('splash-screen').style.display = 'none';
+        // Hide the 3D layer
+        document.getElementById('intro-layer').style.display = 'none';
+        // Show the actual app
         document.getElementById('main-app').style.display = 'block';
-    }, 2500);
+        // Re-enable scrolling for the feed
+        document.body.style.overflow = 'auto';
+    }, 3000); 
 });
 
-// Menu Toggle
 function toggleMenu() {
-    document.getElementById('side-menu').classList.toggle('open');
+    document.getElementById('side-menu').classList.toggle('show');
 }
 
 function showSection(section) {
-    toggleMenu(); // Close menu
-    const feed = document.getElementById('feed-container');
-    
-    // Switch content based on button click
-    if(section === 'tasks') {
-        feed.innerHTML = "<h2>Active Tasks</h2><div class='video-card'>Task: Follow @OurBot (+50 pts)</div>";
-    } else if(section === 'home') {
-        location.reload(); // Returns to video feed
+    toggleMenu();
+    const content = document.getElementById('feed-area');
+    if (section === 'tasks') {
+        content.innerHTML = "<div class='post-card'><h2>Tasks</h2><p>Follow channels to earn!</p></div>";
+    } else {
+        location.reload();
     }
-    // Add more section logic here
 }
