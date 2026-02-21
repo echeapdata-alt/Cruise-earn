@@ -1,28 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cruise Earn</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
     <div id="splash-screen">
-        <img src="logo.png" alt="Cruise Earn" class="pulse-logo">
-        <div class="loader-bar"><div class="progress"></div></div>
-    </div>
-
-    <div id="side-menu" class="menu-closed">
-        <button class="close-btn" onclick="toggleMenu()">×</button>
-        <div class="menu-links">
-            <a href="#" onclick="showSection('tasks')">💰 Earn Points</a>
-            <a href="#" onclick="showSection('cruise')">📺 Watch Feeds</a>
-            <a href="#" onclick="showSection('upload')">🚀 Studio Upload</a>
-            <a href="#" onclick="showSection('wallet')">🏦 My Wallet</a>
-        </div>
+        <img src="logo.png" alt="Logo" class="pulse-logo">
     </div>
 
     <div id="main-app" style="display:none;">
-        <header>
+        <header class="navbar">
+            <div class="logo-text">CRUISE</div>
             <button class="menu-trigger" onclick="toggleMenu()">☰</button>
-            <span class="brand-name">Cruise Earn</span>
         </header>
-        
-        <main id="content">
-            </main>
-    </div>
 
+        <main id="feed-container">
+            <div class="video-card">
+                <div class="video-header">
+                    <span class="user-tag">@creator_one</span>
+                </div>
+                <div class="video-body">
+                    <p>Fetching latest funny clips...</p>
+                </div>
+                <div class="video-footer">
+                    <button class="watch-btn">Watch to Earn 10pts</button>
+                </div>
+            </div>
+        </main>
+
+        <div id="side-menu">
+            <div class="menu-header">
+                <h3>Dashboard</h3>
+                <button onclick="toggleMenu()">✕</button>
+            </div>
+            <div class="menu-items">
+                <button onclick="showSection('home')">🏠 Home Feed</button>
+                <button onclick="showSection('tasks')">💰 Earn Points</button>
+                <button onclick="showSection('upload')">📤 Studio Upload</button>
+                <button onclick="showSection('wallet')">💎 My Wallet</button>
+                <button onclick="showSection('profile')">👤 My Profile</button>
+            </div>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
+                    </html>
