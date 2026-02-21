@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -11,20 +11,20 @@
     <div id="intro-layer">
         <div class="stage">
             <img src="logo.png" alt="Logo" class="floating-logo">
-            <div class="shadow"></div>
+            <p style="margin-top:20px; color:#2481cc; font-weight:bold;">CRUISING...</p>
         </div>
     </div>
 
-    <div id="main-app" style="display:none; opacity:0; transition: opacity 0.5s;">
+    <div id="main-app" style="display:none;">
         <header class="navbar">
             <button class="menu-trigger" onclick="toggleMenu()">☰</button>
             <div class="brand">CRUISE</div>
-            <div class="header-spacer"></div> 
+            <div style="width:30px;"></div>
         </header>
 
         <div id="side-menu">
             <div class="menu-header">
-                <h3>Menu</h3>
+                <h3>MENU</h3>
                 <button onclick="toggleMenu()">✕</button>
             </div>
             <div class="menu-items">
@@ -35,24 +35,22 @@
             </div>
         </div>
 
-        <main id="app-content">
-            <div id="feed-view">
-                <div class="v-card">
-                    <div class="v-user">@cruise_admin</div>
-                    <div class="v-frame"><span>[ Video Feed Active ]</span></div>
-                    <div class="v-footer">
-                        <button class="claim-btn">Claim 10 Pts</button>
-                    </div>
+        <main id="feed-view">
+            <div class="v-card">
+                <div class="v-user">@cruise_admin</div>
+                <div class="v-frame"><span>Video Content Active</span></div>
+                <div class="v-footer">
+                    <button class="claim-btn">Claim 10 Pts</button>
                 </div>
             </div>
-
-            <div id="studio-view" style="display:none;">
-                <h2>Studio</h2>
-                <p>Upload your videos here.</p>
-            </div>
         </main>
+
+        <div id="studio-view" style="display:none; padding:20px;">
+            <h2>Studio</h2>
+            <p>Upload section is ready.</p>
+        </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-</html>
+            </html>
