@@ -38,7 +38,7 @@
         
         /* CONTENT GRID */
         .content-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 10px; }
-        .grid-item { aspect-ratio: 9/16; background: #111; border-radius: 5px; border: 1px solid #222; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #333; }
+        .grid-item { aspect-ratio: 9/16; background: #111; border-radius: 8px; border: 1px solid #222; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #333; }
 
         /* NOTIFICATION LIST */
         .notif-item { background: #111; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid #2481cc; display: flex; align-items: center; }
@@ -82,40 +82,32 @@
         </div>
 
         <main id="home-view" class="view-section active-view">
-            <p style="text-align:center; color:#444;">No new videos in your cruise yet.</p>
+            <p style="text-align:center; color:#444; margin-top:50px;">Your cruise feed is empty.<br>Follow creators to see content!</p>
         </main>
 
         <main id="notif-view" class="view-section">
             <h2 style="margin-top:0;">Notifications</h2>
             <div class="notif-item">
-                <div class="notif-icon">🚀</div>
-                <div class="notif-text">Welcome to <b>Cruise</b>! Start watching to earn.<span class="notif-time">Just now</span></div>
-            </div>
-            <div class="notif-item">
-                <div class="notif-icon">📈</div>
-                <div class="notif-text"><b>@cruise_king</b> just posted a viral clip!<span class="notif-time">2 mins ago</span></div>
+                <div class="notif-icon">🚢</div>
+                <div class="notif-text">Welcome to <b>Cruise</b>! Your journey to earning starts here. Follow creators and complete tasks to grow.<span class="notif-time">Just now</span></div>
             </div>
         </main>
 
         <main id="profile-view" class="view-section">
             <div class="profile-header">
-                <div id="pfp" class="profile-pfp">U</div>
-                <h2 id="p-name" style="margin:0;">User</h2>
-                <p style="color:#555; font-size:13px; margin:5px 0;">@cruiser_id</p>
+                <div id="pfp" class="profile-pfp">?</div>
+                <h2 id="p-name" style="margin:0;">Cruiser</h2>
+                <p style="color:#555; font-size:13px; margin:5px 0;">New Member</p>
             </div>
 
             <div class="stat-bar">
                 <div class="stat-box"><span class="stat-num">0</span><span class="stat-label">Posts</span></div>
-                <div class="stat-box"><span class="stat-num">1.2k</span><span class="stat-label">Followers</span></div>
-                <div class="stat-box"><span class="stat-num">450</span><span class="stat-label">Following</span></div>
+                <div class="stat-box"><span class="stat-num">0</span><span class="stat-label">Followers</span></div>
+                <div class="stat-box"><span class="stat-num">0</span><span class="stat-label">Following</span></div>
             </div>
 
-            <h4 style="margin-bottom:10px; border-bottom: 1px solid #222; padding-bottom:5px;">My Content</h4>
-            <div class="content-grid">
-                <div class="grid-item">Clip 1</div>
-                <div class="grid-item">Clip 2</div>
-                <div class="grid-item">Clip 3</div>
-            </div>
+            <h4 style="margin-bottom:15px; border-bottom: 1px solid #222; padding-bottom:5px;">My Content</h4>
+            <p style="text-align:center; color:#333; font-size:14px; margin-top:20px;">No content posted yet.</p>
         </main>
     </div>
 
@@ -128,7 +120,8 @@
             document.getElementById('main-app').style.display = 'flex';
             setTimeout(() => { 
                 document.getElementById('main-app').style.opacity = '1';
-                document.getElementById('notif-dot').style.display = 'block'; // New notification arrives!
+                // Show red dot for the initial welcome message
+                document.getElementById('notif-dot').style.display = 'block';
             }, 50);
         }, 7000);
 
@@ -136,22 +129,19 @@
 
         function showSection(id) {
             if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
-            
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             document.getElementById(id + '-view').classList.add('active-view');
             
-            // If they open notifications, hide the red dot
             if(id === 'notif') {
                 document.getElementById('notif-dot').style.display = 'none';
             }
         }
 
-        // Pulling Telegram Name
         const user = tg.initDataUnsafe?.user;
         if(user) {
             document.getElementById('p-name').innerText = user.first_name;
-            document.getElementById('pfp').innerText = user.first_name[0];
+            document.getElementById('pfp').innerText = user.first_name[0].toUpperCase();
         }
     </script>
 </body>
-                                                                    </html>
+</html>
