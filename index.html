@@ -11,60 +11,51 @@
 
         /* 7s INTRO */
         #intro-layer { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-        .logo-wrapper { position: relative; animation: breathe 4s ease-in-out infinite 3s; }
+        .logo-wrapper { position: relative; animation: breathe 4s infinite 3s; }
         .floating-logo { width: 170px; height: 170px; border-radius: 40px; animation: iconic3D 3s forwards; box-shadow: 0 0 60px rgba(36, 129, 204, 0.5); }
         @keyframes iconic3D { 0% { transform: rotateX(50deg) rotateY(-50deg) translateZ(-600px) scale(0); opacity: 0; } 100% { transform: rotateX(0deg) rotateY(0deg) translateZ(0) scale(1); opacity: 1; } }
         @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
         /* MAIN UI */
-        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1.2s ease; }
-        
-        .navbar { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 15px 20px; background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(15px); 
-            border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100;
-        }
-        .nav-left { display: flex; align-items: center; }
-        .menu-btn, .notif-btn { background: none; border: none; color: #2481cc; font-size: 24px; cursor: pointer; padding: 5px; }
+        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1.2s; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(15,15,15,0.95); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+        .nav-left, .nav-right { display: flex; align-items: center; }
+        .menu-btn, .notif-btn { background: none; border: none; color: #2481cc; font-size: 24px; cursor: pointer; position: relative; }
+        .notif-dot { position: absolute; top: 2px; right: 2px; width: 10px; height: 10px; background: #ff3b30; border-radius: 50%; border: 2px solid #000; display: none; }
         .brand-text { font-weight: 800; letter-spacing: 3px; font-size: 18px; margin-left: 10px; }
-        
-        /* NOTIFICATION DOT LOGIC */
-        .notif-wrapper { position: relative; display: flex; align-items: center; }
-        .notif-dot { 
-            position: absolute; top: 6px; right: 6px; 
-            width: 10px; height: 10px; background: #ff3b30; 
-            border-radius: 50%; border: 2px solid #000; 
-            display: none; /* Hidden by default */
-        }
-
-        /* SIDEBAR */
-        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid #2481cc; transition: 0.5s; z-index: 10000; padding: 30px 20px; }
-        #side-menu.active { left: 0; }
-        .menu-items button { width: 100%; padding: 18px; margin-bottom: 15px; background: #151515; color: #fff; border: 1px solid #222; border-radius: 15px; text-align: left; font-size: 16px; font-weight: 600; }
 
         /* VIEWS */
         .view-section { padding: 20px; overflow-y: auto; flex: 1; display: none; }
         .active-view { display: block; }
+
+        /* PROFILE SECTION */
+        .profile-header { text-align: center; padding-bottom: 20px; }
+        .profile-pfp { width: 90px; height: 90px; background: #2481cc; border-radius: 50%; margin: 0 auto 15px; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; }
+        .stat-bar { display: flex; justify-content: space-around; margin: 20px 0; background: #111; padding: 15px; border-radius: 15px; border: 1px solid #222; }
+        .stat-box { text-align: center; }
+        .stat-num { display: block; font-size: 18px; font-weight: 800; color: #2481cc; }
+        .stat-label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* FEED CARD */
-        .card { background: #111; border-radius: 25px; padding: 15px; border: 1px solid #222; margin-bottom: 30px; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .mini-avatar { width: 35px; height: 35px; background: #2481cc; border-radius: 50%; margin-right: 10px; }
-        .follow-btn { background: transparent; border: 1px solid #2481cc; color: #2481cc; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .follow-btn.active { background: #2481cc; color: #fff; }
-        .video-box { height: 400px; background: #050505; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #333; font-weight: 800; border: 1px dashed #222; }
-        .earn-btn { width: 100%; margin-top: 15px; background: linear-gradient(90deg, #2481cc, #005fa3); color: #fff; border: none; padding: 18px; border-radius: 15px; font-weight: 900; }
+        /* CONTENT GRID */
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 10px; }
+        .grid-item { aspect-ratio: 9/16; background: #111; border-radius: 5px; border: 1px solid #222; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #333; }
+
+        /* NOTIFICATION LIST */
+        .notif-item { background: #111; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid #2481cc; display: flex; align-items: center; }
+        .notif-icon { margin-right: 15px; font-size: 20px; }
+        .notif-text b { color: #2481cc; }
+        .notif-time { font-size: 10px; color: #555; display: block; margin-top: 4px; }
+
+        /* SIDEBAR */
+        #side-menu { position: fixed; top: 0; left: -100%; width: 280px; height: 100%; background: #0a0a0a; border-right: 1px solid #2481cc; transition: 0.5s; z-index: 10000; padding: 30px 20px; }
+        #side-menu.active { left: 0; }
+        .menu-items button { width: 100%; padding: 18px; margin-bottom: 15px; background: #151515; color: #fff; border: 1px solid #222; border-radius: 15px; text-align: left; font-size: 16px; }
     </style>
 </head>
 <body>
 
     <div id="intro-layer">
-        <div class="stage">
-            <div class="logo-wrapper">
-                <img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
-            </div>
-            <div style="width: 120px; height: 12px; background: rgba(36,129,204,0.7); margin-top: 45px; border-radius: 50%; filter: blur(20px);"></div>
-        </div>
+        <div class="stage"><div class="logo-wrapper"><img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'"></div></div>
     </div>
 
     <div id="main-app">
@@ -74,10 +65,9 @@
                 <div class="brand-text">CRUISE</div>
             </div>
             <div class="nav-right">
-                <div class="notif-wrapper" onclick="openNotifications()">
-                    <button class="notif-btn">🔔</button>
-                    <div id="notif-dot" class="notif-dot"></div>
-                </div>
+                <button class="notif-btn" onclick="showSection('notif')">
+                    🔔 <div id="notif-dot" class="notif-dot"></div>
+                </button>
             </div>
         </header>
 
@@ -92,24 +82,39 @@
         </div>
 
         <main id="home-view" class="view-section active-view">
-            <div class="card">
-                <div class="card-header">
-                    <div style="display:flex; align-items:center;">
-                        <div class="mini-avatar"></div>
-                        <span style="font-weight:bold;">@cruise_king</span>
-                    </div>
-                    <button id="f1" class="follow-btn" onclick="toggleFollow('f1')">Follow</button>
-                </div>
-                <div class="video-box">VIDEO CONTENT</div>
-                <button class="earn-btn" onclick="tg.showAlert('10 Points Added! 💎')">CLAIM 10 POINTS</button>
+            <p style="text-align:center; color:#444;">No new videos in your cruise yet.</p>
+        </main>
+
+        <main id="notif-view" class="view-section">
+            <h2 style="margin-top:0;">Notifications</h2>
+            <div class="notif-item">
+                <div class="notif-icon">🚀</div>
+                <div class="notif-text">Welcome to <b>Cruise</b>! Start watching to earn.<span class="notif-time">Just now</span></div>
+            </div>
+            <div class="notif-item">
+                <div class="notif-icon">📈</div>
+                <div class="notif-text"><b>@cruise_king</b> just posted a viral clip!<span class="notif-time">2 mins ago</span></div>
             </div>
         </main>
 
         <main id="profile-view" class="view-section">
-            <div style="background: #111; border: 1px solid #2481cc; border-radius: 25px; padding: 30px; text-align: center;">
-                <div id="u-avatar" style="width:70px; height:70px; background:#2481cc; border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:bold;">U</div>
-                <h3 id="u-name" style="margin:0;">User</h3>
-                <p style="color:#555; font-size:12px;">Rank: #1,204</p>
+            <div class="profile-header">
+                <div id="pfp" class="profile-pfp">U</div>
+                <h2 id="p-name" style="margin:0;">User</h2>
+                <p style="color:#555; font-size:13px; margin:5px 0;">@cruiser_id</p>
+            </div>
+
+            <div class="stat-bar">
+                <div class="stat-box"><span class="stat-num">0</span><span class="stat-label">Posts</span></div>
+                <div class="stat-box"><span class="stat-num">1.2k</span><span class="stat-label">Followers</span></div>
+                <div class="stat-box"><span class="stat-num">450</span><span class="stat-label">Following</span></div>
+            </div>
+
+            <h4 style="margin-bottom:10px; border-bottom: 1px solid #222; padding-bottom:5px;">My Content</h4>
+            <div class="content-grid">
+                <div class="grid-item">Clip 1</div>
+                <div class="grid-item">Clip 2</div>
+                <div class="grid-item">Clip 3</div>
             </div>
         </main>
     </div>
@@ -118,46 +123,35 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Start App Logic
         setTimeout(() => {
             document.getElementById('intro-layer').style.display = 'none';
             document.getElementById('main-app').style.display = 'flex';
-            setTimeout(() => { document.getElementById('main-app').style.opacity = '1'; }, 50);
-
-            // MOCK: Receive a notification after 5 seconds of browsing
-            setTimeout(receiveNotification, 5000);
+            setTimeout(() => { 
+                document.getElementById('main-app').style.opacity = '1';
+                document.getElementById('notif-dot').style.display = 'block'; // New notification arrives!
+            }, 50);
         }, 7000);
-
-        function receiveNotification() {
-            const dot = document.getElementById('notif-dot');
-            dot.style.display = 'block'; // Only shows when there's a notification
-            tg.HapticFeedback.notificationOccurred('warning');
-        }
-
-        function openNotifications() {
-            const dot = document.getElementById('notif-dot');
-            dot.style.display = 'none'; // Clear the dot once viewed
-            tg.showAlert("🔔 New Update:\nYour favorite creator @cruise_king just posted!");
-        }
 
         function toggleMenu() { document.getElementById('side-menu').classList.toggle('active'); }
 
         function showSection(id) {
-            toggleMenu();
+            if(document.getElementById('side-menu').classList.contains('active')) toggleMenu();
+            
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active-view'));
             document.getElementById(id + '-view').classList.add('active-view');
+            
+            // If they open notifications, hide the red dot
+            if(id === 'notif') {
+                document.getElementById('notif-dot').style.display = 'none';
+            }
         }
 
-        function toggleFollow(id) {
-            const btn = document.getElementById(id);
-            if(btn.innerText === "Follow") {
-                btn.innerText = "Following";
-                btn.classList.add('active');
-            } else {
-                btn.innerText = "Follow";
-                btn.classList.remove('active');
-            }
+        // Pulling Telegram Name
+        const user = tg.initDataUnsafe?.user;
+        if(user) {
+            document.getElementById('p-name').innerText = user.first_name;
+            document.getElementById('pfp').innerText = user.first_name[0];
         }
     </script>
 </body>
-</html>
+                                                                    </html>
