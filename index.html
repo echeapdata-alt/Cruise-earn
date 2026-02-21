@@ -13,7 +13,7 @@
             overflow: hidden; 
         }
 
-        /* 5-SECOND ICONIC INTRO */
+        /* 7-SECOND LIVING LOGO INTRO */
         #intro-layer { 
             position: fixed; inset: 0; background: #000; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -25,81 +25,97 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
+        .logo-wrapper {
+            position: relative;
+            /* Breathing Animation */
+            animation: breathe 4s ease-in-out infinite 3s; 
+        }
+
         .floating-logo { 
-            width: 160px; height: 160px;
-            border-radius: 35px;
+            width: 170px; height: 170px;
+            border-radius: 40px;
             object-fit: cover;
-            /* Animation timing adjusted for 5 seconds total */
-            animation: iconic3D 5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-            box-shadow: 0 0 50px rgba(36, 129, 204, 0.4);
+            /* Entry Animation */
+            animation: iconic3D 3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            box-shadow: 0 0 60px rgba(36, 129, 204, 0.5);
+        }
+
+        /* Shine Effect Overlay */
+        .shine {
+            position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg);
+            animation: shineSweep 3s ease-in-out infinite 3.5s;
         }
 
         @keyframes iconic3D {
-            0% { 
-                transform: rotateX(45deg) rotateY(-45deg) translateZ(-500px) scale(0);
-                opacity: 0; 
-            }
-            30% { 
-                transform: rotateX(-15deg) rotateY(15deg) translateZ(50px) scale(1.1);
-                opacity: 1;
-            }
-            /* Stays still and glorious from 50% to 100% */
-            50%, 100% { 
-                transform: rotateX(0deg) rotateY(0deg) translateZ(0) scale(1);
-                opacity: 1;
-            }
+            0% { transform: rotateX(50deg) rotateY(-50deg) translateZ(-600px) scale(0); opacity: 0; }
+            100% { transform: rotateX(0deg) rotateY(0deg) translateZ(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shineSweep {
+            0% { left: -100%; }
+            100% { left: 200%; }
         }
 
         .logo-glow {
-            width: 100px; height: 10px;
-            background: rgba(36, 129, 204, 0.6);
-            margin-top: 40px; border-radius: 50%;
-            filter: blur(15px);
-            animation: glowPulse 2.5s infinite ease-in-out;
+            width: 120px; height: 12px;
+            background: rgba(36, 129, 204, 0.7);
+            margin-top: 45px; border-radius: 50%;
+            filter: blur(20px);
+            animation: glowPulse 4s infinite ease-in-out 3s;
         }
 
         @keyframes glowPulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.8); opacity: 0.7; }
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(2); opacity: 0.8; }
         }
 
         /* MAIN UI */
-        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1s ease; }
+        #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: opacity 1.2s ease; }
 
         .navbar { 
             display: flex; align-items: center; padding: 15px 20px; 
-            background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(10px);
+            background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(15px);
             border-bottom: 1px solid #222; position: sticky; top: 0;
         }
         
-        .menu-btn { background: none; border: none; color: #2481cc; font-size: 28px; cursor: pointer; padding-right: 15px; }
-        .brand-text { font-weight: 800; letter-spacing: 3px; font-size: 18px; }
+        .menu-btn { background: none; border: none; color: #2481cc; font-size: 30px; cursor: pointer; padding-right: 15px; }
+        .brand-text { font-weight: 800; letter-spacing: 4px; font-size: 20px; }
 
         /* SIDEBAR (LEFT) */
         #side-menu {
             position: fixed; top: 0; left: -100%; width: 280px; height: 100%;
             background: #0a0a0a; border-right: 1px solid #2481cc;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; padding: 30px 20px;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10000; padding: 30px 20px;
         }
         #side-menu.active { left: 0; }
         .menu-items button { 
-            width: 100%; padding: 18px; margin-bottom: 12px; 
+            width: 100%; padding: 18px; margin-bottom: 15px; 
             background: #151515; color: #fff; border: 1px solid #222; 
-            border-radius: 15px; text-align: left; font-size: 16px;
+            border-radius: 15px; text-align: left; font-size: 16px; font-weight: 600;
         }
 
         /* FEED */
-        .feed { padding: 15px; overflow-y: auto; flex: 1; }
-        .card { background: #111; border-radius: 20px; padding: 15px; border: 1px solid #222; margin-bottom: 25px; }
-        .video-placeholder { height: 400px; background: #050505; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; }
-        .earn-btn { width: 100%; margin-top: 15px; background: linear-gradient(90deg, #2481cc, #005fa3); color: #fff; border: none; padding: 16px; border-radius: 12px; font-weight: 800; }
+        .feed { padding: 20px; overflow-y: auto; flex: 1; }
+        .card { background: #111; border-radius: 25px; padding: 20px; border: 1px solid #222; margin-bottom: 30px; }
+        .video-placeholder { height: 450px; background: #050505; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #333; font-weight: 800; border: 1px dashed #222; }
+        .earn-btn { width: 100%; margin-top: 20px; background: linear-gradient(90deg, #2481cc, #005fa3); color: #fff; border: none; padding: 18px; border-radius: 15px; font-weight: 900; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <div id="intro-layer">
         <div class="stage">
-            <img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
+            <div class="logo-wrapper">
+                <img src="logo.png" class="floating-logo" onerror="this.src='https://via.placeholder.com/150?text=CRUISE'">
+                <div class="shine"></div>
+            </div>
             <div class="logo-glow"></div>
         </div>
     </div>
@@ -111,21 +127,22 @@
         </header>
 
         <div id="side-menu">
-            <h2 style="color:#2481cc; margin-bottom:30px;">Menu</h2>
+            <h2 style="color:#2481cc; margin-bottom:40px; letter-spacing:1px;">CRUISE MENU</h2>
             <div class="menu-items">
                 <button onclick="toggleMenu()">🏠 Home Feed</button>
-                <button onclick="alert('Studio Open')">📤 Studio</button>
-                <button onclick="alert('Tasks Open')">💰 Tasks</button>
-                <button onclick="alert('Wallet Open')">💎 Wallet</button>
+                <button onclick="alert('Studio Feature: Coming Soon')">📤 Studio</button>
+                <button onclick="alert('Tasks Feature: Coming Soon')">💰 Tasks</button>
+                <button onclick="alert('Wallet Feature: Coming Soon')">💎 Wallet</button>
+                <button onclick="alert('Profile Feature: Coming Soon')">👤 My Profile</button>
             </div>
-            <button onclick="toggleMenu()" style="background:none; border:none; color:#555; margin-top:20px;">✕ Close</button>
+            <button onclick="toggleMenu()" style="background:none; border:none; color:#444; margin-top:30px; width:100%; text-align:center;">✕ CLOSE MENU</button>
         </div>
 
         <div class="feed">
             <div class="card">
-                <div style="color:#2481cc; font-size:12px; margin-bottom:10px;">@cruise_hq</div>
-                <div class="video-placeholder">VIDEO READY</div>
-                <button class="earn-btn">CLAIM 10 POINTS</button>
+                <div style="color:#2481cc; font-size:13px; margin-bottom:12px; font-weight:bold;">@cruise_admin</div>
+                <div class="video-placeholder">VIDEO FEED CONTENT</div>
+                <button class="earn-btn" onclick="tg.showAlert('Claiming points... Feature active soon!')">CLAIM 10 POINTS</button>
             </div>
         </div>
     </div>
@@ -133,12 +150,14 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
 
         function startApp() {
             const intro = document.getElementById('intro-layer');
             const app = document.getElementById('main-app');
             
-            intro.style.transition = "opacity 1s ease";
+            // Ultra-smooth fade out
+            intro.style.transition = "opacity 1.5s ease";
             intro.style.opacity = "0";
             
             setTimeout(() => {
@@ -146,15 +165,15 @@
                 app.style.display = 'flex';
                 setTimeout(() => { app.style.opacity = '1'; }, 50);
                 document.body.style.overflow = 'auto';
-            }, 1000);
+            }, 1500);
         }
 
-        // Timer set to 5000ms (5 seconds)
-        setTimeout(startApp, 5000);
+        // Set to 7000ms (7 seconds)
+        setTimeout(startApp, 7000);
 
         function toggleMenu() {
             document.getElementById('side-menu').classList.toggle('active');
         }
     </script>
 </body>
-</html>
+    </html>
