@@ -1,32 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cruise Earn</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
 <body>
-    <div id="app">
-        <header>
-            <img src="logo.png" alt="Cruise Earn Logo" id="main-logo">
-            <h1>Welcome, <span id="username">Hustler</span></h1>
-        </header>
+    <div id="splash-screen">
+        <img src="logo.png" alt="Cruise Earn" class="pulse-logo">
+        <div class="loader-bar"><div class="progress"></div></div>
+    </div>
 
-        <div class="stats">
-            <p>Cruise Points: <b id="points">0</b></p>
+    <div id="side-menu" class="menu-closed">
+        <button class="close-btn" onclick="toggleMenu()">×</button>
+        <div class="menu-links">
+            <a href="#" onclick="showSection('tasks')">💰 Earn Points</a>
+            <a href="#" onclick="showSection('cruise')">📺 Watch Feeds</a>
+            <a href="#" onclick="showSection('upload')">🚀 Studio Upload</a>
+            <a href="#" onclick="showSection('wallet')">🏦 My Wallet</a>
         </div>
+    </div>
 
-        <nav>
-            <button onclick="showSection('tasks')">Tasks</button>
-            <button onclick="showSection('cruise')">Cruise</button>
-            <button onclick="showSection('upload')">Studio</button>
-        </nav>
-
+    <div id="main-app" style="display:none;">
+        <header>
+            <button class="menu-trigger" onclick="toggleMenu()">☰</button>
+            <span class="brand-name">Cruise Earn</span>
+        </header>
+        
         <main id="content">
             </main>
     </div>
+
     <script src="script.js"></script>
 </body>
-  </html>
