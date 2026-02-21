@@ -6,99 +6,98 @@
     <title>Cruise Official</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #2481cc; --bg: #000; --panel: #111; --border: #222; }
+        :root { --primary: #2481cc; --bg: #000; --panel: #111; --border: #262626; --text-main: #ffffff; --text-dim: #a0a0a0; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text-main); font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
 
-        /* INTRO 4s */
+        /* 4s LOGO SPLASH */
         #intro-layer { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 99999; }
-        .iconic-logo { width: 140px; height: 140px; border-radius: 35px; animation: entry 2.5s forwards; box-shadow: 0 0 60px rgba(36, 129, 204, 0.4); }
-        @keyframes entry { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .iconic-logo { width: 120px; height: 120px; border-radius: 30px; animation: entry 2.5s ease-out forwards; border: 1px solid rgba(255,255,255,0.1); }
+        @keyframes entry { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 100% { transform: scale(1); opacity: 1; filter: blur(0); } }
 
-        /* MAIN APP */
+        /* NAV & LAYOUT */
         #main-app { display: none; height: 100vh; flex-direction: column; opacity: 0; transition: 1s; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #0a0a0a; border-bottom: 1px solid var(--border); z-index: 100; }
-        .shorts-btn { background: var(--primary); color: #fff; font-size: 10px; font-weight: 900; padding: 5px 10px; border-radius: 6px; border: none; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); z-index: 100; }
+        .nav-logo { letter-spacing: 4px; font-weight: 900; font-size: 14px; color: #fff; }
+        .shorts-pill { background: linear-gradient(90deg, #2481cc, #005fa3); color: #fff; font-size: 10px; font-weight: 800; padding: 5px 12px; border-radius: 20px; border: none; text-transform: uppercase; }
 
-        /* POST FEED */
-        #post-container { position: relative; flex: 1; width: 100%; overflow: hidden; background: #050505; }
-        .post-card { position: absolute; inset: 0; padding: 25px; display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); background: #000; }
-        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-        .post-pfp { width: 45px; height: 45px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #222; }
-        .post-content { flex: 1; font-size: 18px; line-height: 1.6; color: #eee; overflow-y: auto; white-space: pre-wrap; }
-        .post-image { width: 100%; max-height: 300px; border-radius: 15px; object-fit: cover; margin-top: 15px; border: 1px solid #333; }
+        /* POST FEED ENGINE */
+        #post-container { position: relative; flex: 1; width: 100%; overflow: hidden; }
+        .post-card { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); background: #000; }
+        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .post-pfp { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 1px solid var(--border); background: #1a1a1a; }
+        .post-content { flex: 1; font-size: 17px; line-height: 1.5; overflow-y: auto; color: #f0f0f0; }
+        .post-img-wrap { margin-top: 15px; border-radius: 18px; overflow: hidden; border: 1px solid var(--border); background: #0a0a0a; line-height: 0; }
+        .post-img-wrap img { width: 100%; max-height: 350px; object-fit: contain; }
         
-        /* ACTIONS */
-        .post-actions { display: flex; gap: 12px; padding: 20px 0; border-top: 1px solid var(--border); }
-        .action-btn { background: var(--panel); border: none; color: #fff; padding: 10px 15px; border-radius: 12px; font-size: 14px; display: flex; align-items: center; gap: 8px; font-weight: bold; }
+        /* INTERACTION BAR */
+        .post-actions { display: flex; gap: 10px; padding: 15px 0 25px; border-top: 1px solid var(--border); margin-top: 10px; }
+        .act-btn { background: #111; border: 1px solid var(--border); color: #fff; padding: 10px 16px; border-radius: 14px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
 
-        /* POST EDITOR */
-        #editor-modal { position: fixed; bottom: -100%; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; transition: 0.5s; padding: 20px; display: flex; flex-direction: column; }
-        #editor-modal.active { bottom: 0; }
-        #post-input { width: 100%; height: 200px; background: transparent; border: none; color: #fff; font-size: 20px; resize: none; padding-top: 20px; }
-        .editor-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-        .post-submit { background: var(--primary); color: #fff; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; }
-        #preview-box { width: 80px; height: 80px; border-radius: 10px; border: 2px dashed #333; display: none; margin-top: 10px; background-size: cover; background-position: center; position: relative; }
+        /* MODERN EDITOR */
+        #editor-modal { position: fixed; inset: 0; background: #000; z-index: 50000; transform: translateY(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; display: flex; flex-direction: column; }
+        #editor-modal.active { transform: translateY(0); }
+        .ed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        #post-input { flex: 1; background: transparent; border: none; color: #fff; font-size: 19px; resize: none; }
+        .ed-footer { display: flex; align-items: center; gap: 20px; padding: 20px 0; border-top: 1px solid var(--border); }
+        .post-btn { background: var(--primary); color: #fff; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 800; }
+        
+        #preview-box { width: 100px; height: 100px; border-radius: 14px; border: 1px solid var(--primary); margin-bottom: 15px; display: none; background-size: cover; background-position: center; position: relative; }
 
-        /* CREATE BTN */
-        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 500; border: none; color: #fff; box-shadow: 0 8px 25px rgba(36, 129, 204, 0.4); }
+        /* FLOATING CREATE */
+        .create-btn { position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; z-index: 500; border: none; color: #fff; box-shadow: 0 10px 30px rgba(36, 129, 204, 0.4); transform: rotate(45deg); }
+        .create-btn span { transform: rotate(-45deg); display: block; font-weight: 300; }
     </style>
 </head>
 <body>
 
     <div id="intro-layer">
-        <img src="logo.png" class="iconic-logo" onerror="this.src='https://via.placeholder.com/150?text=C'">
+        <img src="logo.png" class="iconic-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5778/5778439.png'">
     </div>
 
     <div id="main-app">
-        <header class="navbar">
-            <button style="background:none; border:none; color:var(--primary); font-size:24px;">☰</button>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <b style="letter-spacing:2px; font-size:14px;">CRUISE</b>
-                <button class="shorts-btn" onclick="openShorts()">SHORTS ⚡</button>
-            </div>
-            <button onclick="showView('wallet')" style="background:none; border:none; font-size:20px;">💎</button>
-        </header>
+        <nav class="navbar">
+            <button onclick="tg.showAlert('Settings coming soon')" style="background:none; border:none; color:var(--primary); font-size:20px;">⚡</button>
+            <div class="nav-logo">CRUISE</div>
+            <button class="shorts-pill" onclick="openShorts()">Shorts</button>
+        </nav>
 
-        <main id="view-cruise" class="view active" style="padding:0; position:relative;">
+        <main id="view-cruise" class="view active" style="padding:0;">
             <div id="post-container"></div>
-            <button class="create-btn" onclick="openEditor()">+</button>
+            <button class="create-btn" onclick="openEditor()"><span>+</span></button>
         </main>
 
         <div id="editor-modal">
-            <div class="editor-header">
-                <button onclick="closeEditor()" style="background:none; border:none; color:#666; font-size:16px;">Cancel</button>
-                <b style="color:var(--primary)">CREATE POST</b>
-                <button class="post-submit" onclick="submitPost()">Post</button>
+            <div class="ed-header">
+                <button onclick="closeEditor()" style="background:none; border:none; color:var(--text-dim); font-size:16px;">Cancel</button>
+                <button class="post-btn" onclick="submitPost()">Post</button>
             </div>
-            <textarea id="post-input" placeholder="What's the vibe today?"></textarea>
+            
+            <textarea id="post-input" placeholder="Share a meme or article..."></textarea>
             
             <div id="preview-box">
-                <button onclick="removeImg()" style="position:absolute; top:-10px; right:-10px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:12px;">✕</button>
+                <button onclick="removeImg()" style="position:absolute; top:-8px; right:-8px; background:#ff3b30; color:white; border:none; border-radius:50%; width:22px; height:22px;">✕</button>
             </div>
 
-            <div style="padding: 20px 0; border-top: 1px solid var(--border); display:flex; gap:25px;">
-                <label for="file-upload" style="cursor:pointer; font-size:24px;">🖼️</label>
-                <input type="file" id="file-upload" accept="image/*" style="display:none;" onchange="handleImage(event)">
-                <span onclick="addEmoji('🔥')" style="font-size:24px;">🔥</span>
-                <span onclick="addEmoji('😂')" style="font-size:24px;">😂</span>
+            <div class="ed-footer">
+                <label for="file-up" style="cursor:pointer; display:flex; align-items:center; gap:8px; color:var(--primary); font-weight:700;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Gallery
+                </label>
+                <input type="file" id="file-up" accept="image/*" style="display:none;" onchange="handleImage(event)">
             </div>
-        </div>
-
-        <div id="shorts-overlay" style="display:none; position:fixed; inset:0; background:#000; z-index:60000;">
-            <button onclick="closeShorts()" style="position:absolute; top:20px; left:20px; z-index:100; background:rgba(0,0,0,0.5); border:none; color:#fff; width:40px; height:40px; border-radius:50%;">✕</button>
-            <video id="shorts-v" style="width:100%; height:100%; object-fit: contain;" loop playsinline></video>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         let curPost = 0;
-        let selectedImgData = null;
+        let selectedImg = null;
         let posts = [
-            { user: "CruiseBot", text: "Welcome! Tap + to upload a photo from your phone. 📸", color: "#2481cc" }
+            { user: "Cruise", text: "Welcome to Cruise. Swipe left to explore.\n\nTap the + to share your first post!", color: "#2481cc" }
         ];
 
+        // STARTUP SCRIPT
         setTimeout(() => {
             document.getElementById('intro-layer').style.opacity = "0";
             setTimeout(() => {
@@ -115,89 +114,81 @@
             container.innerHTML = posts.map((p, i) => `
                 <div class="post-card" style="transform: translateX(${(i - curPost) * 100}%);">
                     <div class="post-header">
-                        <div class="post-pfp" style="background:${p.color}">${p.user[0]}</div>
-                        <b>@${p.user}</b>
+                        <div class="post-pfp" style="color:${p.color || '#2481cc'}">${p.user[0]}</div>
+                        <div style="font-weight:700; font-size:15px; letter-spacing:0.5px;">@${p.user.toLowerCase()}</div>
                     </div>
                     <div class="post-content">
                         ${p.text}
-                        ${p.img ? `<img src="${p.img}" class="post-image">` : ''}
+                        ${p.img ? `<div class="post-img-wrap"><img src="${p.img}"></div>` : ''}
                     </div>
                     <div class="post-actions">
-                        <button class="action-btn">👍 0</button>
-                        <button class="action-btn">💬 Comment</button>
+                        <button class="act-btn">👍 0</button>
+                        <button class="act-btn">💬 0</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Horizontal Swipe
+        // SWIPE SYSTEM
         let startX = 0;
         document.getElementById('post-container').addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.getElementById('post-container').addEventListener('touchend', e => {
             const diffX = startX - e.changedTouches[0].clientX;
-            if (diffX > 60 && curPost < posts.length - 1) curPost++;
-            else if (diffX < -60 && curPost > 0) curPost--;
+            if (diffX > 50 && curPost < posts.length - 1) {
+                curPost++;
+            } else if (diffX < -50 && curPost > 0) {
+                curPost--;
+            }
             renderPosts();
         });
 
-        // Image Handling
+        // IMAGE HANDLER
         function handleImage(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (event) => {
-                    selectedImgData = event.target.result;
-                    const preview = document.getElementById('preview-box');
-                    preview.style.display = 'block';
-                    preview.style.backgroundImage = `url(${selectedImgData})`;
+                reader.onload = (ev) => {
+                    selectedImg = ev.target.result;
+                    const pre = document.getElementById('preview-box');
+                    pre.style.display = 'block';
+                    pre.style.backgroundImage = `url(${selectedImg})`;
                 };
                 reader.readAsDataURL(file);
             }
         }
 
         function removeImg() {
-            selectedImgData = null;
+            selectedImg = null;
             document.getElementById('preview-box').style.display = 'none';
-            document.getElementById('file-upload').value = "";
+            document.getElementById('file-up').value = "";
         }
 
         function openEditor() { document.getElementById('editor-modal').classList.add('active'); }
-        function closeEditor() { document.getElementById('editor-modal').classList.remove('active'); removeImg(); }
-        function addEmoji(e) { document.getElementById('post-input').value += e; }
+        function closeEditor() { 
+            document.getElementById('editor-modal').classList.remove('active'); 
+            removeImg(); 
+            document.getElementById('post-input').value = "";
+        }
 
         function submitPost() {
-            const text = document.getElementById('post-input').value;
-            if (!text.trim() && !selectedImgData) return;
+            const txt = document.getElementById('post-input').value;
+            if (!txt.trim() && !selectedImg) return;
 
+            // CRITICAL: Unshift puts it at the start (index 0)
             posts.unshift({
                 user: tg.initDataUnsafe?.user?.first_name || "Cruiser",
-                text: text,
-                img: selectedImgData,
-                color: "#" + Math.floor(Math.random()*16777215).toString(16)
+                text: txt,
+                img: selectedImg,
+                color: "#2481cc"
             });
 
-            curPost = 0;
+            curPost = 0; // Reset index to show the new post immediately
             renderPosts();
-            document.getElementById('post-input').value = "";
             closeEditor();
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        function openShorts() {
-            document.getElementById('shorts-overlay').style.display = 'block';
-            document.getElementById('shorts-v').src = "https://www.w3schools.com/html/mov_bbb.mp4";
-            document.getElementById('shorts-v').play();
-        }
-        function closeShorts() {
-            document.getElementById('shorts-v').pause();
-            document.getElementById('shorts-overlay').style.display = 'none';
-        }
-
-        function showView(id) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            const target = document.getElementById('view-' + id);
-            if(target) target.classList.add('active');
-        }
+        function openShorts() { tg.showAlert("Shorts feed coming in the next sync!"); }
     </script>
 </body>
-</html>
+                    </html>
