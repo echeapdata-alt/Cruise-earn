@@ -30,7 +30,7 @@ body,html{margin:0;padding:0;font-family:-apple-system,sans-serif;background:#00
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:2500;}
 
 /* ================= VIEWS ================= */
-.view{display:none;padding-top:70px;}
+.view{display:none;padding-top:70px;padding-left:10px;padding-right:10px;overflow-y:auto;height:calc(100vh - 70px);}
 .view.active{display:block;}
 
 /* ================= POST CARDS ================= */
@@ -65,6 +65,14 @@ body,html{margin:0;padding:0;font-family:-apple-system,sans-serif;background:#00
 #chatModal,#groupModal{position:fixed;bottom:80px;right:20px;width:320px;height:400px;background:#111;border-radius:12px;padding:15px;display:none;flex-direction:column;z-index:1600;overflow-y:auto;}
 #chatModal input,#groupModal input{margin-top:5px;padding:6px;border-radius:6px;border:none;background:#222;color:#fff;}
 .message{padding:4px 8px;border-radius:6px;margin:4px 0;background:#222;}
+
+/* ================= PROFILE ================= */
+.profile-header{display:flex;flex-direction:column;align-items:center;margin-bottom:15px;}
+.profile-header .avatar{width:90px;height:90px;background:#2481cc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:35px;font-weight:bold;margin-bottom:10px;}
+.profile-header h2{margin:0;}
+.profile-stats{display:flex;gap:30px;margin-top:10px;}
+.profile-stats div{text-align:center;}
+.profile-stats div b{font-size:18px;color:#f39c12;}
 </style>
 </head>
 <body>
@@ -95,11 +103,11 @@ body,html{margin:0;padding:0;font-family:-apple-system,sans-serif;background:#00
 <div id="overlay" onclick="toggleMenu()"></div>
 
 <!-- VIEWS -->
-<div id="v-home" class="view active"></div>
+<div id="v-home" class="view"></div>
 <div id="v-profile" class="view"></div>
-<div id="v-wallet" class="view"></div>
-<div id="v-tasks" class="view"></div>
-<div id="v-ads" class="view"></div>
+<div id="v-wallet" class="view"><h2>Wallet Page</h2></div>
+<div id="v-tasks" class="view"><h2>Tasks Page</h2></div>
+<div id="v-ads" class="view"><h2>Post Ads Page</h2></div>
 
 <!-- FLOAT BUTTONS -->
 <button class="add" onclick="showEd(true)">+</button>
@@ -152,7 +160,7 @@ window.addEventListener("load", async ()=>{
         setTimeout(()=>{
             splash.style.display="none";
             app.style.display="block";
-            loadPosts(); loadChats(); checkNotifications(); initRealtime();
+            loadPosts(); renderProfile(); checkNotifications();
         },500);
     },4000);
 });
@@ -177,8 +185,8 @@ async function initUser(){
 function toggleMenu(){
     const side=document.getElementById("side");
     const overlay=document.getElementById("overlay");
-    side.style.left=(side.style.left==="0px")?"-260px":"0px";
-    overlay.style.display=(overlay.style.display==="block")?"none":"block";
+    if(side.style.left==="0px"){side.style.left="-260px";overlay.style.display="none";}
+    else{side.style.left="0px";overlay.style.display="block";}
 }
 function openPage(p){
     toggleMenu();
@@ -194,7 +202,6 @@ async function loadPosts(){
     const {data,error}=await sb.from('posts').select('*').order('created_at',{ascending:false});
     if(error) return;
     const feed=document.getElementById('v-home');
-    if(!feed) return;
     feed.innerHTML=data.map(p=>{
         let media='';
         if(p.media_url){media=`<${p.media_type==='video'?'video controls':'img'} src="${p.media_url}"></${p.media_type==='video'?'video':'img'}>`;}
@@ -215,6 +222,29 @@ async function loadPosts(){
     }).join('');
 }
 
+// PROFILE
+async function renderProfile(){
+    const profileView=document.getElementById('v-profile');
+    profileView.innerHTML='';
+    profileView.innerHTML=`<div class="profile-header">
+        <div class="avatar">${currentUsername[0]}</div>
+        <h2>${currentUsername}</h2>
+        <div>ID: ${currentUserId.slice(0,8)}</div>
+    </div>`;
+    const {data,error}=await sb.from('posts').select('*').eq('user_id',currentUserId).order('created_at',{ascending:false});
+    if(data.length>0){
+        data.forEach(p=>{
+            let media='';
+            if(p.media_url){media=`<${p.media_type==='video'?'video controls':'img'} src="${p.media_url}"></${p.media_type==='video'?'video':'img'}>`;}
+            profileView.innerHTML+=`<div class="post" id="post-${p.id}">
+                <div class="post-header"><b>@${p.username}</b>
+                <button onclick="editPost('${p.id}')">✎</button><button onclick="deletePost('${p.id}')">✕</button></div>
+                <div class="post-content"><p>${p.content||''}</p>${media}</div>
+            </div>`;
+        });
+    }
+}
+
 // SEND POST
 async function send(){
     const t=document.getElementById('inp').value.trim();
@@ -231,7 +261,7 @@ async function send(){
     document.getElementById('inp').value='';
     document.getElementById('fileInp').value='';
     showEd(false);
-    loadPosts();
+    loadPosts(); renderProfile();
 }
 
 // REACTIONS
@@ -244,19 +274,6 @@ async function addComment(postId,text){
     document.querySelector(`#comments-${postId}`).innerHTML+=`<div class="comment"><b>${currentUsername}:</b> ${text}</div>`;
 }
 
-// REALTIME
-function initRealtime(){
-    sb.channel('*').on('postgres_changes',{event:'*',schema:'public'},payload=>{
-        if(payload.table==='posts' || payload.table==='comments' || payload.table==='reactions'){loadPosts();}
-    }).subscribe();
-}
-
-// CHAT
-function openChat(){ document.getElementById('chatModal').style.display='flex'; }
-function sendMessage(text){ if(!text.trim()) return; sb.from('messages').insert([{from_user_id:currentUserId,to_user_id:'All',text}]); }
-function createGroup(){ document.getElementById('groupModal').style.display='flex'; }
-function sendGroupMessage(text){ if(!text.trim()) return; sb.from('group_messages').insert([{group:'All',from_user_id:currentUserId,text}]); }
-
 // NOTIFICATIONS
 async function checkNotifications(){
     const {data}=await sb.from('notifications').select('*').eq('user_id',currentUserId).eq('read',false);
@@ -265,12 +282,4 @@ async function checkNotifications(){
     notifList.innerHTML=data.map(n=>`<div>${n.text}</div>`).join('');
 }
 function openNotifications(){
-    const modal=document.getElementById('notifModal');
-    modal.style.display=(modal.style.display==='block')?'none':'block';
-    sb.from('notifications').update({read:true}).eq('user_id',currentUserId);
-    document.getElementById('notifDot').style.display='none';
-}
-</script>
-
-</body>
-    </html>
+    const modal=document.getElementById('notifModal
