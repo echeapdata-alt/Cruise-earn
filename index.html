@@ -71,7 +71,7 @@ body,html{margin:0;padding:0;font-family:-apple-system,sans-serif;background:#00
 
 <!-- SPLASH -->
 <div id="splash">
-    <img src="logo.png" alt="Cruise Logo">
+    <img src="https://i.ibb.co/7vS1L2F/cruise-logo.png" alt="Cruise Logo">
     <h1>CRUISE</h1>
 </div>
 
@@ -140,13 +140,20 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 let currentUserId, currentUsername;
 
 // SPLASH
-window.addEventListener("load",async ()=>{
+window.addEventListener("load", async ()=>{
     await initUser();
-    setTimeout(()=>{
-        document.getElementById("splash").style.opacity=0;
-        setTimeout(()=>document.getElementById("splash").style.display="none",500);
-        document.getElementById("app").style.display="block";
-        loadPosts(); loadChats(); checkNotifications(); initRealtime();
+    const splash=document.getElementById("splash");
+    const app=document.getElementById("app");
+
+    // Wait 4s
+    setTimeout(async ()=>{
+        splash.style.transition="opacity 0.5s";
+        splash.style.opacity=0;
+        setTimeout(()=>{
+            splash.style.display="none";
+            app.style.display="block";
+            loadPosts(); loadChats(); checkNotifications(); initRealtime();
+        },500);
     },4000);
 });
 
@@ -164,7 +171,6 @@ async function initUser(){
         // One-time welcome notification
         await sb.from('notifications').insert([{user_id:currentUserId,text:'Welcome to Cruise! Enjoy your first day here.',read:false}]);
     }
-    document.getElementById('u-display')?.innerText = currentUsername;
 }
 
 // MENU
@@ -211,4 +217,60 @@ async function loadPosts(){
 
 // SEND POST
 async function send(){
-    const t
+    const t=document.getElementById('inp').value.trim();
+    const file=document.getElementById('fileInp').files[0];
+    let media_url=null,media_type=null;
+    if(file){
+        const ext=file.name.split('.').pop();
+        media_type=file.type.startsWith('video')?'video':'image';
+        const name='uploads/'+Date.now()+'.'+ext;
+        const {data,error}=await sb.storage.from('public').upload(name,file);
+        if(!error) media_url=`https://chsybopznpfdvhmdspox.supabase.co/storage/v1/object/public/${name}`;
+    }
+    await sb.from('posts').insert([{username:currentUsername,content:t,media_url,media_type,user_id:currentUserId}]);
+    document.getElementById('inp').value='';
+    document.getElementById('fileInp').value='';
+    showEd(false);
+    loadPosts();
+}
+
+// REACTIONS
+async function react(postId,type){await sb.from('reactions').insert([{post_id:postId,user_id:currentUserId,type}]);}
+
+// COMMENTS
+async function addComment(postId,text){
+    if(!text.trim()) return;
+    await sb.from('comments').insert([{post_id:postId,user_id:currentUserId,username:currentUsername,text}]);
+    document.querySelector(`#comments-${postId}`).innerHTML+=`<div class="comment"><b>${currentUsername}:</b> ${text}</div>`;
+}
+
+// REALTIME
+function initRealtime(){
+    sb.channel('*').on('postgres_changes',{event:'*',schema:'public'},payload=>{
+        if(payload.table==='posts' || payload.table==='comments' || payload.table==='reactions'){loadPosts();}
+    }).subscribe();
+}
+
+// CHAT
+function openChat(){ document.getElementById('chatModal').style.display='flex'; }
+function sendMessage(text){ if(!text.trim()) return; sb.from('messages').insert([{from_user_id:currentUserId,to_user_id:'All',text}]); }
+function createGroup(){ document.getElementById('groupModal').style.display='flex'; }
+function sendGroupMessage(text){ if(!text.trim()) return; sb.from('group_messages').insert([{group:'All',from_user_id:currentUserId,text}]); }
+
+// NOTIFICATIONS
+async function checkNotifications(){
+    const {data}=await sb.from('notifications').select('*').eq('user_id',currentUserId).eq('read',false);
+    document.getElementById('notifDot').style.display=data.length?'block':'none';
+    const notifList=document.getElementById('notifList');
+    notifList.innerHTML=data.map(n=>`<div>${n.text}</div>`).join('');
+}
+function openNotifications(){
+    const modal=document.getElementById('notifModal');
+    modal.style.display=(modal.style.display==='block')?'none':'block';
+    sb.from('notifications').update({read:true}).eq('user_id',currentUserId);
+    document.getElementById('notifDot').style.display='none';
+}
+</script>
+
+</body>
+    </html>
