@@ -1,168 +1,596 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cruise Official</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root { --primary: #2481cc; --bg: #000; --panel: #0a0a0a; --border: #1a1a1a; --text-dim: #888; --gold: #f39c12; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        /* HEADER & LOGO */
-        .navbar { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 20px; height: 65px; background: #000; border-bottom: 1px solid var(--border);
-            position: fixed; top: 0; width: 100%; z-index: 1000;
-        }
-        .logo { font-weight: 900; letter-spacing: 5px; font-size: 20px; color: #fff; }
-        .live-tag { font-size: 10px; color: #00ff00; font-weight: bold; border: 1px solid #00ff0044; padding: 2px 8px; border-radius: 10px; }
+<title>Cruise Official</title>
 
-        /* MAIN AREA */
-        .main-view { margin-top: 65px; height: calc(100vh - 145px); overflow-y: auto; width: 100%; }
-        .view { display: none; padding: 15px; }
-        .view.active { display: block; }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-        /* POST CARDS */
-        .post { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; position: relative; }
-        .post-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .u-name { font-weight: 800; color: var(--primary); font-size: 14px; }
-        .del-btn { background: none; border: none; color: #ff4444; font-size: 18px; }
+<style>
 
-        /* WALLET & PROFILE CARDS */
-        .card-stat { background: linear-gradient(145deg, #111, #000); border: 1px solid var(--border); border-radius: 20px; padding: 25px; text-align: center; margin-bottom: 20px; }
-        .balance { font-size: 32px; font-weight: 900; color: var(--gold); margin: 10px 0; }
-        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #111; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border); }
+:root{
+--primary:#2481cc;
+--bg:#000;
+--panel:#0a0a0a;
+--border:#1a1a1a;
+--dim:#888;
+--gold:#f39c12;
+}
 
-        /* BOTTOM MENU */
-        .nav-menu { 
-            position: fixed; bottom: 0; width: 100%; height: 80px; 
-            background: #000; border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center; padding-bottom: 15px;
-        }
-        .nav-link { background: none; border: none; color: #444; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; }
-        .nav-link.active { color: var(--primary); }
-        .nav-link i { font-size: 22px; font-style: normal; }
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
 
-        .add-fab { width: 55px; height: 55px; background: var(--primary); border-radius: 18px; color: #fff; font-size: 30px; border: none; transform: translateY(-20px); box-shadow: 0 10px 20px rgba(36,129,204,0.3); }
+body,html{
+margin:0;
+width:100%;
+height:100%;
+background:var(--bg);
+color:#fff;
+font-family:-apple-system,sans-serif;
+overflow:hidden;
+}
 
-        /* EDITOR */
-        #editor { position: fixed; inset: 0; background: #000; z-index: 2000; transform: translateY(100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 25px; display: flex; flex-direction: column; }
-        #editor.active { transform: translateY(0); }
-    </style>
+/* TOP BAR */
+
+.navbar{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 15px;
+height:65px;
+background:#000;
+border-bottom:1px solid var(--border);
+position:fixed;
+top:0;
+width:100%;
+z-index:1000;
+}
+
+.menu-btn{
+font-size:26px;
+background:none;
+border:none;
+color:#fff;
+}
+
+.logo{
+font-weight:900;
+letter-spacing:4px;
+}
+
+.live{
+font-size:10px;
+color:#0f0;
+border:1px solid #0f04;
+padding:2px 7px;
+border-radius:8px;
+}
+
+/* MAIN */
+
+.main{
+margin-top:65px;
+height:calc(100vh - 145px);
+overflow-y:auto;
+}
+
+.view{
+display:none;
+padding:15px;
+}
+
+.view.active{
+display:block;
+}
+
+/* POSTS */
+
+.post{
+background:var(--panel);
+border:1px solid var(--border);
+border-radius:18px;
+padding:18px;
+margin-bottom:12px;
+}
+
+.post-top{
+display:flex;
+justify-content:space-between;
+margin-bottom:8px;
+}
+
+.u-name{
+color:var(--primary);
+font-weight:700;
+}
+
+.del{
+border:none;
+background:none;
+color:#f44;
+font-size:18px;
+}
+
+/* CARD */
+
+.card{
+background:linear-gradient(145deg,#111,#000);
+border:1px solid var(--border);
+border-radius:18px;
+padding:22px;
+text-align:center;
+margin-bottom:20px;
+}
+
+.balance{
+font-size:32px;
+color:var(--gold);
+font-weight:900;
+}
+
+/* TASK */
+
+.task{
+display:flex;
+justify-content:space-between;
+padding:14px;
+background:#111;
+border-radius:12px;
+border:1px solid var(--border);
+margin-bottom:10px;
+}
+
+/* BOTTOM BAR */
+
+.bottom{
+position:fixed;
+bottom:0;
+width:100%;
+height:80px;
+background:#000;
+border-top:1px solid var(--border);
+display:flex;
+justify-content:space-around;
+align-items:center;
+padding-bottom:15px;
+}
+
+.nav-btn{
+border:none;
+background:none;
+color:#444;
+font-size:10px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:4px;
+font-weight:600;
+}
+
+.nav-btn.active{
+color:var(--primary);
+}
+
+.add{
+width:55px;
+height:55px;
+border:none;
+background:var(--primary);
+border-radius:18px;
+font-size:30px;
+color:#fff;
+transform:translateY(-20px);
+}
+
+/* EDITOR */
+
+#editor{
+position:fixed;
+inset:0;
+background:#000;
+z-index:2000;
+padding:25px;
+display:flex;
+flex-direction:column;
+transform:translateY(100%);
+transition:.3s;
+}
+
+#editor.active{
+transform:translateY(0);
+}
+
+/* SIDE MENU */
+
+#side{
+position:fixed;
+top:0;
+left:-260px;
+width:260px;
+height:100%;
+background:#050505;
+border-right:1px solid var(--border);
+z-index:3000;
+padding:25px 18px;
+transition:.3s;
+}
+
+#side.active{
+left:0;
+}
+
+.side-title{
+font-size:20px;
+font-weight:800;
+letter-spacing:3px;
+margin-bottom:30px;
+}
+
+.side-btn{
+width:100%;
+padding:14px;
+margin-bottom:12px;
+background:#111;
+border:1px solid var(--border);
+border-radius:12px;
+color:#fff;
+text-align:left;
+font-weight:600;
+}
+
+.side-btn:hover{
+background:var(--primary);
+}
+
+#overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+z-index:2500;
+display:none;
+}
+
+#overlay.active{
+display:block;
+}
+
+</style>
 </head>
+
 <body>
 
-    <nav class="navbar">
-        <div class="logo">CRUISE</div>
-        <div class="live-tag">● LIVE</div>
-    </nav>
+<!-- TOP -->
 
-    <div class="main-view">
-        <div id="v-home" class="view active">
-            <div id="feed"></div>
-        </div>
+<nav class="navbar">
 
-        <div id="v-wallet" class="view">
-            <div class="card-stat">
-                <div style="font-size: 12px; color: var(--text-dim);">TOTAL EARNINGS</div>
-                <div class="balance">1,250 <span style="font-size:14px;">CRZ</span></div>
-                <button style="background:var(--primary); color:#fff; border:none; padding:8px 20px; border-radius:10px; font-weight:bold;">Withdraw</button>
-            </div>
-            <h3 style="margin-left:5px;">Daily Tasks</h3>
-            <div class="task-item"><span>Daily Check-in</span><b style="color:var(--gold);">+10</b></div>
-            <div class="task-item"><span>Watch 5 Shorts</span><b style="color:var(--gold);">+50</b></div>
-            <div class="task-item"><span>Post a Cruise</span><b style="color:var(--gold);">+20</b></div>
-        </div>
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
 
-        <div id="v-profile" class="view">
-            <div style="text-align:center; padding:20px;">
-                <div id="pfp" style="width:90px; height:90px; background:var(--primary); border-radius:25px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:35px; font-weight:bold;">?</div>
-                <h2 id="u-display" style="margin:0;">User</h2>
-                <p style="color:var(--text-dim); margin-top:5px;">@cruiser_global</p>
-                <div style="display:flex; justify-content:center; gap:30px; margin-top:20px;">
-                    <div><b id="post-count">0</b><br><small style="color:var(--text-dim);">Posts</small></div>
-                    <div><b>12k</b><br><small style="color:var(--text-dim);">Fans</small></div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="logo">CRUISE</div>
 
-    <div class="nav-menu">
-        <button class="nav-link active" onclick="go('home', this)"><i>🚀</i>Feed</button>
-        <button class="nav-link" onclick="go('wallet', this)"><i>💰</i>Wallet</button>
-        <button class="add-fab" onclick="showEd(true)">+</button>
-        <button class="nav-link" onclick="go('profile', this)"><i>👤</i>Profile</button>
-    </div>
+<div class="live">● LIVE</div>
 
-    <div id="editor">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button onclick="showEd(false)" style="background:none; border:none; color:var(--text-dim);">Cancel</button>
-            <button onclick="send()" style="background:var(--primary); color:#fff; border:none; padding:10px 25px; border-radius:12px; font-weight:bold;">Publish</button>
-        </div>
-        <textarea id="inp" style="flex:1; background:transparent; border:none; color:#fff; font-size:22px; margin-top:30px; resize:none;" placeholder="What's the vibe?"></textarea>
-    </div>
+</nav>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+<!-- SIDE MENU -->
 
-        const SB_URL = "https://chsybopznpfdvhmdspox.supabase.co"; 
-        const SB_KEY = "sb_publishable_IfqycsZxpWeXgSPA5U7D5w_u-nl_FJf";
-        const sb = supabase.createClient(SB_URL, SB_KEY);
+<div id="side">
 
-        const myName = tg.initDataUnsafe?.user?.first_name || "Guest";
-        document.getElementById('u-display').innerText = myName;
-        document.getElementById('pfp').innerText = myName[0];
+<div class="side-title">CRUISE</div>
 
-        async function load() {
-            const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
-            if (!error) {
-                document.getElementById('post-count').innerText = data.filter(p => p.username === myName).length;
-                document.getElementById('feed').innerHTML = data.map(p => `
-                    <div class="post">
-                        <div class="post-top">
-                            <span class="u-name">@${p.username.toLowerCase()}</span>
-                            ${p.username === myName ? `<button class="del-btn" onclick="del('${p.id}')">✕</button>` : ''}
-                        </div>
-                        <div style="font-size:17px; line-height:1.5;">${p.content}</div>
-                    </div>
-                `).join('');
-            }
-        }
+<button class="side-btn" onclick="openPage('profile')">👤 Profile</button>
+<button class="side-btn" onclick="openPage('wallet')">💰 Wallet</button>
+<button class="side-btn" onclick="openPage('tasks')">✅ Tasks</button>
+<button class="side-btn" onclick="openPage('ads')">📢 Post Ads</button>
 
-        async function send() {
-            const t = document.getElementById('inp').value;
-            if(!t.trim()) return;
-            await sb.from('posts').insert([{ username: myName, content: t }]);
-            document.getElementById('inp').value = "";
-            showEd(false);
-            load();
-            tg.HapticFeedback.notificationOccurred('success');
-        }
+</div>
 
-        async function del(id) {
-            tg.showConfirm("Delete this post permanently?", async (ok) => {
-                if(ok) {
-                    await sb.from('posts').delete().eq('id', id);
-                    load();
-                }
-            });
-        }
+<div id="overlay" onclick="toggleMenu()"></div>
 
-        function go(v, b) {
-            document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
-            document.getElementById('v-' + v).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            if(b) b.classList.add('active');
-            load();
-        }
+<!-- MAIN -->
 
-        function showEd(s) { document.getElementById('editor').classList.toggle('active', s); }
+<div class="main">
 
-        load();
-    </script>
+<!-- FEED -->
+
+<div id="v-home" class="view active">
+<div id="feed"></div>
+</div>
+
+<!-- WALLET -->
+
+<div id="v-wallet" class="view">
+
+<div class="card">
+
+<div style="font-size:12px;color:var(--dim)">TOTAL</div>
+
+<div class="balance">1250 CRZ</div>
+
+<button style="
+background:var(--primary);
+border:none;
+padding:8px 20px;
+border-radius:10px;
+color:#fff;
+font-weight:700;">Withdraw</button>
+
+</div>
+
+</div>
+
+<!-- PROFILE -->
+
+<div id="v-profile" class="view">
+
+<div style="text-align:center;padding:20px">
+
+<div id="pfp"
+style="
+width:90px;
+height:90px;
+border-radius:25px;
+background:var(--primary);
+margin:0 auto 15px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:35px;
+font-weight:800;">?</div>
+
+<h2 id="name">User</h2>
+
+<p style="color:var(--dim)">@cruise_global</p>
+
+<div style="display:flex;justify-content:center;gap:30px">
+
+<div><b id="count">0</b><br><small>Posts</small></div>
+
+<div><b>12k</b><br><small>Fans</small></div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- TASKS -->
+
+<div id="v-tasks" class="view">
+
+<h3>Daily Tasks</h3>
+
+<div class="task">Check-in <b>+10</b></div>
+<div class="task">Watch Ads <b>+30</b></div>
+<div class="task">Post Today <b>+20</b></div>
+
+</div>
+
+<!-- ADS -->
+
+<div id="v-ads" class="view">
+
+<h3>Post Advertisement</h3>
+
+<div class="card">
+
+<p style="color:var(--dim)">
+Boost your post and reach more users.
+</p>
+
+<button style="
+background:var(--primary);
+border:none;
+padding:12px 25px;
+border-radius:12px;
+color:#fff;
+font-weight:700;">
+Start Promotion
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- BOTTOM -->
+
+<div class="bottom">
+
+<button class="nav-btn active" onclick="go('home',this)">🚀 Feed</button>
+
+<button class="nav-btn" onclick="go('wallet',this)">💰 Wallet</button>
+
+<button class="add" onclick="showEd(true)">+</button>
+
+<button class="nav-btn" onclick="go('profile',this)">👤 Profile</button>
+
+</div>
+
+<!-- EDITOR -->
+
+<div id="editor">
+
+<div style="display:flex;justify-content:space-between">
+
+<button onclick="showEd(false)"
+style="background:none;border:none;color:var(--dim)">Cancel</button>
+
+<button onclick="send()"
+style="
+background:var(--primary);
+border:none;
+padding:10px 25px;
+border-radius:12px;
+color:#fff;
+font-weight:700;">Publish</button>
+
+</div>
+
+<textarea id="inp"
+style="
+flex:1;
+background:none;
+border:none;
+color:#fff;
+font-size:22px;
+margin-top:25px"
+placeholder="What's the vibe?"></textarea>
+
+</div>
+
+<!-- SCRIPT -->
+
+<script>
+
+/* TELEGRAM */
+
+const tg = window.Telegram?.WebApp;
+
+if(tg){
+tg.ready();
+tg.expand();
+}
+
+/* SUPABASE */
+
+const SB_URL="https://chsybopznpfdvhmdspox.supabase.co";
+
+const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoc3lib3B6bnBmZHZobWRzcG94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MTEwMzQsImV4cCI6MjA4NzI4NzAzNH0.OFPBD6anJmowHfRhgK-UMaRpEJgO3UsxWJaFhPart9w";
+
+const sb = supabase.createClient(SB_URL,SB_KEY);
+
+/* USER */
+
+const myName = tg?.initDataUnsafe?.user?.first_name || "Guest";
+
+name.innerText = myName;
+pfp.innerText = myName[0];
+
+/* LOAD POSTS */
+
+async function load(){
+
+const {data,error} = await sb
+.from("posts")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(error){
+console.log(error);
+return;
+}
+
+count.innerText =
+data.filter(p=>p.username===myName).length;
+
+feed.innerHTML = data.map(p=>`
+
+<div class="post">
+
+<div class="post-top">
+
+<span class="u-name">@${p.username.toLowerCase()}</span>
+
+${p.username===myName ?
+`<button class="del" onclick="delPost('${p.id}')">✕</button>`:""}
+
+</div>
+
+<div>${p.content}</div>
+
+</div>
+
+`).join("");
+
+}
+
+/* SEND POST */
+
+async function send(){
+
+const t = inp.value.trim();
+
+if(!t) return;
+
+await sb.from("posts").insert([
+{ username: myName, content: t }
+]);
+
+inp.value="";
+showEd(false);
+load();
+
+if(tg) tg.HapticFeedback.notificationOccurred("success");
+}
+
+/* DELETE */
+
+async function delPost(id){
+
+if(!tg) return;
+
+tg.showConfirm("Delete post?", async(ok)=>{
+
+if(ok){
+await sb.from("posts").delete().eq("id",id);
+load();
+}
+
+});
+
+}
+
+/* NAV */
+
+function go(v,b){
+
+document
+.querySelectorAll(".view")
+.forEach(x=>x.classList.remove("active"));
+
+document
+.getElementById("v-"+v)
+.classList.add("active");
+
+document
+.querySelectorAll(".nav-btn")
+.forEach(n=>n.classList.remove("active"));
+
+if(b) b.classList.add("active");
+
+load();
+}
+
+/* EDITOR */
+
+function showEd(s){
+editor.classList.toggle("active",s);
+}
+
+/* MENU */
+
+function toggleMenu(){
+side.classList.toggle("active");
+overlay.classList.toggle("active");
+}
+
+function openPage(p){
+toggleMenu();
+go(p);
+}
+
+/* INIT */
+
+load();
+
+</script>
+
 </body>
-                </html>
+    </html>
