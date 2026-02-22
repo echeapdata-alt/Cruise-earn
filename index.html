@@ -7,254 +7,161 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--primary:#2481cc;--bg:#000;--panel:#0a0a0a;--border:#1a1a1a;--text-dim:#888;--gold:#f39c12;}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none;}
-body,html{margin:0;padding:0;width:100%;height:100%;background:var(--bg);color:#fff;font-family:-apple-system,sans-serif;overflow:hidden;}
-.navbar{display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:65px;background:#000;border-bottom:1px solid var(--border);position:fixed;top:0;width:100%;z-index:1000;}
-.logo{font-weight:900;letter-spacing:5px;font-size:20px;color:#fff;}
-.live-tag{font-size:10px;color:#00ff00;font-weight:bold;border:1px solid #00ff0044;padding:2px 8px;border-radius:10px;}
-.main-view{margin-top:65px;height:calc(100vh - 65px);overflow-y:auto;width:100%;}
-.view{display:none;padding:15px;}
-.view.active{display:block;}
-.post{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:15px;position:relative;}
-.post-top{display:flex;justify-content:space-between;margin-bottom:10px;}
-.u-name{font-weight:800;color:var(--primary);font-size:14px;}
-.del-btn{background:none;border:none;color:#ff4444;font-size:18px;}
-.card-stat{background:linear-gradient(145deg,#111,#000);border:1px solid var(--border);border-radius:20px;padding:25px;text-align:center;margin-bottom:20px;}
-.balance{font-size:32px;font-weight:900;color:var(--gold);margin:10px 0;}
-.task-item{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#111;border-radius:15px;margin-bottom:10px;border:1px solid var(--border);}
-.referral-box{background:var(--panel);border:1px solid var(--border);padding:20px;border-radius:20px;margin-bottom:15px;}
-.link-container{display:flex;justify-content:space-between;align-items:center;}
-#cruise-fab{position:fixed;bottom:25px;right:20px;width:58px;height:58px;background:linear-gradient(135deg,#2d0b59,#5a189a,#9d4edd,#c77dff);border-radius:14px;display:flex;align-items:center;justify-content:center;z-index:9999;box-shadow:0 0 12px rgba(157,78,221,0.9),0 0 25px rgba(90,24,154,0.6);animation:cruisePulse 2.5s infinite;cursor:pointer;}
-#cruise-fab span{transform:rotate(-45deg);font-size:32px;font-weight:bold;color:#fff;}
-@keyframes cruisePulse{0%{box-shadow:0 0 10px rgba(157,78,221,.6),0 0 20px rgba(90,24,154,.4);}50%{box-shadow:0 0 18px rgba(199,125,255,.9),0 0 35px rgba(90,24,154,.8);}100%{box-shadow:0 0 10px rgba(157,78,221,.6),0 0 20px rgba(90,24,154,.4);}}
-#cruise-fab:active{transform:rotate(45deg) scale(0.9);}
-#post-menu{position:fixed;inset:0;display:none;z-index:10000;}
-#post-menu .menu-bg{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
-#post-menu .menu-content{position:absolute;bottom:-100%;left:0;width:100%;background:#111;border-top-left-radius:20px;border-top-right-radius:20px;display:flex;flex-direction:column;padding:20px;gap:12px;transition:bottom 0.35s ease-out;}
-#post-menu.active .menu-content{bottom:0;}
-.menu-btn{background:linear-gradient(135deg,#4B1C7D,#5A189A);color:#fff;border:none;padding:15px;border-radius:14px;font-size:18px;font-weight:bold;cursor:pointer;}
-.cancel-btn{background:#444;}
-#post-screen{position:fixed;inset:0;display:none;z-index:10001;}
-#post-screen .screen-bg{position:absolute;inset:0;background:rgba(0,0,0,0.7);}
-#post-screen .screen-content{position:absolute;bottom:-100%;left:0;width:100%;background:#111;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;transition:bottom 0.35s ease-out;max-height:85%;overflow-y:auto;}
-#media-preview{width:100%;height:220px;background:#222;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#888;font-size:18px;}
-#post-caption{width:100%;background:#111;border:1px solid #444;border-radius:12px;padding:12px;color:#fff;font-size:16px;resize:none;}
-.post-actions{display:flex;justify-content:space-between;align-items:center;}
-.post-actions button{background:linear-gradient(135deg,#4B1C7D,#5A189A);color:#fff;border:none;padding:10px 20px;border-radius:12px;font-weight:bold;cursor:pointer;}
-#emoji-panel{display:none;max-height:150px;overflow-y:auto;margin-top:10px;background:#1a0a2a;border-radius:12px;padding:10px;gap:8px;display:flex;flex-wrap:wrap;}
-#file-input{display:none;}
-.post-reactions{display:flex;gap:8px;margin-top:10px;}
-.post-reactions button{background:#222;color:#fff;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:16px;}
-.post-comments{margin-top:10px;}
-.post-comments input{width:calc(100% - 60px);padding:8px;border-radius:12px;border:1px solid #444;background:#111;color:#fff;}
-.post-comments button{padding:8px 12px;margin-left:4px;background:var(--primary);color:#fff;border:none;border-radius:12px;cursor:pointer;}
-.comments-list{margin-top:8px;}
-.comment-item{padding:8px;background:#222;border-radius:12px;margin-top:5px;font-size:14px;}
-#notif-btn{position:fixed;bottom:25px;left:20px;width:50px;height:50px;background:#444;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:9999;}
-#notif-dot{position:absolute;top:5px;right:5px;width:10px;height:10px;background:red;border-radius:50%;display:none;}
+:root {
+    --primary: #2481cc;
+    --bg: #000;
+    --panel: #0d0d0d;
+    --border: #1a1a1a;
+    --studio-bg: #a4a933; /* The olive/yellow color from your screenshot */
+}
+* { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
+body, html { width:100%; height:100%; background:var(--bg); font-family:-apple-system, sans-serif; color:#fff; overflow:hidden; }
+
+/* MAIN APP NAVBAR & CONTENT */
+.navbar { display:flex; justify-content:space-between; align-items:center; padding:0 20px; height:60px; background:#000; border-bottom:1px solid var(--border); position:fixed; top:0; width:100%; z-index:10; }
+.logo { font-weight:900; letter-spacing:5px; font-size:18px; }
+
+/* POST STUDIO (The WhatsApp Style Popup) */
+#studio {
+    position: fixed; inset: 0; background: var(--studio-bg);
+    z-index: 5000; display: none; flex-direction: column;
+    transition: background 0.3s ease;
+}
+#studio.active { display: flex; }
+
+.studio-header { display: flex; justify-content: space-between; padding: 20px; align-items: center; }
+.close-circle { width: 40px; height: 40px; background: rgba(0,0,0,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: none; color: #fff; }
+.studio-tools { display: flex; gap: 15px; }
+.tool-icon { width: 40px; height: 40px; background: rgba(0,0,0,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; color: #fff; font-weight: bold; }
+
+.studio-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
+#studio-input { width: 100%; background: transparent; border: none; color: #fff; font-size: 32px; text-align: center; resize: none; font-weight: 500; }
+#studio-input::placeholder { color: rgba(255,255,255,0.6); }
+
+/* BOTTOM MODE PICKER */
+.mode-picker-wrap { background: rgba(0,0,0,0.4); padding: 20px 0 40px; }
+.mode-picker { display: flex; justify-content: center; align-items: center; gap: 20px; }
+.mode-btn { background: none; border: none; color: #fff; font-size: 14px; font-weight: 600; opacity: 0.6; padding: 8px 15px; border-radius: 20px; transition: 0.2s; }
+.mode-btn.active { opacity: 1; background: rgba(255,255,255,0.15); }
+
+/* MAIN NAV */
+.bottom-nav { position:fixed; bottom:0; width:100%; height:80px; background:#000; border-top:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; padding-bottom:15px; }
+.nav-item { background:none; border:none; color:#444; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:10px; font-weight:bold; }
+.add-fab { width:55px; height:55px; background:var(--primary); border-radius:18px; color:#fff; font-size:30px; border:none; transform:translateY(-15px); }
+
+/* FEED */
+.feed-area { margin-top: 60px; height: calc(100vh - 140px); overflow-y: auto; padding: 15px; }
+.post-card { background: #111; border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid #222; }
 </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="logo">CRUISE</div>
-  <div class="live-tag">● LIVE</div>
-</nav>
+<nav class="navbar"><div class="logo">CRUISE</div><div style="font-size:10px; color:#00ff00;">● LIVE</div></nav>
 
-<div class="main-view">
-  <div id="v-home" class="view active">
-    <div class="referral-box">
-      <label>Share your referral link:</label>
-      <div class="link-container">
-        <input type="text" id="referral-link" readonly style="flex:1;background:#111;color:#fff;padding:10px;border-radius:12px;border:1px solid #444;">
-        <button onclick="copyRef()" style="margin-left:10px;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-weight:bold;">Copy</button>
-      </div>
+<div class="feed-area" id="feed"></div>
+
+<div class="bottom-nav">
+    <button class="nav-item" onclick="location.reload()"><i>🚀</i>Feed</button>
+    <button class="add-fab" onclick="openStudio()">+</button>
+    <button class="nav-item"><i>👤</i>Profile</button>
+</div>
+
+<div id="studio">
+    <div class="studio-header">
+        <button class="close-circle" onclick="closeStudio()">✕</button>
+        <div class="studio-tools">
+            <button class="tool-icon" onclick="changeBg()">🎨</button>
+            <button class="tool-icon">Aa</button>
+        </div>
     </div>
-    <div id="feed"></div>
-  </div>
 
-  <div id="v-profile" class="view">
-    <div style="text-align:center; padding:20px;">
-      <div id="pfp" style="width:90px;height:90px;background:var(--primary);border-radius:25px;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:35px;font-weight:bold;">?</div>
-      <h2 id="u-display">User</h2>
-      <p style="color:var(--text-dim);margin-top:5px;">@cruiser_global</p>
-      <div style="display:flex;justify-content:center;gap:30px;margin-top:20px;">
-        <div><b id="post-count">0</b><br><small style="color:var(--text-dim);">Posts</small></div>
-        <div><b>12k</b><br><small style="color:var(--text-dim);">Fans</small></div>
-      </div>
+    <div class="studio-main">
+        <textarea id="studio-input" placeholder="Type a status" oninput="autoGrow(this)"></textarea>
     </div>
-  </div>
-</div>
 
-<!-- Floating + Button -->
-<div id="cruise-fab"><span>+</span></div>
-
-<!-- Notifications button -->
-<div id="notif-btn">
-  🔔
-  <div id="notif-dot"></div>
-</div>
-
-<!-- Post Menu -->
-<div id="post-menu">
-  <div class="menu-bg" onclick="closePostMenu()"></div>
-  <div class="menu-content">
-    <button class="menu-btn" onclick="openCamera()">Camera</button>
-    <button class="menu-btn" onclick="openGallery()">Gallery</button>
-    <button class="menu-btn" onclick="openVideo()">Video</button>
-    <button class="menu-btn cancel-btn" onclick="closePostMenu()">Cancel</button>
-  </div>
-</div>
-
-<!-- Post Screen -->
-<div id="post-screen">
-  <div class="screen-bg" onclick="closePostScreen()"></div>
-  <div class="screen-content">
-    <div id="media-preview">Preview</div>
-    <textarea id="post-caption" placeholder="Write your caption..."></textarea>
-    <div class="post-actions">
-      <button id="emoji-btn">😊</button>
-      <button id="post-btn">Post</button>
+    <div class="mode-picker-wrap">
+        <div class="mode-picker">
+            <button class="mode-btn" onclick="setMode('Video', this)">Video</button>
+            <button class="mode-btn" onclick="setMode('Photo', this)">Photo</button>
+            <button class="mode-btn active" onclick="setMode('Text', this)">Text</button>
+            <button class="mode-btn" onclick="setMode('Voice', this)">Voice</button>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="publishCruise()" style="background:#fff; color:#000; border:none; padding:12px 40px; border-radius:30px; font-weight:bold;">CRUISE IT</button>
+        </div>
     </div>
-    <div id="emoji-panel"></div>
-  </div>
 </div>
-
-<input type="file" id="file-input">
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
+
+// Supabase Init
 const SB_URL = "https://chsybopznpfdvhmdspox.supabase.co"; 
 const SB_KEY = "sb_publishable_IfqycsZxpWeXgSPA5U7D5w_u-nl_FJf";
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
-const myName = tg.initDataUnsafe?.user?.first_name || "Guest";
-const myId = tg.initDataUnsafe?.user?.id || Date.now();
-document.getElementById('u-display').innerText = myName;
-document.getElementById('pfp').innerText = myName[0];
+const myName = tg.initDataUnsafe?.user?.first_name || "Cruiser";
 
-// Referral
-function setupReferral(){
-    try{
-        const user = tg.initDataUnsafe?.user;
-        if(user && user.id){
-            const botUsername = "CruiseEarnBot";
-            document.getElementById('referral-link').value = `https://t.me/${botUsername}?start=${user.id}`;
-        }
-    }catch(e){console.error(e);}
+function openStudio() { document.getElementById('studio').classList.add('active'); }
+function closeStudio() { document.getElementById('studio').classList.remove('active'); }
+
+function setMode(mode, btn) {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const input = document.getElementById('studio-input');
+    if(mode === 'Text') {
+        input.style.display = 'block';
+        input.placeholder = "Type a status";
+    } else {
+        input.style.display = 'none';
+        tg.showAlert(mode + " mode coming soon!");
+    }
 }
-function copyRef(){
-    const linkInput=document.getElementById('referral-link');
-    navigator.clipboard.writeText(linkInput.value).then(()=>{
+
+const colors = ['#a4a933', '#2481cc', '#8e44ad', '#e67e22', '#c0392b'];
+let colorIdx = 0;
+function changeBg() {
+    colorIdx = (colorIdx + 1) % colors.length;
+    document.getElementById('studio').style.backgroundColor = colors[colorIdx];
+}
+
+function autoGrow(element) {
+    element.style.height = "5px";
+    element.style.height = (element.scrollHeight) + "px";
+}
+
+async function publishCruise() {
+    const val = document.getElementById('studio-input').value;
+    if(!val.trim()) return tg.showAlert("Type something first!");
+
+    const { error } = await sb.from('posts').insert([{ 
+        username: myName, 
+        content: val 
+    }]);
+
+    if(!error) {
+        document.getElementById('studio-input').value = "";
+        closeStudio();
+        loadFeed();
         tg.HapticFeedback.notificationOccurred('success');
-        tg.showAlert("Link copied! Share it with your friends.");
-    });
-}
-
-// Load feed with reactions/comments
-async function load(){
-    const { data, error } = await sb.from('posts').select('*').order('created_at',{ascending:false});
-    if(!error){
-        document.getElementById('post-count').innerText = data.filter(p=>p.username===myName).length;
-        document.getElementById('feed').innerHTML = data.map(p=>{
-            let mediaHtml='';
-            if(p.media_url){
-                if(p.media_url.endsWith('.mp4')){
-                    mediaHtml=`<video controls style="max-width:100%;border-radius:12px;"><source src="${sb.storage.from('posts-media').getPublicUrl(p.media_url).data.publicUrl}" type="video/mp4"></video>`;
-                }else{
-                    mediaHtml=`<img src="${sb.storage.from('posts-media').getPublicUrl(p.media_url).data.publicUrl}" style="max-width:100%;border-radius:12px;">`;
-                }
-            }
-            let reactionsHtml=['👍','👎','😂','😡','❤️','😘','🙂'].map(r=>`<button onclick="react('${p.id}','${r}')">${r} ${p.reactions?.[r]||0}</button>`).join('');
-            let commentsHtml=(p.comments||[]).map(c=>`<div class="comment-item"><b>${c.user}:</b> ${c.text}</div>`).join('');
-            return `<div class="post">
-                <div class="post-top">
-                    <span class="u-name">@${p.username.toLowerCase()}</span>
-                    ${p.username===myName?`<button class="del-btn" onclick="del('${p.id}')">✕</button>`:''}
-                </div>
-                <div style="font-size:17px;line-height:1.5;">${p.content}</div>
-                ${mediaHtml}
-                <div class="post-reactions">${reactionsHtml}</div>
-                <div class="post-comments">
-                  <input placeholder="Add a comment..." id="comment-${p.id}">
-                  <button onclick="addComment('${p.id}')">Send</button>
-                  <div class="comments-list">${commentsHtml}</div>
-                </div>
-            </div>`;
-        }).join('');
     }
 }
 
-// Delete
-async function del(id){
-    tg.showConfirm("Delete this post permanently?", async ok=>{
-        if(ok){
-            await sb.from('posts').delete().eq('id',id);
-            load();
-        }
-    });
-}
-
-// Reactions
-async function react(postId, emoji){
-    const { data } = await sb.from('posts').select('reactions').eq('id',postId).single();
-    let reactions = data.reactions || {};
-    reactions[emoji] = (reactions[emoji]||0)+1;
-    await sb.from('posts').update({reactions}).eq('id',postId);
-    // add notification
-    const post = await sb.from('posts').select('*').eq('id',postId).single();
-    if(post.data.username!==myName){
-        await sb.from('notifications').insert([{user:post.data.username,type:'reaction',emoji,from:myName,post_id:postId,seen:false}]);
-        document.getElementById('notif-dot').style.display='block';
+async function loadFeed() {
+    const { data } = await sb.from('posts').select('*').order('created_at', { ascending: false });
+    if(data) {
+        document.getElementById('feed').innerHTML = data.map(p => `
+            <div class="post-card">
+                <div style="color:var(--primary); font-weight:bold; font-size:12px; margin-bottom:8px;">@${p.username}</div>
+                <div style="font-size:16px;">${p.content}</div>
+            </div>
+        `).join('');
     }
-    load();
 }
 
-// Comments
-async function addComment(postId){
-    const input=document.getElementById(`comment-${postId}`);
-    const text=input.value.trim(); if(!text)return;
-    const { data } = await sb.from('posts').select('comments').eq('id',postId).single();
-    let comments=data.comments||[];
-    comments.push({user:myName,text});
-    await sb.from('posts').update({comments}).eq('id',postId);
-    input.value='';
-    // notification
-    const post = await sb.from('posts').select('*').eq('id',postId).single();
-    if(post.data.username!==myName){
-        await sb.from('notifications').insert([{user:post.data.username,type:'comment',text,text,from:myName,post_id:postId,seen:false}]);
-        document.getElementById('notif-dot').style.display='block';
-    }
-    load();
-}
-
-// + Button
-document.getElementById("cruise-fab").onclick=()=>{tg.HapticFeedback.impactOccurred("medium");openPostMenu();}
-function openPostMenu(){const menu=document.getElementById("post-menu");menu.style.display="block";setTimeout(()=>menu.classList.add("active"),50);}
-function closePostMenu(){const menu=document.getElementById("post-menu");menu.classList.remove("active");setTimeout(()=>menu.style.display="none",350);}
-function openPostScreen(){document.getElementById("post-screen").style.display="block";setTimeout(()=>document.getElementById("post-screen").classList.add("active"),50);}
-function closePostScreen(){const screen=document.getElementById("post-screen");screen.classList.remove("active");setTimeout(()=>screen.style.display="none",350);}
-
-// Media upload
-function openCamera(){openFilePicker('camera');}
-function openGallery(){openFilePicker('image');}
-function openVideo(){openFilePicker('video');}
-function openFilePicker(type){
-    const fileInput=document.getElementById("file-input");
-    fileInput.accept=(type==='video')?"video/*":"image/*";
-    fileInput.click();
-    fileInput.onchange=async e=>{
-        const file=e.target.files[0]; if(!file)return;
-        const preview=document.getElementById("media-preview");
-        if(file.type.startsWith("image")){
-            const reader=new FileReader();
-            reader.onload=()=> preview.innerHTML=`<img src="${reader.result}" style="max-width:100%;border-radius:12px;">`;
-            reader.readAsDataURL(file);
-        } else if(file.type.startsWith("video")){
-            const url=URL.createObjectURL(file);
-            preview.innerHTML=`<video controls style="max-width:100%;border-radius:12px;"><source src="${url}" type="${file.type}"></video>`;
-        }
-        const filename=`${Date.now()}_${file.name}`;
-        const { data, error } = await sb.storage.from('posts-media').
+loadFeed();
+</script>
+</body>
+</html>
