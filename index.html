@@ -3,328 +3,280 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cruise</title>
-
+<title>Cruise Official</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-
-/* ================= RESET ================= */
-*{box-sizing:border-box;margin:0;padding:0;}
-body{
-    background:#000;
-    color:#fff;
-    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+:root {
+  --primary:#2481cc; --bg:#000; --panel:#0a0a0a; --border:#1a1a1a; 
+  --text-dim:#888; --gold:#f39c12;
 }
 
-/* ================= SPLASH ================= */
-#splash{
-    position:fixed;
-    inset:0;
-    background:#000;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
+/* Base */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none;}
+body,html{margin:0;padding:0;width:100%;height:100%;background:var(--bg);color:#fff;font-family:-apple-system,sans-serif;overflow:hidden;}
+
+/* Navbar */
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:65px;background:#000;border-bottom:1px solid var(--border);position:fixed;top:0;width:100%;z-index:1000;}
+.logo{font-weight:900;letter-spacing:5px;font-size:20px;color:#fff;}
+.live-tag{font-size:10px;color:#00ff00;font-weight:bold;border:1px solid #00ff0044;padding:2px 8px;border-radius:10px;}
+
+/* Main Views */
+.main-view{margin-top:65px;height:calc(100vh - 65px);overflow-y:auto;width:100%;}
+.view{display:none;padding:15px;}
+.view.active{display:block;}
+
+/* Post Cards */
+.post{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:15px;position:relative;}
+.post-top{display:flex;justify-content:space-between;margin-bottom:10px;}
+.u-name{font-weight:800;color:var(--primary);font-size:14px;}
+.del-btn{background:none;border:none;color:#ff4444;font-size:18px;}
+
+/* Profile Cards */
+.card-stat{background:linear-gradient(145deg,#111,#000);border:1px solid var(--border);border-radius:20px;padding:25px;text-align:center;margin-bottom:20px;}
+.balance{font-size:32px;font-weight:900;color:var(--gold);margin:10px 0;}
+.task-item{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#111;border-radius:15px;margin-bottom:10px;border:1px solid var(--border);}
+
+/* Floating + Button */
+#cruise-fab{
+  position:fixed;bottom:25px;right:20px;width:58px;height:58px;
+  background: linear-gradient(135deg,#2d0b59,#5a189a,#9d4edd,#c77dff);
+  border-radius:14px;transform:rotate(45deg);
+  display:flex;align-items:center;justify-content:center;z-index:9999;
+  box-shadow:0 0 12px rgba(157,78,221,0.9),0 0 25px rgba(90,24,154,0.6);
+  animation:cruisePulse 2.5s infinite; cursor:pointer;
 }
-
-#splash img{
-    width:150px;
-    max-width:80%;
-    animation:pulse 2s infinite;
+#cruise-fab span{transform:rotate(-45deg);font-size:32px;font-weight:bold;color:#fff;}
+@keyframes cruisePulse{
+  0%{box-shadow:0 0 10px rgba(157,78,221,.6),0 0 20px rgba(90,24,154,.4);}
+  50%{box-shadow:0 0 18px rgba(199,125,255,.9),0 0 35px rgba(90,24,154,.8);}
+  100%{box-shadow:0 0 10px rgba(157,78,221,.6),0 0 20px rgba(90,24,154,.4);}
 }
+#cruise-fab:active{transform:rotate(45deg) scale(0.9);}
 
-#splash h1{
-    margin-top:20px;
-    letter-spacing:6px;
-    font-size:32px;
-    color:#2481cc;
+/* Slide-Up Post Menu */
+#post-menu{position:fixed;inset:0;display:none;z-index:10000;}
+#post-menu .menu-bg{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
+#post-menu .menu-content{
+  position:absolute;bottom:-100%;left:0;width:100%;background:#111;
+  border-top-left-radius:20px;border-top-right-radius:20px;
+  display:flex;flex-direction:column;padding:20px;gap:12px;transition:bottom 0.35s ease-out;
 }
-
-@keyframes pulse{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.1);}
-    100%{transform:scale(1);}
+#post-menu.active .menu-content{bottom:0;}
+.menu-btn{
+  background: linear-gradient(135deg,#4B1C7D,#5A189A);color:#fff;border:none;padding:15px;border-radius:14px;font-size:18px;font-weight:bold;cursor:pointer;
 }
+.cancel-btn{background:#444;}
 
-/* ================= APP ================= */
-#app{display:none;}
-
-/* ================= HEADER ================= */
-.header{
-    position:fixed;
-    top:0;
-    width:100%;
-    height:60px;
-    background:#111;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-bottom:1px solid #222;
-    z-index:1000;
+/* Post Screen */
+#post-screen{position:fixed;inset:0;display:none;z-index:10001;}
+#post-screen .screen-bg{position:absolute;inset:0;background:rgba(0,0,0,0.7);}
+#post-screen .screen-content{
+  position:absolute;bottom:-100%;left:0;width:100%;background:#111;
+  border-top-left-radius:20px;border-top-right-radius:20px;
+  padding:20px;display:flex;flex-direction:column;gap:12px;
+  transition:bottom 0.35s ease-out;max-height:85%;overflow-y:auto;
 }
+#media-preview{width:100%;height:220px;background:#222;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#888;font-size:18px;}
+#post-caption{width:100%;background:#111;border:1px solid #444;border-radius:12px;padding:12px;color:#fff;font-size:16px;resize:none;}
+.post-actions{display:flex;justify-content:space-between;align-items:center;}
+.post-actions button{background:linear-gradient(135deg,#4B1C7D,#5A189A);color:#fff;border:none;padding:10px 20px;border-radius:12px;font-weight:bold;cursor:pointer;}
+#emoji-panel,#gif-panel{display:none;max-height:150px;overflow-y:auto;margin-top:10px;background:#1a0a2a;border-radius:12px;padding:10px;gap:8px;display:flex;flex-wrap:wrap;}
 
-.header b{
-    letter-spacing:5px;
-    font-size:20px;
-    color:#2481cc;
-}
-
-/* ================= MAIN ================= */
-.main{
-    margin-top:60px;
-    padding:12px;
-    height:calc(100vh - 60px);
-    overflow-y:auto;
-}
-
-/* ================= POST ================= */
-.post{
-    background:#111;
-    border-radius:12px;
-    padding:12px;
-    margin-bottom:15px;
-    border:1px solid #222;
-}
-
-.post-header{
-    color:#2481cc;
-    font-weight:bold;
-    margin-bottom:5px;
-}
-
-.post img,
-.post video{
-    width:100%;
-    border-radius:10px;
-    margin-top:8px;
-}
-
-/* ================= FLOAT BTN ================= */
-#addBtn{
-    position:fixed;
-    bottom:30px;
-    left:50%;
-    transform:translateX(-50%);
-    width:60px;
-    height:60px;
-    border-radius:50%;
-    background:#2481cc;
-    color:#fff;
-    border:none;
-    font-size:30px;
-    box-shadow:0 5px 20px rgba(36,129,204,.5);
-}
-
-/* ================= EDITOR ================= */
-#editor{
-    position:fixed;
-    inset:0;
-    background:#000;
-    z-index:2000;
-    padding:20px;
-    display:none;
-    flex-direction:column;
-}
-
-#editor textarea{
-    flex:1;
-    background:none;
-    border:none;
-    color:white;
-    font-size:18px;
-    margin-top:20px;
-}
-
-#editor button{
-    padding:10px;
-    border:none;
-    border-radius:8px;
-    margin:5px;
-}
-
+/* Hidden file inputs */
+#file-input,#gif-input{display:none;}
 </style>
 </head>
-
 <body>
 
-<!-- SPLASH -->
-<div id="splash">
-    <img src="logo.png" onerror="this.style.display='none'">
-    <h1>CRUISE</h1>
-</div>
+<nav class="navbar">
+  <div class="logo">CRUISE</div>
+  <div class="live-tag">● LIVE</div>
+</nav>
 
-<!-- APP -->
-<div id="app">
-
-<div class="header">
-    <b>CRUISE</b>
-</div>
-
-<div id="feed" class="main"></div>
-
-<button id="addBtn" onclick="openEditor()">+</button>
-
-<!-- EDITOR -->
-<div id="editor">
-    <div>
-        <button onclick="closeEditor()">Cancel</button>
-        <button onclick="publish()">Post</button>
+<div class="main-view">
+  <div id="v-home" class="view active"><div id="feed"></div></div>
+  <div id="v-wallet" class="view">
+    <div class="card-stat">
+      <div style="font-size:12px;color:var(--text-dim);">TOTAL EARNINGS</div>
+      <div class="balance">1,250 <span style="font-size:14px;">CRZ</span></div>
+      <button style="background:var(--primary);color:#fff;border:none;padding:8px 20px;border-radius:10px;font-weight:bold;">Withdraw</button>
     </div>
-
-    <textarea id="textInp" placeholder="What's on your mind?"></textarea>
-
-    <input type="file" id="fileInp" accept="image/*,video/*">
+    <h3 style="margin-left:5px;">Daily Tasks</h3>
+    <div class="task-item"><span>Daily Check-in</span><b style="color:var(--gold);">+10</b></div>
+    <div class="task-item"><span>Watch 5 Shorts</span><b style="color:var(--gold);">+50</b></div>
+    <div class="task-item"><span>Post a Cruise</span><b style="color:var(--gold);">+20</b></div>
+  </div>
+  <div id="v-profile" class="view">
+    <div style="text-align:center;padding:20px;">
+      <div id="pfp" style="width:90px;height:90px;background:var(--primary);border-radius:25px;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:35px;font-weight:bold;">?</div>
+      <h2 id="u-display" style="margin:0;">User</h2>
+      <p style="color:var(--text-dim);margin-top:5px;">@cruiser_global</p>
+      <div style="display:flex;justify-content:center;gap:30px;margin-top:20px;">
+        <div><b id="post-count">0</b><br><small style="color:var(--text-dim);">Posts</small></div>
+        <div><b>12k</b><br><small style="color:var(--text-dim);">Fans</small></div>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- Floating + Button -->
+<div id="cruise-fab"><span>+</span></div>
+
+<!-- Slide-Up Post Menu -->
+<div id="post-menu">
+  <div class="menu-bg" onclick="closePostMenu()"></div>
+  <div class="menu-content">
+    <button class="menu-btn" onclick="openCamera()">📷 Camera</button>
+    <button class="menu-btn" onclick="openGallery()">🖼️ Gallery</button>
+    <button class="menu-btn" onclick="openVideo()">🎬 Video</button>
+    <button class="menu-btn" onclick="openGif()">🎞️ GIF</button>
+    <button class="menu-btn" onclick="openArticle()">✍️ Article</button>
+    <button class="menu-btn cancel-btn" onclick="closePostMenu()">❌ Cancel</button>
+  </div>
 </div>
+
+<!-- Post Screen -->
+<div id="post-screen">
+  <div class="screen-bg" onclick="closePostScreen()"></div>
+  <div class="screen-content">
+    <div id="media-preview">Preview</div>
+    <textarea id="post-caption" placeholder="What's the vibe?"></textarea>
+    <div class="post-actions">
+      <button id="emoji-btn">😊</button>
+      <button id="gif-btn">🎞️ GIF</button>
+      <button id="post-btn">POST</button>
+    </div>
+    <div id="emoji-panel"></div>
+    <div id="gif-panel"></div>
+  </div>
+</div>
+
+<!-- Hidden file inputs -->
+<input type="file" id="file-input" accept="image/*,video/*">
+<input type="file" id="gif-input" accept="image/gif">
 
 <script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+const SB_URL = "https://chsybopznpfdvhmdspox.supabase.co"; 
+const SB_KEY = "sb_publishable_IfqycsZxpWeXgSPA5U7D5w_u-nl_FJf";
+const sb = supabase.createClient(SB_URL, SB_KEY);
 
-/* ================= TELEGRAM ================= */
-const tg = window.Telegram?.WebApp;
-if(tg){
-    tg.expand();
-    tg.ready();
-}
+const myName = tg.initDataUnsafe?.user?.first_name || "Guest";
+document.getElementById('u-display').innerText = myName;
+document.getElementById('pfp').innerText = myName[0];
 
-/* ================= SUPABASE ================= */
-const SB_URL="https://chsybopznpfdvhmdspox.supabase.co";
-const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoc3lib3B6bnBmZHZobWRzcG94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MTEwMzQsImV4cCI6MjA4NzI4NzAzNH0.OFPBD6anJmowHfRhgK-UMaRpEJgO3UsxWJaFhPart9w";
-
-const sb = supabase.createClient(SB_URL,SB_KEY);
-
-/* ================= USER ================= */
-let userId = localStorage.getItem("uid");
-let username = localStorage.getItem("uname");
-
-async function initUser(){
-
-    if(!userId){
-
-        userId = crypto.randomUUID();
-        username = prompt("Your name?") || "Guest";
-
-        await sb.from("users").insert([{
-            id:userId,
-            name:username
-        }]);
-
-        localStorage.setItem("uid",userId);
-        localStorage.setItem("uname",username);
-
-        await sb.from("notifications").insert([{
-            user_id:userId,
-            text:"Welcome to Cruise 👋",
-            read:false
-        }]);
-    }
-}
-
-/* ================= SPLASH ================= */
-window.onload = async ()=>{
-
-    await initUser();
-
-    setTimeout(()=>{
-        document.getElementById("splash").style.display="none";
-        document.getElementById("app").style.display="block";
-        loadFeed();
-    },4000);
-
-};
-
-/* ================= FEED ================= */
-async function loadFeed(){
-
-    const {data,error} =
-    await sb.from("posts")
-    .select("*")
-    .order("created_at",{ascending:false});
-
-    if(error) return;
-
-    const feed = document.getElementById("feed");
-
-    feed.innerHTML="";
-
-    data.forEach(p=>{
-
-        let media="";
-
-        if(p.media_url){
-            if(p.media_type==="video"){
-                media=`<video src="${p.media_url}" controls></video>`;
-            }else{
-                media=`<img src="${p.media_url}">`;
-            }
-        }
-
-        feed.innerHTML += `
-        <div class="post">
-
-            <div class="post-header">@${p.username}</div>
-
-            <div>${p.content||""}</div>
-
-            ${media}
-
+// Load feed
+async function load() {
+  const { data, error } = await sb.from('posts').select('*').order('created_at',{ascending:false});
+  if(!error){
+    document.getElementById('post-count').innerText = data.filter(p=>p.username===myName).length;
+    document.getElementById('feed').innerHTML = data.map(p=>`
+      <div class="post">
+        <div class="post-top">
+          <span class="u-name">@${p.username.toLowerCase()}</span>
+          ${p.username===myName?`<button class="del-btn" onclick="del('${p.id}')">✕</button>`:''}
         </div>
-        `;
-    });
-
+        <div style="font-size:17px;line-height:1.5;">${p.content}</div>
+        ${p.media_url?`<div style="margin-top:10px;">${p.media_url.endsWith('.mp4')?`<video controls style="max-width:100%;border-radius:12px;"><source src="${sb.storage.from('posts-media').getPublicUrl(p.media_url).data.publicUrl}" type="video/mp4"></video>`:`<img src="${sb.storage.from('posts-media').getPublicUrl(p.media_url).data.publicUrl}" style="max-width:100%;border-radius:12px;">`}</div>`:''}
+      </div>
+    `).join('');
+  }
 }
 
-/* ================= EDITOR ================= */
-function openEditor(){
-    document.getElementById("editor").style.display="flex";
-}
-
-function closeEditor(){
-    document.getElementById("editor").style.display="none";
-}
-
-/* ================= POST ================= */
-async function publish(){
-
-    const text = textInp.value.trim();
-    const file = fileInp.files[0];
-
-    let url=null;
-    let type=null;
-
-    if(file){
-
-        const ext = file.name.split('.').pop();
-        type = file.type.startsWith("video")?"video":"image";
-        const path = "uploads/"+Date.now()+"."+ext;
-
-        const {error} =
-        await sb.storage.from("public").upload(path,file);
-
-        if(!error){
-            url = SB_URL+"/storage/v1/object/public/"+path;
-        }
+// Delete post
+async function del(id){
+  tg.showConfirm("Delete this post permanently?", async ok=>{
+    if(ok){
+      await sb.from('posts').delete().eq('id',id);
+      load();
     }
-
-    await sb.from("posts").insert([{
-        user_id:userId,
-        username:username,
-        content:text,
-        media_url:url,
-        media_type:type
-    }]);
-
-    textInp.value="";
-    fileInp.value="";
-
-    closeEditor();
-    loadFeed();
+  });
 }
 
-</script>
+// Navigation
+function go(v,b){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('v-'+v).classList.add('active');
+  load();
+}
 
+// + Button & Menu
+document.getElementById("cruise-fab").onclick=()=>{tg.HapticFeedback.impactOccurred("medium");openPostMenu();}
+function openPostMenu(){const menu=document.getElementById("post-menu");menu.style.display="block";setTimeout(()=>menu.classList.add("active"),50);}
+function closePostMenu(){const menu=document.getElementById("post-menu");menu.classList.remove("active");setTimeout(()=>menu.style.display="none",350);}
+
+// Post screen
+function openPostScreen(previewType){document.getElementById("post-screen").style.display="block";setTimeout(()=>document.getElementById("post-screen").classList.add("active"),50);document.getElementById("media-preview").innerText=previewType;}
+function closePostScreen(){const screen=document.getElementById("post-screen");screen.classList.remove("active");setTimeout(()=>screen.style.display="none",350);}
+
+// Media Upload
+function openCamera(){openFilePicker('camera');}
+function openGallery(){openFilePicker('gallery');}
+function openVideo(){openFilePicker('video');}
+
+function openFilePicker(type){
+  const fileInput = document.getElementById("file-input");
+  if(type==='video') fileInput.accept="video/*";
+  else fileInput.accept="image/*";
+  fileInput.click();
+  fileInput.onchange = async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const preview = document.getElementById("media-preview");
+    if(file.type.startsWith("image")){
+      const reader = new FileReader();
+      reader.onload = ()=> preview.innerHTML = `<img src="${reader.result}" style="max-width:100%;max-height:220px;border-radius:12px;">`;
+      reader.readAsDataURL(file);
+    } else if(file.type.startsWith("video")){
+      const url = URL.createObjectURL(file);
+      preview.innerHTML = `<video controls style="max-width:100%;max-height:220px;border-radius:12px;"><source src="${url}" type="${file.type}"></video>`;
+    }
+    const filename = `${Date.now()}_${file.name}`;
+    const { data, error } = await sb.storage.from('posts-media').upload(filename, file);
+    if(error){alert("Upload failed"); return;}
+    preview.dataset.mediaUrl = data.path;
+  }
+  closePostMenu();
+  openPostScreen("Media Upload");
+}
+
+// GIF
+function openGif(){
+  closePostMenu();
+  document.getElementById("gif-panel").style.display="flex";
+  openPostScreen("GIF");
+}
+
+// Emoji Panel
+document.getElementById("emoji-btn").onclick=()=>{
+  const panel=document.getElementById("emoji-panel");
+  panel.style.display=panel.style.display==="flex"?"none":"flex";
+  if(panel.style.display==="flex") loadEmojis();
+}
+function loadEmojis(){
+  const panel=document.getElementById("emoji-panel");
+  const emojis=["😄","😂","😍","🔥","💜","👑⚡","🚀💜","🌍🔥","🦁✨"];
+  panel.innerHTML=emojis.map(e=>`<button class="emoji-item">${e}</button>`).join("");
+  panel.querySelectorAll(".emoji-item").forEach(btn=>{btn.onclick=()=>{document.getElementById("post-caption").value+=btn.innerText;}});
+}
+
+// Post Button
+document.getElementById("post-btn").onclick=async()=>{
+  const text=document.getElementById("post-caption").value;
+  const mediaUrl=document.getElementById("media-preview").dataset.mediaUrl||null;
+  if(!text.trim() && !mediaUrl){alert("Add text or media");return;}
+  await sb.from("posts").insert([{username:myName,content:text||"",media_url:mediaUrl}]);
+  document.getElementById("post-caption").value=""; document.getElementById("media-preview").innerHTML="Preview";
+  document.getElementById("media-preview").dataset.mediaUrl="";
+  closePostScreen();
+  load();
+  tg.HapticFeedback.notificationOccurred("success");
+}
+
+load();
+</script>
 </body>
     </html>
