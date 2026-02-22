@@ -1,1 +1,9 @@
+:root {
+    --bg-blue: #020817; /* The deep navy you wanted */
+    --panel: #0f172a;
+    --border: #1e293b;
+}
 
+body, html { 
+    background: var(--bg-blue); 
+}
