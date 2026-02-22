@@ -1,11 +1,96 @@
+:root {
+  --primary:#2481cc; 
+  --bg:#000; 
+  --panel:#0a0a0a; 
+  --border:#1a1a1a; 
+  --text-dim:#888; 
+  --gold:#f39c12;
+}
+
+/* Base */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none;}
+body,html{margin:0;padding:0;width:100%;height:100%;background:var(--bg);color:#fff;font-family:-apple-system,sans-serif;overflow:hidden;}
+
+/* Navbar */
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:0 20px;height:65px;background:#000;border-bottom:1px solid var(--border);position:fixed;top:0;width:100%;z-index:1000;}
+.logo{font-weight:900;letter-spacing:5px;font-size:20px;color:#fff;}
+.live-tag{font-size:10px;color:#00ff00;font-weight:bold;border:1px solid #00ff0044;padding:2px 8px;border-radius:10px;}
+
+/* Main Views */
+.main-view{margin-top:65px;height:calc(100vh - 65px);overflow-y:auto;width:100%;}
+.view{display:none;padding:15px;}
+.view.active{display:block;}
+
+/* Post Cards */
+.post{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:15px;position:relative;}
+.post-top{display:flex;justify-content:space-between;margin-bottom:10px;}
+.u-name{font-weight:800;color:var(--primary);font-size:14px;}
+.del-btn{background:none;border:none;color:#ff4444;font-size:18px;}
+
+/* Profile Cards */
+.card-stat{background:linear-gradient(145deg,#111,#000);border:1px solid var(--border);border-radius:20px;padding:25px;text-align:center;margin-bottom:20px;}
+.balance{font-size:32px;font-weight:900;color:var(--gold);margin:10px 0;}
+.task-item{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#111;border-radius:15px;margin-bottom:10px;border:1px solid var(--border);}
+
+/* Floating + Button */
+#cruise-fab{
+  position:fixed;bottom:25px;right:20px;width:58px;height:58px;
+  background: linear-gradient(135deg,#2d0b59,#5a189a,#9d4edd,#c77dff);
+  border-radius:14px;transform:rotate(45deg);
+  display:flex;align-items:center;justify-content:center;z-index:9999;
+  box-shadow:0 0 12px rgba(157,78,221,0.9),0 0 25px rgba(90,24,154,0.6);
+  animation:cruisePulse 2.5s infinite; cursor:pointer;
+}
+#cruise-fab span{transform:rotate(-45deg);font-size:32px;font-weight:bold;color:#fff;}
+@keyframes cruisePulse{
+  0%{box-shadow:0 0 10px rgba(157,78,221,.6),0 0 20px rgba(90,24,154,.4);}
+  50%{box-shadow:0 0 18px rgba(199,125,255,.9),0 0 35px rgba(90,24,154,.8);}
+  100%{box-shadow:0 0 10px rgba(157,78,221,.6),0 0 20px rgba(90,24,154,.4);}
+}
+#cruise-fab:active{transform:rotate(45deg) scale(0.9);}
+
+/* Slide-Up Post Menu */
+#post-menu{position:fixed;inset:0;display:none;z-index:10000;}
+#post-menu .menu-bg{position:absolute;inset:0;background:rgba(0,0,0,0.6);}
+#post-menu .menu-content{
+  position:absolute;bottom:-100%;left:0;width:100%;background:#111;
+  border-top-left-radius:20px;border-top-right-radius:20px;
+  display:flex;flex-direction:column;padding:20px;gap:12px;transition:bottom 0.35s ease-out;
+}
+#post-menu.active .menu-content{bottom:0;}
+.menu-btn{
+  background: linear-gradient(135deg,#4B1C7D,#5A189A);color:#fff;border:none;padding:15px;border-radius:14px;font-size:18px;font-weight:bold;cursor:pointer;
+}
+.cancel-btn{background:#444;}
+
+/* Post Screen */
+#post-screen{position:fixed;inset:0;display:none;z-index:10001;}
+#post-screen .screen-bg{position:absolute;inset:0;background:rgba(0,0,0,0.7);}
+#post-screen .screen-content{
+  position:absolute;bottom:-100%;left:0;width:100%;background:#111;
+  border-top-left-radius:20px;border-top-right-radius:20px;
+  padding:20px;display:flex;flex-direction:column;gap:12px;
+  transition:bottom 0.35s ease-out;max-height:85%;overflow-y:auto;
+}
+#media-preview{width:100%;height:220px;background:#222;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#888;font-size:18px;}
+#post-caption{width:100%;background:#111;border:1px solid #444;border-radius:12px;padding:12px;color:#fff;font-size:16px;resize:none;}
+.post-actions{display:flex;justify-content:space-between;align-items:center;}
+.post-actions button{background:linear-gradient(135deg,#4B1C7D,#5A189A);color:#fff;border:none;padding:10px 20px;border-radius:12px;font-weight:bold;cursor:pointer;}
+#emoji-panel,#gif-panel{display:none;max-height:150px;overflow-y:auto;margin-top:10px;background:#1a0a2a;border-radius:12px;padding:10px;gap:8px;display:flex;flex-wrap:wrap;}
+
+/* Hidden file inputs */
+#file-input,#gif-input{display:none;}
+
+/* Referral Box */
 .referral-box {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            padding: 20px;
-            border-radius: 20px;
-        }
-        .link-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+}
+.link-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
         }
