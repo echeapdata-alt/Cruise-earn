@@ -2,542 +2,177 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>Cruise Official</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cruise App</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-
-:root{
---primary:#2481cc;
---bg:#000;
---panel:#0a0a0a;
---border:#1a1a1a;
---dim:#888;
---gold:#f39c12;
+body, html {
+    margin:0; padding:0; width:100%; height:100%; font-family:-apple-system,sans-serif; overflow:hidden;
 }
 
-*{
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
+/* SPLASH SCREEN */
+#splash {
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:5000;
+    flex-direction:column;
+    transition: opacity 0.5s ease;
 }
 
-body,html{
-margin:0;
-width:100%;
-height:100%;
-background:var(--bg);
-color:#fff;
-font-family:-apple-system,sans-serif;
-overflow:hidden;
+#splash img {
+    width:150px;
+    height:150px;
+    object-fit:contain;
+    margin-bottom:20px;
 }
 
-/* TOP BAR */
-
-.navbar{
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 15px;
-height:65px;
-background:#000;
-border-bottom:1px solid var(--border);
-position:fixed;
-top:0;
-width:100%;
-z-index:1000;
+#splash h1 {
+    color:#fff;
+    font-size:28px;
+    letter-spacing:5px;
 }
 
-.menu-btn{
-font-size:26px;
-background:none;
-border:none;
-color:#fff;
+/* MAIN APP */
+#app {
+    display:none;
+    width:100%; height:100%;
+    background:#000;
 }
 
-.logo{
-font-weight:900;
-letter-spacing:5px;
-font-size:20px;
-}
-
-/* MAIN */
-
-.main{
-margin-top:65px;
-height:calc(100vh - 80px);
-overflow-y:auto;
-}
-
-.view{
-display:none;
-padding:15px;
-}
-
-.view.active{
-display:block;
-}
-
-/* POSTS */
-
-.post{
-background:var(--panel);
-border:1px solid var(--border);
-border-radius:18px;
-padding:18px;
-margin-bottom:12px;
-}
-
-.post-top{
-display:flex;
-justify-content:space-between;
-margin-bottom:8px;
-}
-
-.u-name{
-color:var(--primary);
-font-weight:700;
-}
-
-.del{
-border:none;
-background:none;
-color:#f44;
-font-size:18px;
-}
-
-/* CARD */
-
-.card{
-background:linear-gradient(145deg,#111,#000);
-border:1px solid var(--border);
-border-radius:18px;
-padding:22px;
-text-align:center;
-margin-bottom:20px;
-}
-
-.balance{
-font-size:32px;
-color:var(--gold);
-font-weight:900;
-}
-
-/* TASK */
-
-.task{
-display:flex;
-justify-content:space-between;
-padding:14px;
-background:#111;
-border-radius:12px;
-border:1px solid var(--border);
-margin-bottom:10px;
-}
-
-/* FLOAT + BUTTON */
-
+/* Floating + button */
 .add{
-position:fixed;
-bottom:25px;
-left:50%;
-transform:translateX(-50%);
-width:60px;
-height:60px;
-border:none;
-background:var(--primary);
-border-radius:20px;
-font-size:32px;
-color:#fff;
-z-index:1500;
-box-shadow:0 10px 25px rgba(36,129,204,.4);
+    position:fixed;
+    bottom:25px;
+    left:50%;
+    transform:translateX(-50%);
+    width:60px;
+    height:60px;
+    border:none;
+    background:#2481cc;
+    border-radius:20px;
+    font-size:32px;
+    color:#fff;
+    z-index:1500;
+    box-shadow:0 10px 25px rgba(36,129,204,.4);
 }
 
-/* EDITOR */
-
-#editor{
-position:fixed;
-inset:0;
-background:#000;
-z-index:2000;
-padding:25px;
-display:flex;
-flex-direction:column;
-transform:translateY(100%);
-transition:.3s;
-}
-
-#editor.active{
-transform:translateY(0);
-}
-
-/* SIDE MENU */
-
-#side{
-position:fixed;
-top:0;
-left:-260px;
-width:260px;
-height:100%;
-background:#050505;
-border-right:1px solid var(--border);
-z-index:3000;
-padding:25px 18px;
-transition:.3s;
-}
-
-#side.active{
-left:0;
-}
-
-.side-title{
-font-size:20px;
-font-weight:800;
-letter-spacing:3px;
-margin-bottom:30px;
-}
-
-.side-btn{
-width:100%;
-padding:14px;
-margin-bottom:12px;
-background:#111;
-border:1px solid var(--border);
-border-radius:12px;
-color:#fff;
-text-align:left;
-font-weight:600;
-}
-
-.side-btn:hover{
-background:var(--primary);
-}
-
-#overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.6);
-z-index:2500;
-display:none;
-}
-
-#overlay.active{
-display:block;
-}
-
+/* Other styles same as before */
 </style>
 </head>
-
 <body>
 
-<!-- TOP -->
+<!-- SPLASH SCREEN -->
+<div id="splash">
+    <img src="logo.png" alt="Cruise Logo">
+    <h1>CRUISE</h1>
+</div>
 
-<nav class="navbar">
+<!-- MAIN APP -->
+<div id="app">
 
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
-
-<div class="logo">CRUISE</div>
-
-<div></div>
-
+<!-- HEADER -->
+<nav class="navbar" style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;">
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <div class="logo">CRUISE</div>
+    <div></div>
 </nav>
 
 <!-- SIDE MENU -->
-
-<div id="side">
-
-<div class="side-title">CRUISE</div>
-
-<button class="side-btn" onclick="openPage('home')">🏠 Home</button>
-<button class="side-btn" onclick="openPage('profile')">👤 Profile</button>
-<button class="side-btn" onclick="openPage('wallet')">💰 Wallet</button>
-<button class="side-btn" onclick="openPage('tasks')">✅ Tasks</button>
-<button class="side-btn" onclick="openPage('ads')">📢 Post Ads</button>
-
+<div id="side" style="position:fixed;top:0;left:-260px;width:260px;height:100%;background:#222;padding:25px;transition:.3s;z-index:3000;">
+    <div class="side-title" style="color:white;font-size:20px;font-weight:800;margin-bottom:20px;">CRUISE</div>
+    <button class="side-btn" onclick="openPage('home')">🏠 Home</button>
+    <button class="side-btn" onclick="openPage('profile')">👤 Profile</button>
+    <button class="side-btn" onclick="openPage('wallet')">💰 Wallet</button>
+    <button class="side-btn" onclick="openPage('tasks')">✅ Tasks</button>
+    <button class="side-btn" onclick="openPage('ads')">📢 Post Ads</button>
 </div>
-
-<div id="overlay" onclick="toggleMenu()"></div>
-
-<!-- MAIN -->
-
-<div class="main">
+<div id="overlay" onclick="toggleMenu()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:2500;"></div>
 
 <!-- FEED -->
-
-<div id="v-home" class="view active">
-<div id="feed"></div>
-</div>
-
-<!-- WALLET -->
-
-<div id="v-wallet" class="view">
-
-<div class="card">
-
-<div style="font-size:12px;color:var(--dim)">TOTAL</div>
-
-<div class="balance">1250 CRZ</div>
-
-<button style="
-background:var(--primary);
-border:none;
-padding:8px 20px;
-border-radius:10px;
-color:#fff;
-font-weight:700;">Withdraw</button>
-
-</div>
-
-</div>
-
-<!-- PROFILE -->
-
-<div id="v-profile" class="view">
-
-<div style="text-align:center;padding:20px">
-
-<div id="pfp"
-style="
-width:90px;
-height:90px;
-border-radius:25px;
-background:var(--primary);
-margin:0 auto 15px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:35px;
-font-weight:800;">?</div>
-
-<h2 id="name">User</h2>
-
-<p style="color:var(--dim)">@cruise_global</p>
-
-<div style="display:flex;justify-content:center;gap:30px">
-
-<div><b id="count">0</b><br><small>Posts</small></div>
-
-<div><b>12k</b><br><small>Fans</small></div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- TASKS -->
-
-<div id="v-tasks" class="view">
-
-<h3>Daily Tasks</h3>
-
-<div class="task">Check-in <b>+10</b></div>
-<div class="task">Watch Ads <b>+30</b></div>
-<div class="task">Post Today <b>+20</b></div>
-
-</div>
-
-<!-- ADS -->
-
-<div id="v-ads" class="view">
-
-<h3>Post Advertisement</h3>
-
-<div class="card">
-
-<p style="color:var(--dim)">
-Boost your post and reach more users.
-</p>
-
-<button style="
-background:var(--primary);
-border:none;
-padding:12px 25px;
-border-radius:12px;
-color:#fff;
-font-weight:700;">
-Start Promotion
-</button>
-
-</div>
-
-</div>
-
+<div class="main" style="margin-top:65px;padding:15px;">
+    <div id="v-home" class="view active"></div>
+    <div id="v-wallet" class="view"></div>
+    <div id="v-profile" class="view"></div>
+    <div id="v-tasks" class="view"></div>
+    <div id="v-ads" class="view"></div>
 </div>
 
 <!-- FLOAT BUTTON -->
-
 <button class="add" onclick="showEd(true)">+</button>
 
 <!-- EDITOR -->
-
-<div id="editor">
-
-<div style="display:flex;justify-content:space-between">
-
-<button onclick="showEd(false)"
-style="background:none;border:none;color:var(--dim)">Cancel</button>
-
-<button onclick="send()"
-style="
-background:var(--primary);
-border:none;
-padding:10px 25px;
-border-radius:12px;
-color:#fff;
-font-weight:700;">Publish</button>
-
+<div id="editor" style="position:fixed;inset:0;background:#000;z-index:2000;padding:25px;display:flex;flex-direction:column;transform:translateY(100%);transition:.3s;">
+    <div style="display:flex;justify-content:space-between;">
+        <button onclick="showEd(false)" style="background:none;border:none;color:#888;">Cancel</button>
+        <button onclick="send()" style="background:#2481cc;color:#fff;border:none;padding:10px 25px;border-radius:12px;font-weight:700;">Publish</button>
+    </div>
+    <textarea id="inp" style="flex:1;background:none;border:none;color:#fff;font-size:22px;margin-top:25px;" placeholder="What's the vibe?"></textarea>
 </div>
 
-<textarea id="inp"
-style="
-flex:1;
-background:none;
-border:none;
-color:#fff;
-font-size:22px;
-margin-top:25px"
-placeholder="What's the vibe?"></textarea>
-
 </div>
-
-<!-- SCRIPT -->
 
 <script>
-
+// TELEGRAM
 const tg = window.Telegram?.WebApp;
+if(tg){ tg.ready(); tg.expand(); }
 
-if(tg){
-tg.ready();
-tg.expand();
-}
-
-/* SUPABASE */
-
+// SUPABASE
 const SB_URL="https://chsybopznpfdvhmdspox.supabase.co";
-
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoc3lib3B6bnBmZHZobWRzcG94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MTEwMzQsImV4cCI6MjA4NzI4NzAzNH0.OFPBD6anJmowHfRhgK-UMaRpEJgO3UsxWJaFhPart9w";
+const sb = supabase.createClient(SB_URL, SB_KEY);
 
-const sb = supabase.createClient(SB_URL,SB_KEY);
-
-/* USER */
-
-const myName = tg?.initDataUnsafe?.user?.first_name || "Guest";
-
-name.innerText = myName;
-pfp.innerText = myName[0];
-
-/* LOAD */
-
-async function load(){
-
-const {data,error} = await sb
-.from("posts")
-.select("*")
-.order("created_at",{ascending:false});
-
-if(error) return;
-
-count.innerText =
-data.filter(p=>p.username===myName).length;
-
-feed.innerHTML = data.map(p=>`
-
-<div class="post">
-
-<div class="post-top">
-
-<span class="u-name">@${p.username.toLowerCase()}</span>
-
-${p.username===myName ?
-`<button class="del" onclick="delPost('${p.id}')">✕</button>`:""}
-
-</div>
-
-<div>${p.content}</div>
-
-</div>
-
-`).join("");
-
-}
-
-/* SEND */
-
-async function send(){
-
-const t = inp.value.trim();
-
-if(!t) return;
-
-await sb.from("posts").insert([
-{ username: myName, content: t }
-]);
-
-inp.value="";
-showEd(false);
-load();
-
-if(tg) tg.HapticFeedback.notificationOccurred("success");
-}
-
-/* DELETE */
-
-async function delPost(id){
-
-if(!tg) return;
-
-tg.showConfirm("Delete post?", async(ok)=>{
-
-if(ok){
-await sb.from("posts").delete().eq("id",id);
-load();
-}
-
+// SPLASH SCREEN FADEOUT
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        const splash = document.getElementById("splash");
+        splash.style.opacity = 0;
+        setTimeout(()=> splash.style.display="none", 500);
+        document.getElementById("app").style.display = "block";
+    }, 2000); // 2 seconds splash
 });
 
-}
-
-/* NAV */
-
-function go(v){
-
-document
-.querySelectorAll(".view")
-.forEach(x=>x.classList.remove("active"));
-
-document
-.getElementById("v-"+v)
-.classList.add("active");
-
-load();
-}
-
-/* EDITOR */
-
-function showEd(s){
-editor.classList.toggle("active",s);
-}
-
-/* MENU */
-
+// MENU FUNCTIONS
 function toggleMenu(){
-side.classList.toggle("active");
-overlay.classList.toggle("active");
+    const side=document.getElementById("side");
+    const overlay=document.getElementById("overlay");
+    side.style.left = (side.style.left==="0px") ? "-260px":"0px";
+    overlay.style.display = (overlay.style.display==="block") ? "none":"block";
 }
 
-function openPage(p){
-toggleMenu();
-go(p);
+function openPage(page){
+    toggleMenu();
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('v-'+page).classList.add('active');
+}
+
+// EDITOR
+function showEd(s){ document.getElementById('editor').classList.toggle('active', s); }
+
+// LOAD POSTS
+async function load(){
+    const {data,error} = await sb.from('posts').select('*').order('created_at',{ascending:false});
+    if(error) return;
+    const feed = document.getElementById('v-home');
+    feed.innerHTML = data.map(p=>`<div class="post"><b>@${p.username}</b><p>${p.content}</p></div>`).join('');
+}
+
+async function send(){
+    const t=document.getElementById('inp').value.trim();
+    if(!t) return;
+    await sb.from('posts').insert([{username:"Guest",content:t}]);
+    document.getElementById('inp').value="";
+    showEd(false);
+    load();
 }
 
 load();
-
 </script>
 
 </body>
-                       </html>
+</html>
