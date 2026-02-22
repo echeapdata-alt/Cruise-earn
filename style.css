@@ -7,3 +7,17 @@
 body, html { 
     background: var(--bg-blue); 
 }
+
+.post-media {
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 12px;
+    display: block;
+    background: #000;
+    border: 1px solid var(--border);
+}
+audio {
+    width: 100%;
+    margin-top: 10px;
+    filter: invert(100%) hue-rotate(180deg) brightness(1.5); /* Makes audio player look better in dark mode */
+}
