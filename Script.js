@@ -7,7 +7,7 @@ const myName = tg.initDataUnsafe?.user?.first_name || "Guest";
 let recorder, chunks = [], isLocked = false, startY = 0, voiceBlob = null;
 const vBtn = document.getElementById('voice-btn');
 
-// --- FEED LOGIC (Ensures everything shows) ---
+// --- FEED LOGIC (Fixed syntax & duplicates) ---
 async function load() {
     const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
     
@@ -16,50 +16,33 @@ async function load() {
         return;
     }
 
-    console.log("Fetched Posts:", data); // This lets you see the raw data in the console
-
     const feed = document.getElementById('feed');
     if (!data || data.length === 0) {
-        feed.innerHTML = '<p style="text-align:center; color:var(--text-dim); margin-top:20px;">No posts yet. Be the first!</p>';
+        feed.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:20px;">No posts yet.</p>';
         return;
     }
 
     feed.innerHTML = data.map(p => {
-        // Build the media HTML string based on what exists in the database
         let mediaHtml = '';
-        
         if (p.image_url) {
-            mediaHtml = `<img src="${p.image_url}" class="post-media" loading="lazy">`;
+            mediaHtml = `<img src="${p.image_url}" style="width:100%; border-radius:12px; margin-top:10px; border:1px solid #1e293b;">`;
         } else if (p.video_url) {
-            mediaHtml = `<video src="${p.video_url}" class="post-media" controls playsinline></video>`;
+            mediaHtml = `<video src="${p.video_url}" controls style="width:100%; border-radius:12px; margin-top:10px;"></video>`;
         } else if (p.voice_url) {
-            mediaHtml = `<audio src="${p.voice_url}" controls></audio>`;
+            mediaHtml = `<audio src="${p.voice_url}" controls style="width:100%; margin-top:10px;"></audio>`;
         }
 
         return `
-            <div class="post">
-                <div class="u-info">
-                    <div class="u-pfp">${p.username ? p.username[0].toUpperCase() : 'C'}</div>
-                    <span class="u-name">@${p.username || 'anonymous'}</span>
+            <div class="post" style="background:#0f172a; border:1px solid #1e293b; padding:15px; border-radius:15px; margin-bottom:12px;">
+                <div class="u-info" style="display:flex; align-items:center; margin-bottom:10px;">
+                    <div class="u-pfp" style="width:32px; height:32px; background:#2481cc; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-right:10px; font-weight:bold;">${p.username ? p.username[0].toUpperCase() : 'C'}</div>
+                    <b>@${p.username || 'cruiser'}</b>
                 </div>
-                <div class="post-body">
-                    ${p.content ? `<p style="font-size:16px; line-height:1.4;">${p.content}</p>` : ''}
-                    ${mediaHtml}
-                </div>
+                ${p.content ? `<p style="margin-bottom:10px; line-height:1.4;">${p.content}</p>` : ''}
+                ${mediaHtml}
             </div>
         `;
     }).join('');
-}
-    const feed = document.getElementById('feed');
-    feed.innerHTML = data.map(p => `
-        <div class="post">
-            <div class="u-info"><div class="u-pfp">${p.username ? p.username[0] : 'C'}</div><b>@${p.username || 'cruiser'}</b></div>
-            ${p.content ? `<p style="margin-bottom:10px;">${p.content}</p>` : ''}
-            ${p.image_url ? `<img src="${p.image_url}" style="width:100%; border-radius:12px; border:1px solid #1e293b;">` : ''}
-            ${p.video_url ? `<video src="${p.video_url}" controls style="width:100%; border-radius:12px;"></video>` : ''}
-            ${p.voice_url ? `<audio src="${p.voice_url}" controls style="width:100%; margin-top:10px;"></audio>` : ''}
-        </div>
-    `).join('');
 }
 
 // --- VOICE LOGIC (Hold & Swipe) ---
@@ -75,7 +58,7 @@ vBtn.addEventListener('touchstart', async (e) => {
         recorder = new MediaRecorder(stream);
         recorder.start();
         
-        document.getElementById('rec-dot').style.display = 'inline';
+        if(document.getElementById('rec-dot')) document.getElementById('rec-dot').style.display = 'inline';
         vBtn.innerText = "🎙️ SLIDE UP TO LOCK";
         vBtn.style.color = "#ff4444";
         tg.HapticFeedback.impactOccurred('medium');
@@ -85,7 +68,7 @@ vBtn.addEventListener('touchstart', async (e) => {
             voiceBlob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
             document.getElementById('media-preview-box').style.display = 'block';
             document.getElementById('p-voice').style.display = 'block';
-            document.getElementById('rec-dot').style.display = 'none';
+            if(document.getElementById('rec-dot')) document.getElementById('rec-dot').style.display = 'none';
         };
     } catch (err) {
         tg.showAlert("Mic access denied!");
@@ -117,7 +100,6 @@ async function sendCruise() {
 
     tg.MainButton.setText("SENDING...").show();
 
-    // 1. Upload Media
     const file = img || vid || (voiceBlob ? new File([voiceBlob], "voice.ogg") : null);
     if (file) {
         const path = `media/${Date.now()}_${file.name || 'voice.ogg'}`;
@@ -127,7 +109,6 @@ async function sendCruise() {
         }
     }
 
-    // 2. Insert Post
     const { error } = await sb.from('posts').insert([{ 
         username: myName, 
         content: text, 
@@ -145,18 +126,18 @@ async function sendCruise() {
     }
 }
 
-// Helpers
+// --- HELPERS ---
 function attach(type) {
     const file = type === 'Image' ? document.getElementById('img-in').files[0] : document.getElementById('vid-in').files[0];
     if (file) {
         const url = URL.createObjectURL(file);
         document.getElementById('media-preview-box').style.display = 'block';
+        const iPrev = document.getElementById('img-prev');
+        const vPrev = document.getElementById('vid-prev');
         if(type === 'Image') { 
-            document.getElementById('img-prev').src=url; 
-            document.getElementById('img-prev').style.display='block';
+            iPrev.src=url; iPrev.style.display='block'; vPrev.style.display='none';
         } else { 
-            document.getElementById('vid-prev').src=url; 
-            document.getElementById('vid-prev').style.display='block';
+            vPrev.src=url; vPrev.style.display='block'; iPrev.style.display='none';
         }
     }
 }
