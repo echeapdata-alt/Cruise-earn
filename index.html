@@ -7,93 +7,102 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #2481cc; --bg: #000; --panel: #111; --border: #262626; --danger: #ff4444; }
+        :root { --primary: #2481cc; --bg: #000; --panel: #0a0a0a; --border: #1a1a1a; --text-dim: #888; --gold: #f39c12; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; overflow: hidden; }
 
-        /* PREMIUM HEADER */
-        .header { 
+        /* HEADER & LOGO */
+        .navbar { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 20px; height: 65px; background: rgba(0,0,0,0.9); 
-            border-bottom: 1px solid var(--border); backdrop-filter: blur(10px);
+            padding: 0 20px; height: 65px; background: #000; border-bottom: 1px solid var(--border);
             position: fixed; top: 0; width: 100%; z-index: 1000;
         }
-        .logo-box { display: flex; align-items: center; gap: 8px; }
-        .logo-circle { width: 30px; height: 30px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; }
-        .logo-text { font-weight: 900; letter-spacing: 4px; font-size: 18px; color: #fff; margin: 0; }
+        .logo { font-weight: 900; letter-spacing: 5px; font-size: 20px; color: #fff; }
+        .live-tag { font-size: 10px; color: #00ff00; font-weight: bold; border: 1px solid #00ff0044; padding: 2px 8px; border-radius: 10px; }
 
-        /* CONTENT VIEWS */
-        .view-port { margin-top: 65px; height: calc(100vh - 135px); width: 100%; position: relative; }
-        .view { display: none; height: 100%; width: 100%; overflow-y: auto; }
+        /* MAIN AREA */
+        .main-view { margin-top: 65px; height: calc(100vh - 145px); overflow-y: auto; width: 100%; }
+        .view { display: none; padding: 15px; }
         .view.active { display: block; }
 
         /* POST CARDS */
-        .post-card { 
-            background: var(--panel); border: 1px solid var(--border); border-radius: 20px; 
-            margin: 15px; padding: 20px; position: relative;
-        }
-        .post-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .user-meta { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 32px; height: 32px; border-radius: 8px; background: #222; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: bold; }
-        .post-body { font-size: 16px; line-height: 1.5; color: #eee; }
-        
-        /* DELETE BUTTON */
-        .delete-btn { background: none; border: none; color: var(--danger); font-size: 18px; padding: 5px; opacity: 0.6; }
-        .delete-btn:active { opacity: 1; transform: scale(0.9); }
+        .post { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; position: relative; }
+        .post-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .u-name { font-weight: 800; color: var(--primary); font-size: 14px; }
+        .del-btn { background: none; border: none; color: #ff4444; font-size: 18px; }
+
+        /* WALLET & PROFILE CARDS */
+        .card-stat { background: linear-gradient(145deg, #111, #000); border: 1px solid var(--border); border-radius: 20px; padding: 25px; text-align: center; margin-bottom: 20px; }
+        .balance { font-size: 32px; font-weight: 900; color: var(--gold); margin: 10px 0; }
+        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #111; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border); }
 
         /* BOTTOM MENU */
-        .menu-bar { 
-            position: fixed; bottom: 0; width: 100%; height: 70px; 
-            background: #050505; border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center; padding-bottom: 5px;
+        .nav-menu { 
+            position: fixed; bottom: 0; width: 100%; height: 80px; 
+            background: #000; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center; padding-bottom: 15px;
         }
-        .menu-item { background: none; border: none; color: #555; display: flex; flex-direction: column; align-items: center; font-size: 10px; gap: 4px; transition: 0.3s; }
-        .menu-item.active { color: var(--primary); }
-        .menu-item i { font-size: 22px; font-style: normal; }
+        .nav-link { background: none; border: none; color: #444; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; }
+        .nav-link.active { color: var(--primary); }
+        .nav-link i { font-size: 22px; font-style: normal; }
 
-        /* FAB (Plus Button) */
-        .fab { width: 55px; height: 55px; background: var(--primary); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff; border: none; transform: translateY(-15px); box-shadow: 0 10px 20px rgba(36, 129, 204, 0.3); }
+        .add-fab { width: 55px; height: 55px; background: var(--primary); border-radius: 18px; color: #fff; font-size: 30px; border: none; transform: translateY(-20px); box-shadow: 0 10px 20px rgba(36,129,204,0.3); }
 
-        /* CREATE MODAL */
-        #editor { position: fixed; inset: 0; background: #000; z-index: 2000; transform: translateY(100%); transition: 0.4s; padding: 25px; display: flex; flex-direction: column; }
+        /* EDITOR */
+        #editor { position: fixed; inset: 0; background: #000; z-index: 2000; transform: translateY(100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 25px; display: flex; flex-direction: column; }
         #editor.active { transform: translateY(0); }
-        #post-input { flex: 1; background: transparent; border: none; color: #fff; font-size: 20px; resize: none; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <div class="logo-box">
-            <div class="logo-circle">C</div>
-            <h1 class="logo-text">CRUISE</h1>
-        </div>
-        <div id="status" style="font-size:10px; color:#00ff00;">● LIVE</div>
-    </header>
+    <nav class="navbar">
+        <div class="logo">CRUISE</div>
+        <div class="live-tag">● LIVE</div>
+    </nav>
 
-    <div class="view-port">
+    <div class="main-view">
         <div id="v-home" class="view active">
-            <div id="feed-list"></div>
+            <div id="feed"></div>
         </div>
-        <div id="v-shorts" class="view" style="display:flex; align-items:center; justify-content:center; color:#444;">Shorts View</div>
-        <div id="v-profile" class="view" style="padding:20px; text-align:center;">
-            <div id="pfp-big" style="width:80px; height:80px; background:var(--primary); border-radius:20px; margin:20px auto; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold;">?</div>
-            <h2 id="user-display">Cruiser</h2>
+
+        <div id="v-wallet" class="view">
+            <div class="card-stat">
+                <div style="font-size: 12px; color: var(--text-dim);">TOTAL EARNINGS</div>
+                <div class="balance">1,250 <span style="font-size:14px;">CRZ</span></div>
+                <button style="background:var(--primary); color:#fff; border:none; padding:8px 20px; border-radius:10px; font-weight:bold;">Withdraw</button>
+            </div>
+            <h3 style="margin-left:5px;">Daily Tasks</h3>
+            <div class="task-item"><span>Daily Check-in</span><b style="color:var(--gold);">+10</b></div>
+            <div class="task-item"><span>Watch 5 Shorts</span><b style="color:var(--gold);">+50</b></div>
+            <div class="task-item"><span>Post a Cruise</span><b style="color:var(--gold);">+20</b></div>
+        </div>
+
+        <div id="v-profile" class="view">
+            <div style="text-align:center; padding:20px;">
+                <div id="pfp" style="width:90px; height:90px; background:var(--primary); border-radius:25px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:35px; font-weight:bold;">?</div>
+                <h2 id="u-display" style="margin:0;">User</h2>
+                <p style="color:var(--text-dim); margin-top:5px;">@cruiser_global</p>
+                <div style="display:flex; justify-content:center; gap:30px; margin-top:20px;">
+                    <div><b id="post-count">0</b><br><small style="color:var(--text-dim);">Posts</small></div>
+                    <div><b>12k</b><br><small style="color:var(--text-dim);">Fans</small></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <nav class="menu-bar">
-        <button class="menu-item active" onclick="setTab('home', this)"><i>🏠</i><span>Feed</span></button>
-        <button class="menu-item" onclick="setTab('shorts', this)"><i>🎬</i><span>Shorts</span></button>
-        <button class="fab" onclick="toggleEdit(true)">+</button>
-        <button class="menu-item" onclick="setTab('profile', this)"><i>👤</i><span>Profile</span></button>
-    </nav>
+    <div class="nav-menu">
+        <button class="nav-link active" onclick="go('home', this)"><i>🚀</i>Feed</button>
+        <button class="nav-link" onclick="go('wallet', this)"><i>💰</i>Wallet</button>
+        <button class="add-fab" onclick="showEd(true)">+</button>
+        <button class="nav-link" onclick="go('profile', this)"><i>👤</i>Profile</button>
+    </div>
 
     <div id="editor">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button onclick="toggleEdit(false)" style="background:none; border:none; color:#666; font-size:16px;">Cancel</button>
-            <button onclick="publish()" style="background:var(--primary); color:#fff; border:none; padding:10px 25px; border-radius:12px; font-weight:bold;">Post</button>
+            <button onclick="showEd(false)" style="background:none; border:none; color:var(--text-dim);">Cancel</button>
+            <button onclick="send()" style="background:var(--primary); color:#fff; border:none; padding:10px 25px; border-radius:12px; font-weight:bold;">Publish</button>
         </div>
-        <textarea id="post-input" placeholder="What's on your mind?"></textarea>
+        <textarea id="inp" style="flex:1; background:transparent; border:none; color:#fff; font-size:22px; margin-top:30px; resize:none;" placeholder="What's the vibe?"></textarea>
     </div>
 
     <script>
@@ -104,64 +113,56 @@
         const SB_KEY = "sb_publishable_IfqycsZxpWeXgSPA5U7D5w_u-nl_FJf";
         const sb = supabase.createClient(SB_URL, SB_KEY);
 
-        let posts = [];
         const myName = tg.initDataUnsafe?.user?.first_name || "Guest";
+        document.getElementById('u-display').innerText = myName;
+        document.getElementById('pfp').innerText = myName[0];
 
-        async function loadFeed() {
+        async function load() {
             const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
             if (!error) {
-                posts = data;
-                render();
+                document.getElementById('post-count').innerText = data.filter(p => p.username === myName).length;
+                document.getElementById('feed').innerHTML = data.map(p => `
+                    <div class="post">
+                        <div class="post-top">
+                            <span class="u-name">@${p.username.toLowerCase()}</span>
+                            ${p.username === myName ? `<button class="del-btn" onclick="del('${p.id}')">✕</button>` : ''}
+                        </div>
+                        <div style="font-size:17px; line-height:1.5;">${p.content}</div>
+                    </div>
+                `).join('');
             }
         }
 
-        function render() {
-            document.getElementById('feed-list').innerHTML = posts.map(p => `
-                <div class="post-card">
-                    <div class="post-header">
-                        <div class="user-meta">
-                            <div class="avatar">${p.username[0]}</div>
-                            <b>@${p.username.toLowerCase()}</b>
-                        </div>
-                        ${p.username === myName ? `<button class="delete-btn" onclick="deletePost('${p.id}')">✕</button>` : ''}
-                    </div>
-                    <div class="post-body">${p.content}</div>
-                </div>
-            `).join('');
+        async function send() {
+            const t = document.getElementById('inp').value;
+            if(!t.trim()) return;
+            await sb.from('posts').insert([{ username: myName, content: t }]);
+            document.getElementById('inp').value = "";
+            showEd(false);
+            load();
+            tg.HapticFeedback.notificationOccurred('success');
         }
 
-        async function deletePost(id) {
-            tg.showConfirm("Delete this post?", async (ok) => {
+        async function del(id) {
+            tg.showConfirm("Delete this post permanently?", async (ok) => {
                 if(ok) {
-                    const { error } = await sb.from('posts').delete().eq('id', id);
-                    if(!error) loadFeed();
+                    await sb.from('posts').delete().eq('id', id);
+                    load();
                 }
             });
         }
 
-        async function publish() {
-            const txt = document.getElementById('post-input').value;
-            if(!txt.trim()) return;
-            const { error } = await sb.from('posts').insert([{ username: myName, content: txt }]);
-            if(!error) {
-                document.getElementById('post-input').value = "";
-                toggleEdit(false);
-                loadFeed();
-            }
+        function go(v, b) {
+            document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+            document.getElementById('v-' + v).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            if(b) b.classList.add('active');
+            load();
         }
 
-        function setTab(t, btn) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('v-' + t).classList.add('active');
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            btn.classList.add('active');
-        }
+        function showEd(s) { document.getElementById('editor').classList.toggle('active', s); }
 
-        function toggleEdit(show) { document.getElementById('editor').classList.toggle('active', show); }
-
-        document.getElementById('user-display').innerText = myName;
-        document.getElementById('pfp-big').innerText = myName[0];
-        loadFeed();
+        load();
     </script>
 </body>
-    </html>
+                </html>
