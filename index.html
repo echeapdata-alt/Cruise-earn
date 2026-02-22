@@ -3,283 +3,328 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cruise Social App</title>
+<title>Cruise</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
-/* ================= BASIC ================= */
-body,html{margin:0;padding:0;font-family:-apple-system,sans-serif;background:#000;color:#fff;overflow-x:hidden;}
+
+/* ================= RESET ================= */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+    background:#000;
+    color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+}
 
 /* ================= SPLASH ================= */
-#splash{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#000;z-index:5000;opacity:1;transition:opacity 0.5s;}
-#splash img{width:160px;height:160px;animation:logoAlive 4s ease forwards;}
-#splash h1{margin-top:20px;font-size:32px;letter-spacing:6px;opacity:0;animation:textAlive 4s ease forwards;}
-@keyframes logoAlive{0%{transform:scale(0) rotate(0deg);opacity:0;}20%{transform:scale(1.2) rotate(15deg);opacity:1;}50%{transform:scale(1) rotate(-10deg);}70%{transform:scale(1.05) rotate(5deg);}90%{transform:scale(0.98) rotate(-3deg);}100%{transform:scale(1) rotate(0);}}
-@keyframes textAlive{0%{opacity:0;transform:translateY(30px);}50%{opacity:0.8;transform:translateY(10px);}100%{opacity:1;transform:translateY(0);}}
+#splash{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+#splash img{
+    width:150px;
+    max-width:80%;
+    animation:pulse 2s infinite;
+}
+
+#splash h1{
+    margin-top:20px;
+    letter-spacing:6px;
+    font-size:32px;
+    color:#2481cc;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.1);}
+    100%{transform:scale(1);}
+}
 
 /* ================= APP ================= */
 #app{display:none;}
-.navbar{display:flex;align-items:center;justify-content:space-between;padding:12px;background:#111;position:fixed;top:0;width:100%;z-index:1000;}
-.navbar .logo{font-weight:900;font-size:22px;letter-spacing:4px;color:#2481cc;}
-.menu-btn{font-size:26px;cursor:pointer;color:#fff;}
 
-/* ================= SIDE MENU ================= */
-#side{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#222;padding:25px;transition:.3s;z-index:3000;}
-#side button{width:100%;padding:12px;margin:8px 0;border:none;border-radius:5px;background:#444;color:white;font-size:15px;cursor:pointer;}
-#side button:hover{background:#666;}
-#overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:2500;}
+/* ================= HEADER ================= */
+.header{
+    position:fixed;
+    top:0;
+    width:100%;
+    height:60px;
+    background:#111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-bottom:1px solid #222;
+    z-index:1000;
+}
 
-/* ================= VIEWS ================= */
-.view{display:none;padding-top:70px;padding-left:10px;padding-right:10px;overflow-y:auto;height:calc(100vh - 70px);}
-.view.active{display:block;}
+.header b{
+    letter-spacing:5px;
+    font-size:20px;
+    color:#2481cc;
+}
 
-/* ================= POST CARDS ================= */
-.post{background:#111;border-radius:12px;margin-bottom:15px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.5);}
-.post-header{display:flex;justify-content:space-between;padding:10px 12px;}
-.post-header b{color:#2481cc;}
-.post-content{padding:0 12px 12px;}
-.post-content img,.post-content video{width:100%;border-radius:8px;margin-top:8px;}
-.reactions{display:flex;gap:10px;margin-top:5px;font-size:20px;cursor:pointer;}
-.comments-section{margin-top:10px;}
-.comment{padding:6px 10px;background:#222;border-radius:8px;margin-top:5px;font-size:14px;}
+/* ================= MAIN ================= */
+.main{
+    margin-top:60px;
+    padding:12px;
+    height:calc(100vh - 60px);
+    overflow-y:auto;
+}
 
-/* ================= FLOAT BUTTONS ================= */
-.add{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);width:60px;height:60px;border:none;border-radius:50%;background:#2481cc;color:#fff;font-size:32px;cursor:pointer;box-shadow:0 10px 25px rgba(36,129,204,.4);z-index:1500;}
-#chatBtn,#notifBtn,#createGroupBtn{position:fixed;width:55px;height:55px;border-radius:50%;border:none;cursor:pointer;box-shadow:0 5px 15px rgba(36,129,204,.4);}
-#chatBtn{right:20px;bottom:20px;background:#28a745;font-size:24px;color:#fff;z-index:1500;}
-#createGroupBtn{right:90px;bottom:20px;background:#17a2b8;font-size:20px;color:#fff;z-index:1500;}
-#notifBtn{left:20px;bottom:20px;background:#ffc107;font-size:24px;color:#000;position:fixed;z-index:1500;}
-#notifBtn .dot{position:absolute;top:5px;right:5px;width:10px;height:10px;background:red;border-radius:50%;}
+/* ================= POST ================= */
+.post{
+    background:#111;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #222;
+}
+
+.post-header{
+    color:#2481cc;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.post img,
+.post video{
+    width:100%;
+    border-radius:10px;
+    margin-top:8px;
+}
+
+/* ================= FLOAT BTN ================= */
+#addBtn{
+    position:fixed;
+    bottom:30px;
+    left:50%;
+    transform:translateX(-50%);
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#2481cc;
+    color:#fff;
+    border:none;
+    font-size:30px;
+    box-shadow:0 5px 20px rgba(36,129,204,.5);
+}
 
 /* ================= EDITOR ================= */
-#editor{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:2000;padding:25px;display:flex;flex-direction:column;transform:translateY(100%);transition:.3s;}
-#editor.active{transform:translateY(0);}
-#editor textarea{flex:1;background:none;border:none;color:#fff;font-size:22px;margin-top:25px;resize:none;}
-#editor input{margin-top:15px;color:#fff;}
-#editor-buttons{display:flex;justify-content:space-between;align-items:center;}
-#editor-buttons button{padding:10px 20px;border:none;border-radius:12px;font-weight:700;}
-#publish-btn{background:#2481cc;color:#fff;}
-#cancel-btn{background:none;color:#888;}
+#editor{
+    position:fixed;
+    inset:0;
+    background:#000;
+    z-index:2000;
+    padding:20px;
+    display:none;
+    flex-direction:column;
+}
 
-/* ================= CHAT MODAL ================= */
-#chatModal,#groupModal{position:fixed;bottom:80px;right:20px;width:320px;height:400px;background:#111;border-radius:12px;padding:15px;display:none;flex-direction:column;z-index:1600;overflow-y:auto;}
-#chatModal input,#groupModal input{margin-top:5px;padding:6px;border-radius:6px;border:none;background:#222;color:#fff;}
-.message{padding:4px 8px;border-radius:6px;margin:4px 0;background:#222;}
+#editor textarea{
+    flex:1;
+    background:none;
+    border:none;
+    color:white;
+    font-size:18px;
+    margin-top:20px;
+}
 
-/* ================= PROFILE ================= */
-.profile-header{display:flex;flex-direction:column;align-items:center;margin-bottom:15px;}
-.profile-header .avatar{width:90px;height:90px;background:#2481cc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:35px;font-weight:bold;margin-bottom:10px;}
-.profile-header h2{margin:0;}
-.profile-stats{display:flex;gap:30px;margin-top:10px;}
-.profile-stats div{text-align:center;}
-.profile-stats div b{font-size:18px;color:#f39c12;}
+#editor button{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    margin:5px;
+}
+
 </style>
 </head>
+
 <body>
 
 <!-- SPLASH -->
 <div id="splash">
-    <img src="https://i.ibb.co/7vS1L2F/cruise-logo.png" alt="Cruise Logo">
+    <img src="logo.png" onerror="this.style.display='none'">
     <h1>CRUISE</h1>
 </div>
 
 <!-- APP -->
 <div id="app">
 
-<nav class="navbar">
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
-    <div class="logo">CRUISE</div>
-    <div></div>
-</nav>
-
-<!-- SIDE MENU -->
-<div id="side">
-    <button onclick="openPage('home')">🏠 Home</button>
-    <button onclick="openPage('profile')">👤 Profile</button>
-    <button onclick="openPage('wallet')">💰 Wallet</button>
-    <button onclick="openPage('tasks')">✅ Tasks</button>
-    <button onclick="openPage('ads')">📢 Post Ads</button>
+<div class="header">
+    <b>CRUISE</b>
 </div>
-<div id="overlay" onclick="toggleMenu()"></div>
 
-<!-- VIEWS -->
-<div id="v-home" class="view"></div>
-<div id="v-profile" class="view"></div>
-<div id="v-wallet" class="view"><h2>Wallet Page</h2></div>
-<div id="v-tasks" class="view"><h2>Tasks Page</h2></div>
-<div id="v-ads" class="view"><h2>Post Ads Page</h2></div>
+<div id="feed" class="main"></div>
 
-<!-- FLOAT BUTTONS -->
-<button class="add" onclick="showEd(true)">+</button>
-<button id="chatBtn" onclick="openChat()">💬</button>
-<button id="createGroupBtn" onclick="createGroup()">👥</button>
-<button id="notifBtn" onclick="openNotifications()">🔔<div class="dot" id="notifDot"></div></button>
+<button id="addBtn" onclick="openEditor()">+</button>
 
 <!-- EDITOR -->
 <div id="editor">
-    <div id="editor-buttons">
-        <button id="cancel-btn" onclick="showEd(false)">Cancel</button>
-        <button id="publish-btn" onclick="send()">Publish</button>
+    <div>
+        <button onclick="closeEditor()">Cancel</button>
+        <button onclick="publish()">Post</button>
     </div>
-    <textarea id="inp" placeholder="What's the vibe?"></textarea>
+
+    <textarea id="textInp" placeholder="What's on your mind?"></textarea>
+
     <input type="file" id="fileInp" accept="image/*,video/*">
 </div>
 
-<!-- CHAT MODALS -->
-<div id="chatModal"><h4>Chat</h4><div id="chatList" style="flex:1;overflow-y:auto;"></div><input type="text" placeholder="Message..." onkeydown="if(event.key==='Enter'){sendMessage(this.value);this.value=''}"></div>
-<div id="groupModal"><h4>Group Chat</h4><div id="groupList" style="flex:1;overflow-y:auto;"></div><input type="text" placeholder="Message..." onkeydown="if(event.key==='Enter'){sendGroupMessage(this.value);this.value=''}"></div>
-
-<!-- NOTIFICATIONS MODAL -->
-<div id="notifModal" style="position:fixed;bottom:80px;left:20px;width:300px;background:#111;border-radius:12px;padding:15px;display:none;z-index:1600;max-height:400px;overflow-y:auto;">
-    <h4>Notifications</h4>
-    <div id="notifList"></div>
 </div>
 
 <script>
-// TELEGRAM
-const tg=window.Telegram?.WebApp;
-if(tg){tg.ready();tg.expand();}
 
-// SUPABASE
+/* ================= TELEGRAM ================= */
+const tg = window.Telegram?.WebApp;
+if(tg){
+    tg.expand();
+    tg.ready();
+}
+
+/* ================= SUPABASE ================= */
 const SB_URL="https://chsybopznpfdvhmdspox.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoc3lib3B6bnBmZHZobWRzcG94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MTEwMzQsImV4cCI6MjA4NzI4NzAzNH0.OFPBD6anJmowHfRhgK-UMaRpEJgO3UsxWJaFhPart9w";
-const sb=supabase.createClient(SB_URL,SB_KEY);
 
-let currentUserId, currentUsername;
+const sb = supabase.createClient(SB_URL,SB_KEY);
 
-// SPLASH
-window.addEventListener("load", async ()=>{
-    await initUser();
-    const splash=document.getElementById("splash");
-    const app=document.getElementById("app");
+/* ================= USER ================= */
+let userId = localStorage.getItem("uid");
+let username = localStorage.getItem("uname");
 
-    // Wait 4s
-    setTimeout(async ()=>{
-        splash.style.transition="opacity 0.5s";
-        splash.style.opacity=0;
-        setTimeout(()=>{
-            splash.style.display="none";
-            app.style.display="block";
-            loadPosts(); renderProfile(); checkNotifications();
-        },500);
-    },4000);
-});
-
-// INIT USER
 async function initUser(){
-    currentUserId = localStorage.getItem('user_id');
-    currentUsername = localStorage.getItem('username');
-    if(!currentUserId){
-        currentUserId = crypto.randomUUID();
-        currentUsername = prompt("Enter your display name") || "Guest";
-        await sb.from('users').insert([{id:currentUserId,name:currentUsername}]);
-        localStorage.setItem('user_id',currentUserId);
-        localStorage.setItem('username',currentUsername);
 
-        // One-time welcome notification
-        await sb.from('notifications').insert([{user_id:currentUserId,text:'Welcome to Cruise! Enjoy your first day here.',read:false}]);
+    if(!userId){
+
+        userId = crypto.randomUUID();
+        username = prompt("Your name?") || "Guest";
+
+        await sb.from("users").insert([{
+            id:userId,
+            name:username
+        }]);
+
+        localStorage.setItem("uid",userId);
+        localStorage.setItem("uname",username);
+
+        await sb.from("notifications").insert([{
+            user_id:userId,
+            text:"Welcome to Cruise 👋",
+            read:false
+        }]);
     }
 }
 
-// MENU
-function toggleMenu(){
-    const side=document.getElementById("side");
-    const overlay=document.getElementById("overlay");
-    if(side.style.left==="0px"){side.style.left="-260px";overlay.style.display="none";}
-    else{side.style.left="0px";overlay.style.display="block";}
-}
-function openPage(p){
-    toggleMenu();
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.getElementById('v-'+p).classList.add('active');
-}
+/* ================= SPLASH ================= */
+window.onload = async ()=>{
 
-// EDITOR
-function showEd(s){ document.getElementById('editor').classList.toggle('active',s); }
+    await initUser();
 
-// POSTS
-async function loadPosts(){
-    const {data,error}=await sb.from('posts').select('*').order('created_at',{ascending:false});
+    setTimeout(()=>{
+        document.getElementById("splash").style.display="none";
+        document.getElementById("app").style.display="block";
+        loadFeed();
+    },4000);
+
+};
+
+/* ================= FEED ================= */
+async function loadFeed(){
+
+    const {data,error} =
+    await sb.from("posts")
+    .select("*")
+    .order("created_at",{ascending:false});
+
     if(error) return;
-    const feed=document.getElementById('v-home');
-    feed.innerHTML=data.map(p=>{
-        let media='';
-        if(p.media_url){media=`<${p.media_type==='video'?'video controls':'img'} src="${p.media_url}"></${p.media_type==='video'?'video':'img'}>`;}
-        return `<div class="post" id="post-${p.id}">
-            <div class="post-header"><b>@${p.username}</b>
-            ${p.user_id===currentUserId?`<button onclick="editPost('${p.id}')">✎</button><button onclick="deletePost('${p.id}')">✕</button>`:''}</div>
-            <div class="post-content"><p>${p.content||''}</p>${media}</div>
-            <div class="reactions">
-                <span onclick="react('${p.id}','like')">👍</span>
-                <span onclick="react('${p.id}','dislike')">👎</span>
-                <span onclick="react('${p.id}','love')">❤️</span>
-                <span onclick="react('${p.id}','laugh')">😂</span>
-                <span onclick="react('${p.id}','angry')">😡</span>
-            </div>
-            <div class="comments-section" id="comments-${p.id}"></div>
-            <input type="text" placeholder="Comment..." style="width:100%;padding:6px;margin-top:5px;" onkeydown="if(event.key==='Enter') addComment('${p.id}',this.value)">
-        </div>`;
-    }).join('');
+
+    const feed = document.getElementById("feed");
+
+    feed.innerHTML="";
+
+    data.forEach(p=>{
+
+        let media="";
+
+        if(p.media_url){
+            if(p.media_type==="video"){
+                media=`<video src="${p.media_url}" controls></video>`;
+            }else{
+                media=`<img src="${p.media_url}">`;
+            }
+        }
+
+        feed.innerHTML += `
+        <div class="post">
+
+            <div class="post-header">@${p.username}</div>
+
+            <div>${p.content||""}</div>
+
+            ${media}
+
+        </div>
+        `;
+    });
+
 }
 
-// PROFILE
-async function renderProfile(){
-    const profileView=document.getElementById('v-profile');
-    profileView.innerHTML='';
-    profileView.innerHTML=`<div class="profile-header">
-        <div class="avatar">${currentUsername[0]}</div>
-        <h2>${currentUsername}</h2>
-        <div>ID: ${currentUserId.slice(0,8)}</div>
-    </div>`;
-    const {data,error}=await sb.from('posts').select('*').eq('user_id',currentUserId).order('created_at',{ascending:false});
-    if(data.length>0){
-        data.forEach(p=>{
-            let media='';
-            if(p.media_url){media=`<${p.media_type==='video'?'video controls':'img'} src="${p.media_url}"></${p.media_type==='video'?'video':'img'}>`;}
-            profileView.innerHTML+=`<div class="post" id="post-${p.id}">
-                <div class="post-header"><b>@${p.username}</b>
-                <button onclick="editPost('${p.id}')">✎</button><button onclick="deletePost('${p.id}')">✕</button></div>
-                <div class="post-content"><p>${p.content||''}</p>${media}</div>
-            </div>`;
-        });
-    }
+/* ================= EDITOR ================= */
+function openEditor(){
+    document.getElementById("editor").style.display="flex";
 }
 
-// SEND POST
-async function send(){
-    const t=document.getElementById('inp').value.trim();
-    const file=document.getElementById('fileInp').files[0];
-    let media_url=null,media_type=null;
+function closeEditor(){
+    document.getElementById("editor").style.display="none";
+}
+
+/* ================= POST ================= */
+async function publish(){
+
+    const text = textInp.value.trim();
+    const file = fileInp.files[0];
+
+    let url=null;
+    let type=null;
+
     if(file){
-        const ext=file.name.split('.').pop();
-        media_type=file.type.startsWith('video')?'video':'image';
-        const name='uploads/'+Date.now()+'.'+ext;
-        const {data,error}=await sb.storage.from('public').upload(name,file);
-        if(!error) media_url=`https://chsybopznpfdvhmdspox.supabase.co/storage/v1/object/public/${name}`;
+
+        const ext = file.name.split('.').pop();
+        type = file.type.startsWith("video")?"video":"image";
+        const path = "uploads/"+Date.now()+"."+ext;
+
+        const {error} =
+        await sb.storage.from("public").upload(path,file);
+
+        if(!error){
+            url = SB_URL+"/storage/v1/object/public/"+path;
+        }
     }
-    await sb.from('posts').insert([{username:currentUsername,content:t,media_url,media_type,user_id:currentUserId}]);
-    document.getElementById('inp').value='';
-    document.getElementById('fileInp').value='';
-    showEd(false);
-    loadPosts(); renderProfile();
+
+    await sb.from("posts").insert([{
+        user_id:userId,
+        username:username,
+        content:text,
+        media_url:url,
+        media_type:type
+    }]);
+
+    textInp.value="";
+    fileInp.value="";
+
+    closeEditor();
+    loadFeed();
 }
 
-// REACTIONS
-async function react(postId,type){await sb.from('reactions').insert([{post_id:postId,user_id:currentUserId,type}]);}
+</script>
 
-// COMMENTS
-async function addComment(postId,text){
-    if(!text.trim()) return;
-    await sb.from('comments').insert([{post_id:postId,user_id:currentUserId,username:currentUsername,text}]);
-    document.querySelector(`#comments-${postId}`).innerHTML+=`<div class="comment"><b>${currentUsername}:</b> ${text}</div>`;
-}
-
-// NOTIFICATIONS
-async function checkNotifications(){
-    const {data}=await sb.from('notifications').select('*').eq('user_id',currentUserId).eq('read',false);
-    document.getElementById('notifDot').style.display=data.length?'block':'none';
-    const notifList=document.getElementById('notifList');
-    notifList.innerHTML=data.map(n=>`<div>${n.text}</div>`).join('');
-}
-function openNotifications(){
-    const modal=document.getElementById('notifModal
+</body>
+    </html>
