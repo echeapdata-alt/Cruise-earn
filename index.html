@@ -7,67 +7,75 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+/* RESET */
 body, html {
     margin:0; padding:0; width:100%; height:100%; font-family:-apple-system,sans-serif; overflow:hidden;
+    background:#000;
 }
 
 /* SPLASH SCREEN */
 #splash {
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:#000;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:5000;
-    flex-direction:column;
-    transition: opacity 0.5s ease;
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    background:#000; z-index:5000; opacity:1; transition: opacity 0.5s ease;
 }
 
 #splash img {
-    width:150px;
-    height:150px;
-    object-fit:contain;
-    margin-bottom:20px;
+    width:150px; height:150px; object-fit:contain;
+    animation:logoAnim 1.5s ease forwards;
 }
 
 #splash h1 {
-    color:#fff;
-    font-size:28px;
-    letter-spacing:5px;
+    color:#fff; font-size:28px; letter-spacing:5px; margin-top:20px;
+    opacity:0; animation:textAnim 1.5s ease forwards; animation-delay:0.5s;
+}
+
+/* LOGO ANIMATIONS */
+@keyframes logoAnim {
+    0% { transform: scale(0); opacity:0; }
+    50% { transform: scale(1.2); opacity:1; }
+    100% { transform: scale(1); opacity:1; }
+}
+@keyframes textAnim {
+    0% { opacity:0; transform:translateY(20px); }
+    100% { opacity:1; transform:translateY(0); }
 }
 
 /* MAIN APP */
-#app {
-    display:none;
-    width:100%; height:100%;
-    background:#000;
-}
+#app { display:none; width:100%; height:100%; background:#000; }
 
-/* Floating + button */
+/* FLOATING + BUTTON */
 .add{
-    position:fixed;
-    bottom:25px;
-    left:50%;
-    transform:translateX(-50%);
-    width:60px;
-    height:60px;
-    border:none;
-    background:#2481cc;
-    border-radius:20px;
-    font-size:32px;
-    color:#fff;
-    z-index:1500;
-    box-shadow:0 10px 25px rgba(36,129,204,.4);
+    position:fixed; bottom:40px; left:50%; transform:translateX(-50%);
+    width:60px; height:60px; border:none; border-radius:50%;
+    background:#2481cc; color:#fff; font-size:32px; cursor:pointer;
+    box-shadow:0 10px 25px rgba(36,129,204,.4); z-index:1500;
 }
 
-/* Other styles same as before */
+/* SIDE MENU */
+#side{
+    position:fixed; top:0; left:-260px; width:260px; height:100%;
+    background:#222; padding:25px; transition:.3s; z-index:3000;
+}
+#side button{
+    width:100%; padding:12px; margin:8px 0; border:none; border-radius:5px; background:#444; color:white; font-size:15px; cursor:pointer;
+}
+#side button:hover{ background:#666; }
+#overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; z-index:2500;
+}
+
+/* VIEWS */
+.view{ display:none; padding:15px; color:#fff; }
+.view.active{ display:block; }
+
+/* POSTS */
+.post{ background:#111; padding:12px; margin-bottom:10px; border-radius:6px; }
 </style>
 </head>
 <body>
 
-<!-- SPLASH SCREEN -->
+<!-- SPLASH -->
 <div id="splash">
     <img src="logo.png" alt="Cruise Logo">
     <h1>CRUISE</h1>
@@ -76,45 +84,39 @@ body, html {
 <!-- MAIN APP -->
 <div id="app">
 
-<!-- HEADER -->
-<nav class="navbar" style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:#111;color:#fff;">
+<nav style="display:flex; align-items:center; justify-content:space-between; padding:10px; background:#111; color:#fff;">
     <button class="menu-btn" onclick="toggleMenu()">☰</button>
     <div class="logo">CRUISE</div>
     <div></div>
 </nav>
 
 <!-- SIDE MENU -->
-<div id="side" style="position:fixed;top:0;left:-260px;width:260px;height:100%;background:#222;padding:25px;transition:.3s;z-index:3000;">
-    <div class="side-title" style="color:white;font-size:20px;font-weight:800;margin-bottom:20px;">CRUISE</div>
-    <button class="side-btn" onclick="openPage('home')">🏠 Home</button>
-    <button class="side-btn" onclick="openPage('profile')">👤 Profile</button>
-    <button class="side-btn" onclick="openPage('wallet')">💰 Wallet</button>
-    <button class="side-btn" onclick="openPage('tasks')">✅ Tasks</button>
-    <button class="side-btn" onclick="openPage('ads')">📢 Post Ads</button>
+<div id="side">
+    <button onclick="openPage('home')">🏠 Home</button>
+    <button onclick="openPage('profile')">👤 Profile</button>
+    <button onclick="openPage('wallet')">💰 Wallet</button>
+    <button onclick="openPage('tasks')">✅ Tasks</button>
+    <button onclick="openPage('ads')">📢 Post Ads</button>
 </div>
-<div id="overlay" onclick="toggleMenu()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:2500;"></div>
+<div id="overlay" onclick="toggleMenu()"></div>
 
-<!-- FEED -->
-<div class="main" style="margin-top:65px;padding:15px;">
-    <div id="v-home" class="view active"></div>
-    <div id="v-wallet" class="view"></div>
-    <div id="v-profile" class="view"></div>
-    <div id="v-tasks" class="view"></div>
-    <div id="v-ads" class="view"></div>
-</div>
+<!-- VIEWS -->
+<div id="v-home" class="view active"></div>
+<div id="v-profile" class="view"></div>
+<div id="v-wallet" class="view"></div>
+<div id="v-tasks" class="view"></div>
+<div id="v-ads" class="view"></div>
 
 <!-- FLOAT BUTTON -->
 <button class="add" onclick="showEd(true)">+</button>
 
 <!-- EDITOR -->
-<div id="editor" style="position:fixed;inset:0;background:#000;z-index:2000;padding:25px;display:flex;flex-direction:column;transform:translateY(100%);transition:.3s;">
-    <div style="display:flex;justify-content:space-between;">
-        <button onclick="showEd(false)" style="background:none;border:none;color:#888;">Cancel</button>
-        <button onclick="send()" style="background:#2481cc;color:#fff;border:none;padding:10px 25px;border-radius:12px;font-weight:700;">Publish</button>
+<div id="editor" style="position:fixed; inset:0; background:#000; z-index:2000; padding:25px; display:flex; flex-direction:column; transform:translateY(100%); transition:.3s;">
+    <div style="display:flex; justify-content:space-between;">
+        <button onclick="showEd(false)" style="background:none; border:none; color:#888;">Cancel</button>
+        <button onclick="send()" style="background:#2481cc; color:#fff; border:none; padding:10px 25px; border-radius:12px; font-weight:700;">Publish</button>
     </div>
-    <textarea id="inp" style="flex:1;background:none;border:none;color:#fff;font-size:22px;margin-top:25px;" placeholder="What's the vibe?"></textarea>
-</div>
-
+    <textarea id="inp" placeholder="What's the vibe?" style="flex:1; background:none; border:none; color:#fff; font-size:22px; margin-top:25px;"></textarea>
 </div>
 
 <script>
@@ -127,51 +129,49 @@ const SB_URL="https://chsybopznpfdvhmdspox.supabase.co";
 const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoc3lib3B6bnBmZHZobWRzcG94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MTEwMzQsImV4cCI6MjA4NzI4NzAzNH0.OFPBD6anJmowHfRhgK-UMaRpEJgO3UsxWJaFhPart9w";
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
-// SPLASH SCREEN FADEOUT
-window.addEventListener("load", () => {
-    setTimeout(() => {
-        const splash = document.getElementById("splash");
-        splash.style.opacity = 0;
-        setTimeout(()=> splash.style.display="none", 500);
+// SPLASH ANIMATION + FADEOUT
+window.addEventListener("load", ()=>{
+    setTimeout(()=>{
+        document.getElementById("splash").style.opacity = 0;
+        setTimeout(()=> document.getElementById("splash").style.display="none", 500);
         document.getElementById("app").style.display = "block";
-    }, 2000); // 2 seconds splash
+        loadPosts();
+    }, 2500); // 2.5 seconds splash
 });
 
-// MENU FUNCTIONS
+// MENU
 function toggleMenu(){
     const side=document.getElementById("side");
     const overlay=document.getElementById("overlay");
     side.style.left = (side.style.left==="0px") ? "-260px":"0px";
     overlay.style.display = (overlay.style.display==="block") ? "none":"block";
 }
-
-function openPage(page){
+function openPage(p){
     toggleMenu();
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.getElementById('v-'+page).classList.add('active');
+    document.getElementById('v-'+p).classList.add('active');
 }
 
 // EDITOR
 function showEd(s){ document.getElementById('editor').classList.toggle('active', s); }
 
 // LOAD POSTS
-async function load(){
+async function loadPosts(){
     const {data,error} = await sb.from('posts').select('*').order('created_at',{ascending:false});
     if(error) return;
-    const feed = document.getElementById('v-home');
+    const feed=document.getElementById('v-home');
     feed.innerHTML = data.map(p=>`<div class="post"><b>@${p.username}</b><p>${p.content}</p></div>`).join('');
 }
 
+// SEND POST
 async function send(){
     const t=document.getElementById('inp').value.trim();
     if(!t) return;
-    await sb.from('posts').insert([{username:"Guest",content:t}]);
+    await sb.from('posts').insert([{username:"Guest", content:t}]);
     document.getElementById('inp').value="";
     showEd(false);
-    load();
+    loadPosts();
 }
-
-load();
 </script>
 
 </body>
