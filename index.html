@@ -9,22 +9,22 @@
 <style>
 :root {
     --primary: #2481cc;
-    --bg: #000;
-    --panel: #0d0d0d;
-    --border: #1a1a1a;
-    --text-dim: #71767b;
+    --bg-blue: #020817; /* Very Dark Blue */
+    --panel: #0f172a;
+    --border: #1e293b;
+    --text-dim: #94a3b8;
     --gold: #f39c12;
 }
 * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
-body, html { width:100%; height:100%; background:var(--bg); font-family:-apple-system, sans-serif; color:#fff; overflow:hidden; }
+body, html { width:100%; height:100%; background:var(--bg-blue); font-family:-apple-system, sans-serif; color:#fff; overflow:hidden; }
 
 /* SPLASH */
 #splash { position: fixed; inset:0; background:#000; display:flex; justify-content:center; align-items:center; z-index:9999; }
-#splash-logo { font-size:40px; font-weight:900; letter-spacing:8px; animation: pulse 1.8s infinite; }
+#splash-logo { font-size:40px; font-weight:900; letter-spacing:8px; animation: pulse 1.8s infinite; color:#fff; }
 @keyframes pulse { 0%, 100% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1); opacity: 1; } }
 
 /* NAVBAR */
-.navbar { display:flex; justify-content:space-between; align-items:center; padding:0 20px; height:60px; background:#000; border-bottom:1px solid var(--border); position:fixed; top:0; width:100%; z-index:1000; }
+.navbar { display:flex; justify-content:space-between; align-items:center; padding:0 20px; height:60px; background:rgba(2, 8, 23, 0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:fixed; top:0; width:100%; z-index:1000; }
 .logo { font-weight:900; letter-spacing:5px; font-size:18px; color: var(--primary); }
 
 /* MAIN VIEWPORT */
@@ -33,32 +33,30 @@ body, html { width:100%; height:100%; background:var(--bg); font-family:-apple-s
 .view.active { display:block; }
 
 /* POST CARDS */
-.post { background: #000; border-bottom:1px solid var(--border); padding:15px 0; margin-bottom: 5px; }
+.post { background: var(--panel); border:1px solid var(--border); border-radius:15px; padding:15px; margin-bottom: 12px; }
 .u-info { display:flex; align-items:center; margin-bottom:10px; }
-.u-pfp { width:35px; height:35px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; margin-right:10px; font-size:12px; }
-.u-name { font-weight:800; color:var(--primary); font-size:14px; flex:1; }
-.del-btn { background:none; border:none; color:#ff4444; font-size:18px; opacity:0.5; }
+.u-pfp { width:32px; height:32px; border-radius:8px; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; margin-right:10px; font-size:11px; }
+.u-name { font-weight:700; color:var(--primary); font-size:13px; flex:1; }
 
-/* PREMIUM DARK STUDIO (The + Button Overlay) */
+/* DARK STUDIO (The + Button Overlay) */
 #studio { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; }
 #studio.active { display: flex; }
 .studio-header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; border-bottom: 1px solid var(--border); }
 .studio-main { flex: 1; padding: 20px; display: flex; flex-direction: column; }
 #studio-input { width: 100%; background: transparent; border: none; color: #fff; font-size: 20px; line-height: 1.4; resize: none; flex: 1; }
+
+/* ATTACHMENT AREA */
+.attachment-preview { display:none; padding:10px; border-radius:10px; background:#111; margin-bottom:10px; font-size:12px; color:var(--primary); }
+
 .mode-bar { border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 10px 30px; }
-.mode-tab { background: none; border: none; color: var(--text-dim); font-size: 13px; font-weight: 600; padding: 10px; position: relative; }
-.mode-tab.active { color: var(--primary); }
-.mode-tab.active::after { content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 3px; background: var(--primary); border-radius: 10px; }
+.mode-tab { background: none; border: none; color: var(--text-dim); font-size: 13px; font-weight: 600; padding: 10px; }
+.mode-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
 
 /* BOTTOM NAV */
-.bottom-nav { position:fixed; bottom:0; width:100%; height:80px; background:#000; border-top:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; padding-bottom:15px; z-index:1000; }
-.nav-item { background:none; border:none; color:#444; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:10px; font-weight:bold; }
+.bottom-nav { position:fixed; bottom:0; width:100%; height:80px; background:rgba(2, 8, 23, 0.95); border-top:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; padding-bottom:15px; z-index:1000; }
+.nav-item { background:none; border:none; color:#475569; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:10px; font-weight:bold; }
 .nav-item.active { color:var(--primary); }
-.add-fab { width:55px; height:55px; background:var(--primary); border-radius:50%; color:#fff; font-size:30px; border:none; transform:translateY(-15px); box-shadow: 0 0 15px rgba(36, 129, 204, 0.4); }
-
-/* WALLET & PROFILE STYLES */
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; }
-.balance { font-size: 32px; font-weight: 900; color: var(--gold); margin: 10px 0; }
+.add-fab { width:55px; height:55px; background:var(--primary); border-radius:50%; color:#fff; font-size:30px; border:none; transform:translateY(-15px); box-shadow: 0 8px 20px rgba(36, 129, 204, 0.4); }
 </style>
 </head>
 <body>
@@ -67,43 +65,21 @@ body, html { width:100%; height:100%; background:var(--bg); font-family:-apple-s
 
 <nav class="navbar">
     <div class="logo">CRUISE</div>
-    <div style="font-size:10px; color:#00ff00; font-weight:bold;">● LIVE</div>
+    <div style="font-size:10px; color:#34d399; font-weight:bold;">GLOBAL</div>
 </nav>
 
 <div class="main-view">
-    <div id="v-home" class="view active">
-        <div class="card">
-            <p style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">Referral Link</p>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="ref-link" readonly style="flex:1; background:#000; color:#fff; border:none; padding:8px; border-radius:8px; font-size:12px;">
-                <button onclick="copyRef()" style="background:var(--primary); color:#fff; border:none; padding:0 15px; border-radius:8px; font-size:12px;">Copy</button>
-            </div>
-        </div>
-        <div id="feed"></div>
-    </div>
-
+    <div id="v-home" class="view active"><div id="feed"></div></div>
     <div id="v-wallet" class="view">
-        <div class="card" style="text-align:center;">
-            <p style="font-size:12px; color:var(--text-dim);">CRUISE BALANCE</p>
-            <div class="balance">0.00 <span style="font-size:14px;">CRZ</span></div>
-        </div>
-        <div class="card">
-            <h3 style="font-size:14px; margin-bottom:15px;">Daily Tasks</h3>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span>Daily Check-in</span>
-                <button style="background:var(--primary); color:#fff; border:none; padding:5px 12px; border-radius:8px; font-size:12px;">Claim</button>
-            </div>
+        <div style="background:var(--panel); padding:20px; border-radius:20px; text-align:center; border:1px solid var(--border);">
+            <p style="font-size:12px; color:var(--text-dim);">CRZ BALANCE</p>
+            <div style="font-size:32px; font-weight:900; color:var(--gold); margin:10px 0;">0.00</div>
         </div>
     </div>
-
     <div id="v-profile" class="view">
-        <div style="text-align:center; padding:20px;">
+        <div style="text-align:center;">
             <div id="pfp-big" style="width:80px; height:80px; background:var(--primary); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold;">?</div>
             <h2 id="u-display">Cruiser</h2>
-            <div style="display:flex; justify-content:center; gap:30px; margin-top:20px;">
-                <div><b id="post-count">0</b><br><small style="color:var(--text-dim);">Posts</small></div>
-                <div><b>0</b><br><small style="color:var(--text-dim);">Fans</small></div>
-            </div>
         </div>
     </div>
 </div>
@@ -114,13 +90,18 @@ body, html { width:100%; height:100%; background:var(--bg); font-family:-apple-s
         <button onclick="sendCruise()" style="background:var(--primary); color:#fff; border:none; padding:8px 22px; border-radius:20px; font-weight:bold;">Cruise</button>
     </div>
     <div class="studio-main">
+        <div id="media-notif" class="attachment-preview">📎 Media Attached</div>
         <textarea id="studio-input" placeholder="What's happening?"></textarea>
     </div>
+    
+    <input type="file" id="img-input" accept="image/*" style="display:none" onchange="attachMsg('Image')">
+    <input type="file" id="vid-input" accept="video/*" style="display:none" onchange="attachMsg('Video')">
+
     <div class="mode-bar">
         <button class="mode-tab active" onclick="setMode('Text', this)">Text</button>
-        <button class="mode-tab" onclick="setMode('Photo', this)">Photo</button>
-        <button class="mode-tab" onclick="setMode('Video', this)">Video</button>
-        <button class="mode-tab" onclick="setMode('Voice', this)">Voice</button>
+        <button class="mode-tab" onclick="document.getElementById('img-input').click()">Photo</button>
+        <button class="mode-tab" onclick="document.getElementById('vid-input').click()">Video</button>
+        <button class="mode-tab" onclick="startVoice()">Voice</button>
     </div>
 </div>
 
@@ -145,34 +126,43 @@ const myName = tg.initDataUnsafe?.user?.first_name || "Guest";
 setTimeout(()=> {
     document.getElementById('splash').style.opacity=0;
     setTimeout(()=> document.getElementById('splash').style.display="none", 800);
-}, 3000);
+}, 2500);
 
-// Navigation
 function tab(name) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('v-' + name).classList.add('active');
     document.getElementById('n-' + name).classList.add('active');
-    if(name === 'home') load();
 }
 
-// Studio Logic
 function openStudio() { document.getElementById('studio').classList.add('active'); document.getElementById('studio-input').focus(); }
-function closeStudio() { document.getElementById('studio').classList.remove('active'); }
-function setMode(mode, btn) {
-    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    if(mode !== 'Text') tg.showAlert(mode + " coming soon!");
+function closeStudio() { document.getElementById('studio').classList.remove('active'); document.getElementById('media-notif').style.display='none'; }
+
+function attachMsg(type) {
+    document.getElementById('media-notif').innerText = "📎 " + type + " selected";
+    document.getElementById('media-notif').style.display = 'block';
+}
+
+function startVoice() {
+    tg.HapticFeedback.impactOccurred('medium');
+    tg.showAlert("Voice recording initialized. Hold to record coming in next update!");
 }
 
 async function sendCruise() {
     const val = document.getElementById('studio-input').value;
     if(!val.trim()) return;
+
     const { error } = await sb.from('posts').insert([{ username: myName, content: val }]);
+    
     if(!error) {
+        // FIX: Clear input and CLOSE studio immediately
         document.getElementById('studio-input').value = "";
         closeStudio();
+        
+        // FIX: Switch to home tab and refresh feed
+        tab('home');
         load();
+        
         tg.HapticFeedback.notificationOccurred('success');
     }
 }
@@ -180,43 +170,25 @@ async function sendCruise() {
 async function load() {
     const { data } = await sb.from('posts').select('*').order('created_at', { ascending: false });
     if(data) {
-        document.getElementById('post-count').innerText = data.filter(p => p.username === myName).length;
         document.getElementById('feed').innerHTML = data.map(p => `
             <div class="post">
                 <div class="u-info">
                     <div class="u-pfp">${p.username[0].toUpperCase()}</div>
                     <span class="u-name">@${p.username.toLowerCase()}</span>
-                    ${p.username === myName ? `<button class="del-btn" onclick="delPost('${p.id}')">✕</button>` : ''}
                 </div>
-                <div style="font-size:16px; line-height:1.4;">${p.content}</div>
+                <div style="font-size:15px; line-height:1.5;">${p.content}</div>
             </div>
         `).join('');
     }
 }
 
-async function delPost(id) {
-    tg.showConfirm("Delete this post?", async (ok) => {
-        if(ok) {
-            await sb.from('posts').delete().eq('id', id);
-            load();
-        }
-    });
-}
-
 // User Init
 if(tg.initDataUnsafe?.user) {
-    const user = tg.initDataUnsafe.user;
-    document.getElementById('ref-link').value = `https://t.me/CruiseEarnBot?start=${user.id}`;
-    document.getElementById('u-display').innerText = user.first_name;
-    document.getElementById('pfp-big').innerText = user.first_name[0];
-}
-
-function copyRef() {
-    navigator.clipboard.writeText(document.getElementById('ref-link').value);
-    tg.showAlert("Link Copied!");
+    document.getElementById('u-display').innerText = tg.initDataUnsafe.user.first_name;
+    document.getElementById('pfp-big').innerText = tg.initDataUnsafe.user.first_name[0];
 }
 
 load();
 </script>
 </body>
-    </html>
+            </html>
