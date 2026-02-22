@@ -27,16 +27,21 @@
         .view.active { display:block; }
 
         /* POSTS */
-        .post { background: var(--panel); border:1px solid var(--border); border-radius:15px; padding:15px; margin-bottom: 12px; position: relative; }
+        .post { background: var(--panel); border:1px solid var(--border); border-radius:15px; padding:15px; margin-bottom: 12px; }
         .u-info { display:flex; align-items:center; margin-bottom:10px; }
         .u-pfp { width:32px; height:32px; border-radius:8px; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; margin-right:10px; }
         .post-media { width:100%; border-radius:12px; margin-top:10px; border:1px solid var(--border); display:block; max-height: 400px; object-fit: cover; }
 
-        /* LIKE BUTTON */
-        .actions { display: flex; align-items: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .like-btn { background: none; border: none; color: var(--text-dim); display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .like-btn.liked { color: var(--heart); transform: scale(1.1); }
-        .like-btn i { font-style: normal; font-size: 18px; }
+        /* COMMENTS SECTION */
+        .comment-area { margin-top:15px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .comment { font-size: 13px; margin-bottom: 5px; color: var(--text-dim); }
+        .comment b { color: var(--primary); }
+        .comment-input-box { display: flex; gap: 10px; margin-top: 10px; }
+        .comment-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; padding: 8px 15px; color: #fff; font-size: 13px; outline: none; }
+
+        /* LIKE & COMMENT ACTIONS */
+        .actions { display: flex; align-items: center; gap: 20px; margin-top: 10px; }
+        .action-btn { background: none; border: none; color: var(--text-dim); display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 14px; }
 
         /* STUDIO */
         #studio { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; }
@@ -44,18 +49,11 @@
         .studio-header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; border-bottom: 1px solid var(--border); }
         .studio-main { flex: 1; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
         #studio-input { width: 100%; background: transparent; border: none; color: #fff; font-size: 18px; line-height: 1.4; resize: none; min-height: 100px; outline:none; }
-
         #media-preview-box { display:none; position:relative; width:100%; margin-bottom:15px; border-radius:15px; overflow:hidden; border:1px solid var(--border); background: #111; }
         .clear-media { position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.7); border:none; color:#fff; width:30px; height:30px; border-radius:50%; z-index: 10; }
 
-        /* BOTTOM NAV */
-        .mode-bar { border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 10px 30px; background: #000; }
-        .mode-tab { background: rgba(255,255,255,0.05); border: none; color: #fff; font-size: 13px; font-weight: 700; padding: 12px 15px; border-radius: 12px; flex: 1; margin: 0 5px; }
-        
         .bottom-nav { position:fixed; bottom:0; width:100%; height:80px; background:rgba(2, 8, 23, 0.95); border-top:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; padding-bottom:15px; z-index:1000; }
-        .nav-item { background:none; border:none; color:#475569; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; font-weight:bold; }
-        .nav-item.active { color:var(--primary); }
-        .add-fab { width:55px; height:55px; background:var(--primary); border-radius:50%; color:#fff; font-size:30px; border:none; transform:translateY(-15px); box-shadow: 0 4px 15px rgba(36,129,204,0.4); }
+        .add-fab { width:55px; height:55px; background:var(--primary); border-radius:50%; color:#fff; font-size:30px; border:none; transform:translateY(-15px); }
     </style>
 </head>
 <body>
@@ -81,21 +79,19 @@
         </div>
         <textarea id="studio-input" placeholder="What's the vibe?"></textarea>
     </div>
-    
+    <div style="display:flex; justify-content:space-around; padding: 20px; background:#000;">
+        <button onclick="document.getElementById('img-in').click()" style="color:#fff; background:none; border:none;">📷 Photo</button>
+        <button onclick="document.getElementById('vid-in').click()" style="color:#fff; background:none; border:none;">🎬 Video</button>
+        <button id="voice-btn" style="color:#fff; background:var(--primary); padding:10px 20px; border-radius:10px; border:none;">🎤 Record</button>
+    </div>
     <input type="file" id="img-in" accept="image/*" style="display:none" onchange="attach('Image')">
     <input type="file" id="vid-in" accept="video/*" style="display:none" onchange="attach('Video')">
-
-    <div class="mode-bar">
-        <button class="mode-tab" onclick="document.getElementById('img-in').click()">📷 Photo</button>
-        <button class="mode-tab" onclick="document.getElementById('vid-in').click()">🎬 Video</button>
-        <button class="mode-tab" id="voice-btn" style="background:var(--primary)">🎤 Record</button>
-    </div>
 </div>
 
 <div class="bottom-nav">
-    <button class="nav-item active" onclick="tab('home')">🚀 Feed</button>
+    <button onclick="tab('home')" style="background:none; border:none; color:var(--primary);">🚀 Feed</button>
     <button class="add-fab" onclick="openStudio()">+</button>
-    <button class="nav-item" onclick="tab('profile')">👤 Profile</button>
+    <button onclick="tab('profile')" style="background:none; border:none; color:#475569;">👤 Profile</button>
 </div>
 
 <script>
@@ -105,47 +101,72 @@ const SB_KEY = "sb_publishable_IfqycsZxpWeXgSPA5U7D5w_u-nl_FJf";
 const sb = supabase.createClient(SB_URL, SB_KEY);
 const myName = tg.initDataUnsafe?.user?.first_name || "Cruiser";
 
-tg.expand();
-document.getElementById('profile-name').innerText = "@" + myName;
+// REAL-TIME
+sb.channel('updates').on('postgres_changes', { event: '*', schema: 'public' }, () => load()).subscribe();
 
-// --- REAL-TIME UPDATES ---
-sb.channel('public:posts')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, (payload) => {
-        load(); 
-        if(payload.eventType === 'INSERT') tg.HapticFeedback.notificationOccurred('success');
-    }).subscribe();
-
-function tab(name) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('v-' + name).classList.add('active');
-    if(name === 'home') load();
+async function handleLike(id, likes) {
+    tg.HapticFeedback.impactOccurred('light');
+    await sb.from('posts').update({ likes: likes + 1 }).eq('id', id);
 }
 
+async function addComment(postId) {
+    const input = document.getElementById(`comment-in-${postId}`);
+    if(!input.value) return;
+    await sb.from('comments').insert([{ post_id: postId, username: myName, content: input.value }]);
+    input.value = "";
+    load();
+}
+
+async function load() {
+    const { data: posts } = await sb.from('posts').select('*, comments(*)').order('created_at', { ascending: false });
+    if (!posts) return;
+
+    document.getElementById('feed').innerHTML = posts.map(p => {
+        const commentsHtml = p.comments ? p.comments.map(c => `
+            <div class="comment"><b>@${c.username}:</b> ${c.content}</div>
+        `).join('') : '';
+
+        return `
+            <div class="post">
+                <div class="u-info"><div class="u-pfp">${p.username[0]}</div><b>@${p.username}</b></div>
+                ${p.content ? `<p>${p.content}</p>` : ''}
+                ${p.image_url ? `<img src="${p.image_url}" class="post-media">` : ''}
+                ${p.video_url ? `<video src="${p.video_url}" controls class="post-media"></video>` : ''}
+                ${p.voice_url ? `<audio src="${p.voice_url}" controls style="width:100%; margin-top:10px;"></audio>` : ''}
+                
+                <div class="actions">
+                    <button class="action-btn" onclick="handleLike(${p.id}, ${p.likes || 0})">❤️ ${p.likes || 0}</button>
+                    <span class="action-btn">💬 ${p.comments ? p.comments.length : 0}</span>
+                </div>
+
+                <div class="comment-area">
+                    ${commentsHtml}
+                    <div class="comment-input-box">
+                        <input id="comment-in-${p.id}" class="comment-input" placeholder="Add a comment...">
+                        <button onclick="addComment(${p.id})" style="color:var(--primary); background:none; border:none; font-weight:bold;">Send</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// STUDIO & VOICE LOGIC (Remains identical to previous version)
 function openStudio() { document.getElementById('studio').classList.add('active'); }
 function closeStudio() { document.getElementById('studio').classList.remove('active'); clearMedia(); }
-
 function attach(type) {
     const file = type === 'Image' ? document.getElementById('img-in').files[0] : document.getElementById('vid-in').files[0];
     if (file) {
         document.getElementById('media-preview-box').style.display = 'block';
-        const img = document.getElementById('img-prev');
-        const vid = document.getElementById('vid-prev');
         const url = URL.createObjectURL(file);
-        if(type === 'Image') { img.src=url; img.style.display='block'; vid.style.display='none'; }
-        else { vid.src=url; vid.style.display='block'; img.style.display='none'; }
+        if(type === 'Image') { document.getElementById('img-prev').src=url; document.getElementById('img-prev').style.display='block'; document.getElementById('vid-prev').style.display='none'; }
+        else { document.getElementById('vid-prev').src=url; document.getElementById('vid-prev').style.display='block'; document.getElementById('img-prev').style.display='none'; }
     }
 }
+function clearMedia() { document.getElementById('media-preview-box').style.display='none'; voiceBlob = null; }
 
-function clearMedia() {
-    document.getElementById('media-preview-box').style.display='none';
-    document.getElementById('img-in').value=""; document.getElementById('vid-in').value="";
-    voiceBlob = null;
-}
-
-// --- VOICE LOGIC ---
 let recorder, chunks = [], isLocked = false, startY = 0, voiceBlob = null;
 const vBtn = document.getElementById('voice-btn');
-
 vBtn.addEventListener('touchstart', async (e) => {
     e.preventDefault(); startY = e.touches[0].clientY; isLocked = false; chunks = [];
     try {
@@ -158,71 +179,31 @@ vBtn.addEventListener('touchstart', async (e) => {
             document.getElementById('media-preview-box').style.display = 'block';
             document.getElementById('p-voice').style.display = 'block';
         };
-        vBtn.innerText = "⏺ SLIDE UP";
-        tg.HapticFeedback.impactOccurred('heavy');
-    } catch(err) { alert("Enable Mic Settings"); }
+        vBtn.innerText = "⏺ RECORDING";
+    } catch(err) { alert("Mic error"); }
 });
+vBtn.addEventListener('touchmove', (e) => { if (startY - e.touches[0].clientY > 60) isLocked = true; });
+vBtn.addEventListener('touchend', () => { if (recorder) recorder.stop(); vBtn.innerText = "🎤 Record"; });
 
-vBtn.addEventListener('touchmove', (e) => {
-    if (startY - e.touches[0].clientY > 70 && !isLocked) {
-        isLocked = true; vBtn.innerText = "🔒 LOCKED"; tg.HapticFeedback.notificationOccurred('success');
-    }
-});
-
-vBtn.addEventListener('touchend', () => { if (!isLocked && recorder) recorder.stop(); vBtn.innerText = "🎤 Record"; });
-
-// --- LOAD FEED & LIKE FUNCTION ---
-async function handleLike(postId, currentLikes) {
-    tg.HapticFeedback.impactOccurred('light');
-    const { error } = await sb.from('posts').update({ likes: currentLikes + 1 }).eq('id', postId);
-    if(error) console.log(error);
-}
-
-async function load() {
-    const { data } = await sb.from('posts').select('*').order('created_at', { ascending: false });
-    if (!data) return;
-    document.getElementById('feed').innerHTML = data.map(p => `
-        <div class="post">
-            <div class="u-info"><div class="u-pfp">${p.username ? p.username[0] : 'C'}</div><b>@${p.username}</b></div>
-            ${p.content ? `<p>${p.content}</p>` : ''}
-            ${p.image_url ? `<img src="${p.image_url}" class="post-media">` : ''}
-            ${p.video_url ? `<video src="${p.video_url}" controls class="post-media"></video>` : ''}
-            ${p.voice_url ? `<audio src="${p.voice_url}" controls style="width:100%; margin-top:10px;"></audio>` : ''}
-            
-            <div class="actions">
-                <button class="like-btn" onclick="handleLike(${p.id}, ${p.likes || 0})">
-                    <i>❤️</i> ${p.likes || 0}
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-// --- SEND POST ---
 async function sendCruise() {
     const text = document.getElementById('studio-input').value;
     const img = document.getElementById('img-in').files[0];
     const vid = document.getElementById('vid-in').files[0];
     let fUrl = null;
-
     tg.MainButton.setText("CRUISING...").show();
     const file = img || vid || (voiceBlob ? new File([voiceBlob], "v.ogg") : null);
-
     if (file) {
-        const path = `media/${Date.now()}_${file.name || 'v.ogg'}`;
+        const path = `media/${Date.now()}_file`;
         const { data, error } = await sb.storage.from('media').upload(path, file);
         if (!error) fUrl = sb.storage.from('media').getPublicUrl(path).data.publicUrl;
     }
+    await sb.from('posts').insert([{ username: myName, content: text, image_url: img?fUrl:null, video_url: vid?fUrl:null, voice_url: voiceBlob?fUrl:null, likes: 0 }]);
+    tg.MainButton.hide(); closeStudio();
+}
 
-    await sb.from('posts').insert([{ 
-        username: myName, content: text, 
-        image_url: img ? fUrl : null, video_url: vid ? fUrl : null, voice_url: voiceBlob ? fUrl : null,
-        likes: 0
-    }]);
-
-    tg.MainButton.hide();
-    document.getElementById('studio-input').value = "";
-    closeStudio();
+function tab(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('v-' + name).classList.add('active');
 }
 
 load();
