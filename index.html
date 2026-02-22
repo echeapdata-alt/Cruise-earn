@@ -9,79 +9,62 @@
 <style>
 :root {
     --primary: #2481cc;
-    --bg-blue: #020817; /* Very Dark Blue */
+    --bg-blue: #020817; 
     --panel: #0f172a;
     --border: #1e293b;
     --text-dim: #94a3b8;
-    --gold: #f39c12;
 }
 * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
 body, html { width:100%; height:100%; background:var(--bg-blue); font-family:-apple-system, sans-serif; color:#fff; overflow:hidden; }
 
 /* SPLASH */
 #splash { position: fixed; inset:0; background:#000; display:flex; justify-content:center; align-items:center; z-index:9999; }
-#splash-logo { font-size:40px; font-weight:900; letter-spacing:8px; animation: pulse 1.8s infinite; color:#fff; }
+#splash-logo { font-size:40px; font-weight:900; letter-spacing:8px; animation: pulse 1.8s infinite; }
 @keyframes pulse { 0%, 100% { transform: scale(0.9); opacity: 0.7; } 50% { transform: scale(1); opacity: 1; } }
 
 /* NAVBAR */
 .navbar { display:flex; justify-content:space-between; align-items:center; padding:0 20px; height:60px; background:rgba(2, 8, 23, 0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:fixed; top:0; width:100%; z-index:1000; }
-.logo { font-weight:900; letter-spacing:5px; font-size:18px; color: var(--primary); }
 
-/* MAIN VIEWPORT */
+/* FEED & VIEWS */
 .main-view { margin-top:60px; height:calc(100vh - 140px); overflow-y:auto; width:100%; }
 .view { display:none; padding:15px; }
 .view.active { display:block; }
-
-/* POST CARDS */
 .post { background: var(--panel); border:1px solid var(--border); border-radius:15px; padding:15px; margin-bottom: 12px; }
 .u-info { display:flex; align-items:center; margin-bottom:10px; }
 .u-pfp { width:32px; height:32px; border-radius:8px; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; margin-right:10px; font-size:11px; }
-.u-name { font-weight:700; color:var(--primary); font-size:13px; flex:1; }
 
-/* DARK STUDIO (The + Button Overlay) */
+/* STUDIO & PREVIEW */
 #studio { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; }
 #studio.active { display: flex; }
 .studio-header { display: flex; justify-content: space-between; padding: 15px 20px; align-items: center; border-bottom: 1px solid var(--border); }
-.studio-main { flex: 1; padding: 20px; display: flex; flex-direction: column; }
-#studio-input { width: 100%; background: transparent; border: none; color: #fff; font-size: 20px; line-height: 1.4; resize: none; flex: 1; }
+.studio-main { flex: 1; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
+#studio-input { width: 100%; background: transparent; border: none; color: #fff; font-size: 18px; line-height: 1.4; resize: none; min-height: 100px; }
 
-/* ATTACHMENT AREA */
-.attachment-preview { display:none; padding:10px; border-radius:10px; background:#111; margin-bottom:10px; font-size:12px; color:var(--primary); }
+/* THE PREVIEW BOX */
+#media-preview-box { display:none; position:relative; width:100%; margin-bottom:15px; border-radius:15px; overflow:hidden; border:1px solid var(--border); background: #111; }
+.preview-media { width:100%; border-radius:12px; max-height: 300px; object-fit: cover; }
+.clear-media { position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.7); border:none; color:#fff; width:30px; height:30px; border-radius:50%; z-index: 10; }
 
+/* NAV BARS */
 .mode-bar { border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 10px 30px; }
-.mode-tab { background: none; border: none; color: var(--text-dim); font-size: 13px; font-weight: 600; padding: 10px; }
+.mode-tab { background: none; border: none; color: var(--text-dim); font-size: 13px; font-weight: 700; padding: 10px; }
 .mode-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
 
-/* BOTTOM NAV */
 .bottom-nav { position:fixed; bottom:0; width:100%; height:80px; background:rgba(2, 8, 23, 0.95); border-top:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; padding-bottom:15px; z-index:1000; }
 .nav-item { background:none; border:none; color:#475569; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:10px; font-weight:bold; }
 .nav-item.active { color:var(--primary); }
-.add-fab { width:55px; height:55px; background:var(--primary); border-radius:50%; color:#fff; font-size:30px; border:none; transform:translateY(-15px); box-shadow: 0 8px 20px rgba(36, 129, 204, 0.4); }
+.add-fab { width:55px; height:55px; background:var(--primary); border-radius:50%; color:#fff; font-size:30px; border:none; transform:translateY(-15px); }
 </style>
 </head>
 <body>
 
 <div id="splash"><div id="splash-logo">CRUISE</div></div>
 
-<nav class="navbar">
-    <div class="logo">CRUISE</div>
-    <div style="font-size:10px; color:#34d399; font-weight:bold;">GLOBAL</div>
-</nav>
+<nav class="navbar"><div style="font-weight:900; letter-spacing:5px; color:var(--primary);">CRUISE</div></nav>
 
 <div class="main-view">
     <div id="v-home" class="view active"><div id="feed"></div></div>
-    <div id="v-wallet" class="view">
-        <div style="background:var(--panel); padding:20px; border-radius:20px; text-align:center; border:1px solid var(--border);">
-            <p style="font-size:12px; color:var(--text-dim);">CRZ BALANCE</p>
-            <div style="font-size:32px; font-weight:900; color:var(--gold); margin:10px 0;">0.00</div>
-        </div>
-    </div>
-    <div id="v-profile" class="view">
-        <div style="text-align:center;">
-            <div id="pfp-big" style="width:80px; height:80px; background:var(--primary); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:bold;">?</div>
-            <h2 id="u-display">Cruiser</h2>
-        </div>
-    </div>
+    <div id="v-profile" class="view"><h2 style="text-align:center; margin-top:50px;" id="u-display">Profile</h2></div>
 </div>
 
 <div id="studio">
@@ -90,81 +73,129 @@ body, html { width:100%; height:100%; background:var(--bg-blue); font-family:-ap
         <button onclick="sendCruise()" style="background:var(--primary); color:#fff; border:none; padding:8px 22px; border-radius:20px; font-weight:bold;">Cruise</button>
     </div>
     <div class="studio-main">
-        <div id="media-notif" class="attachment-preview">📎 Media Attached</div>
-        <textarea id="studio-input" placeholder="What's happening?"></textarea>
+        <div id="media-preview-box">
+            <img id="img-prev" class="preview-media" style="display:none;">
+            <video id="vid-prev" class="preview-media" style="display:none;" controls></video>
+            <div id="p-voice" style="display:none; padding:20px; text-align:center; color:var(--primary); font-weight:bold;">🎤 Voice Note Ready</div>
+            <button class="clear-media" onclick="clearMedia()">✕</button>
+        </div>
+        <textarea id="studio-input" placeholder="What's the vibe?"></textarea>
     </div>
     
-    <input type="file" id="img-input" accept="image/*" style="display:none" onchange="attachMsg('Image')">
-    <input type="file" id="vid-input" accept="video/*" style="display:none" onchange="attachMsg('Video')">
+    <input type="file" id="img-in" accept="image/*" style="display:none" onchange="attach('Image')">
+    <input type="file" id="vid-in" accept="video/*" style="display:none" onchange="attach('Video')">
 
     <div class="mode-bar">
         <button class="mode-tab active" onclick="setMode('Text', this)">Text</button>
-        <button class="mode-tab" onclick="document.getElementById('img-input').click()">Photo</button>
-        <button class="mode-tab" onclick="document.getElementById('vid-input').click()">Video</button>
-        <button class="mode-tab" onclick="startVoice()">Voice</button>
+        <button class="mode-tab" onclick="document.getElementById('img-in').click()">Photo</button>
+        <button class="mode-tab" onclick="document.getElementById('vid-in').click()">Video</button>
+        <button class="mode-tab" id="voice-btn">Voice</button>
     </div>
 </div>
 
 <div class="bottom-nav">
     <button class="nav-item active" id="n-home" onclick="tab('home')"><i>🚀</i>Feed</button>
-    <button class="nav-item" id="n-wallet" onclick="tab('wallet')"><i>💰</i>Tasks</button>
     <button class="add-fab" onclick="openStudio()">+</button>
     <button class="nav-item" id="n-profile" onclick="tab('profile')"><i>👤</i>Profile</button>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
-tg.expand();
-
 const SB_URL = "https://chsybopznpfdvhmdspox.supabase.co"; 
 const SB_KEY = "sb_publishable_IfqycsZxpWeXgSPA5U7D5w_u-nl_FJf";
 const sb = supabase.createClient(SB_URL, SB_KEY);
-
 const myName = tg.initDataUnsafe?.user?.first_name || "Guest";
 
-// Splash
-setTimeout(()=> {
-    document.getElementById('splash').style.opacity=0;
-    setTimeout(()=> document.getElementById('splash').style.display="none", 800);
-}, 2500);
+// Splash Screen
+setTimeout(()=> { document.getElementById('splash').style.display="none"; }, 2500);
 
+// Navigation
 function tab(name) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('v-' + name).classList.add('active');
-    document.getElementById('n-' + name).classList.add('active');
+    if(document.getElementById('n-' + name)) document.getElementById('n-' + name).classList.add('active');
+    if(name === 'home') load();
 }
 
 function openStudio() { document.getElementById('studio').classList.add('active'); document.getElementById('studio-input').focus(); }
-function closeStudio() { document.getElementById('studio').classList.remove('active'); document.getElementById('media-notif').style.display='none'; }
+function closeStudio() { document.getElementById('studio').classList.remove('active'); clearMedia(); }
 
-function attachMsg(type) {
-    document.getElementById('media-notif').innerText = "📎 " + type + " selected";
-    document.getElementById('media-notif').style.display = 'block';
-}
-
-function startVoice() {
-    tg.HapticFeedback.impactOccurred('medium');
-    tg.showAlert("Voice recording initialized. Hold to record coming in next update!");
-}
-
-async function sendCruise() {
-    const val = document.getElementById('studio-input').value;
-    if(!val.trim()) return;
-
-    const { error } = await sb.from('posts').insert([{ username: myName, content: val }]);
-    
-    if(!error) {
-        // FIX: Clear input and CLOSE studio immediately
-        document.getElementById('studio-input').value = "";
-        closeStudio();
-        
-        // FIX: Switch to home tab and refresh feed
-        tab('home');
-        load();
-        
-        tg.HapticFeedback.notificationOccurred('success');
+// Preview Feature
+function attach(type) {
+    const file = type === 'Image' ? document.getElementById('img-in').files[0] : document.getElementById('vid-in').files[0];
+    if (file) {
+        const url = URL.createObjectURL(file);
+        document.getElementById('media-preview-box').style.display = 'block';
+        const img = document.getElementById('img-prev');
+        const vid = document.getElementById('vid-prev');
+        if(type === 'Image') { img.src=url; img.style.display='block'; vid.style.display='none'; document.getElementById('p-voice').style.display='none'; }
+        else { vid.src=url; vid.style.display='block'; img.style.display='none'; document.getElementById('p-voice').style.display='none'; }
     }
+}
+
+function clearMedia() {
+    document.getElementById('media-preview-box').style.display='none';
+    document.getElementById('img-in').value=""; document.getElementById('vid-in').value="";
+    voiceBlob = null;
+}
+
+// VOICE RECORDER: HOLD & SWIPE UP
+
+let recorder, chunks = [], isLocked = false, startY = 0, voiceBlob = null;
+const vBtn = document.getElementById('voice-btn');
+
+vBtn.addEventListener('touchstart', async (e) => {
+    e.preventDefault(); startY = e.touches[0].clientY; isLocked = false; chunks = [];
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recorder = new MediaRecorder(stream);
+    recorder.start();
+    recorder.ondataavailable = (ev) => chunks.push(ev.data);
+    recorder.onstop = () => {
+        voiceBlob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
+        document.getElementById('media-preview-box').style.display = 'block';
+        document.getElementById('p-voice').style.display = 'block';
+        document.getElementById('img-prev').style.display = 'none';
+        document.getElementById('vid-prev').style.display = 'none';
+    };
+    vBtn.innerText = "⏺ REC..."; tg.HapticFeedback.impactOccurred('medium');
+});
+
+vBtn.addEventListener('touchmove', (e) => {
+    let moveY = e.touches[0].clientY;
+    if (startY - moveY > 60 && !isLocked) {
+        isLocked = true; vBtn.innerText = "🔒 LOCKED"; tg.HapticFeedback.notificationOccurred('success');
+    }
+});
+
+vBtn.addEventListener('touchend', () => { if (!isLocked && recorder) recorder.stop(); vBtn.innerText = "Voice"; });
+
+// Send Post Logic
+async function sendCruise() {
+    const text = document.getElementById('studio-input').value;
+    const img = document.getElementById('img-in').files[0];
+    const vid = document.getElementById('vid-in').files[0];
+    let fUrl = null;
+
+    tg.MainButton.setText("CRUISING...").show();
+
+    // 1. Upload to Supabase Storage
+    const file = img || vid || (voiceBlob ? new File([voiceBlob], "voice.ogg") : null);
+    if (file) {
+        const path = `media/${Date.now()}_${file.name || 'voice.ogg'}`;
+        const { data, error } = await sb.storage.from('media').upload(path, file);
+        if (!error) { fUrl = sb.storage.from('media').getPublicUrl(path).data.publicUrl; }
+    }
+
+    // 2. Save to Database
+    await sb.from('posts').insert([{ 
+        username: myName, content: text, 
+        image_url: img ? fUrl : null, video_url: vid ? fUrl : null, voice_url: voiceBlob ? fUrl : null 
+    }]);
+
+    tg.MainButton.hide();
+    document.getElementById('studio-input').value = "";
+    closeStudio(); tab('home'); load();
 }
 
 async function load() {
@@ -172,23 +203,22 @@ async function load() {
     if(data) {
         document.getElementById('feed').innerHTML = data.map(p => `
             <div class="post">
-                <div class="u-info">
-                    <div class="u-pfp">${p.username[0].toUpperCase()}</div>
-                    <span class="u-name">@${p.username.toLowerCase()}</span>
-                </div>
-                <div style="font-size:15px; line-height:1.5;">${p.content}</div>
+                <div class="u-info"><div class="u-pfp">${p.username[0]}</div><b>@${p.username}</b></div>
+                <p>${p.content}</p>
+                ${p.image_url ? `<img src="${p.image_url}" style="width:100%; border-radius:10px; margin-top:10px;">` : ''}
+                ${p.video_url ? `<video src="${p.video_url}" controls style="width:100%; border-radius:10px; margin-top:10px;"></video>` : ''}
+                ${p.voice_url ? `<audio src="${p.voice_url}" controls style="width:100%; margin-top:10px;"></audio>` : ''}
             </div>
         `).join('');
     }
 }
 
-// User Init
-if(tg.initDataUnsafe?.user) {
-    document.getElementById('u-display').innerText = tg.initDataUnsafe.user.first_name;
-    document.getElementById('pfp-big').innerText = tg.initDataUnsafe.user.first_name[0];
+function setMode(mode, btn) {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
 }
 
 load();
 </script>
 </body>
-            </html>
+        </html>
