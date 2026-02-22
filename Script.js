@@ -10,8 +10,46 @@ const vBtn = document.getElementById('voice-btn');
 // --- FEED LOGIC (Ensures everything shows) ---
 async function load() {
     const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
-    if(error) return console.error(error);
     
+    if (error) {
+        console.error("Supabase Error:", error);
+        return;
+    }
+
+    console.log("Fetched Posts:", data); // This lets you see the raw data in the console
+
+    const feed = document.getElementById('feed');
+    if (!data || data.length === 0) {
+        feed.innerHTML = '<p style="text-align:center; color:var(--text-dim); margin-top:20px;">No posts yet. Be the first!</p>';
+        return;
+    }
+
+    feed.innerHTML = data.map(p => {
+        // Build the media HTML string based on what exists in the database
+        let mediaHtml = '';
+        
+        if (p.image_url) {
+            mediaHtml = `<img src="${p.image_url}" class="post-media" loading="lazy">`;
+        } else if (p.video_url) {
+            mediaHtml = `<video src="${p.video_url}" class="post-media" controls playsinline></video>`;
+        } else if (p.voice_url) {
+            mediaHtml = `<audio src="${p.voice_url}" controls></audio>`;
+        }
+
+        return `
+            <div class="post">
+                <div class="u-info">
+                    <div class="u-pfp">${p.username ? p.username[0].toUpperCase() : 'C'}</div>
+                    <span class="u-name">@${p.username || 'anonymous'}</span>
+                </div>
+                <div class="post-body">
+                    ${p.content ? `<p style="font-size:16px; line-height:1.4;">${p.content}</p>` : ''}
+                    ${mediaHtml}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
     const feed = document.getElementById('feed');
     feed.innerHTML = data.map(p => `
         <div class="post">
